@@ -16,20 +16,20 @@ export class UsersController {
   constructor(private usersResolver: UsersResolver) {}
 
   @Get()
-  findAll(@Res() res: Response) {
-    console.log(res.json);
-    res.status(HttpStatus.OK).json([]);
+  async findAll(@Res() res: Response) {
+    const users = await this.usersResolver.findAll();
+    return res.status(HttpStatus.OK).json({ users });
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserInput) {
-    const user = this.usersResolver.createUser(createUserDto);
+  async create(@Body() createUserDto: CreateUserInput) {
+    const user = await this.usersResolver.createUser(createUserDto);
     return user;
   }
 
   @Get(':id')
-  findOne(@Param() params): string {
-    console.log(params.id);
-    return `This action returns a #${params.id} user`;
+  async findOne(@Param() params) {
+    const user = await this.usersResolver.findOne(+params.id);
+    return user;
   }
 }
