@@ -8,27 +8,41 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createUserInput: CreateUserInput) {
-    //   const hashedPassword = await this.passwordService.hashPassword(
-    //     data.password,
-    //   );
+    // TODO: Hash passwords
+    // const hashedPassword = await this.passwordService.hashPassword(
+    //   data.password,
+    // );
     return await this.prisma.user.create({
       data: createUserInput,
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  public async findAll() {
+    return await this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  public async findOne(id: number) {
+    return await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  public async update(id: number, updateUserInput: UpdateUserInput) {
+    return await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: updateUserInput,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async remove(id: number) {
+    return await this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
