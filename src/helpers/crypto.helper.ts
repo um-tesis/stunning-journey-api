@@ -5,6 +5,7 @@ import config from '../config/config';
 const { SALT_ROUNDS } = config;
 
 export const hashPassword = (password: string): string => {
+  console.log('SALT_ROUNDS', SALT_ROUNDS!, password);
   const salt = bcrypt.genSaltSync(+SALT_ROUNDS!);
   return bcrypt.hashSync(password, salt);
 };

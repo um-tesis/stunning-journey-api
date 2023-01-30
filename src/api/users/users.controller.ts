@@ -8,6 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { LogInModelIn } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UsersResolver } from './users.resolver';
 
@@ -25,6 +26,12 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserInput) {
     const user = await this.usersResolver.createUser(createUserDto);
     return user;
+  }
+
+  @Get('/auth')
+  async login(@Body() login: CreateUserInput) {
+    // const loginModel = login as LogInModelIn;
+    throw new Error('Not implemented');
   }
 
   @Get(':id')

@@ -5,7 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './api/users/users.module';
 
 @Module({
   imports: [
