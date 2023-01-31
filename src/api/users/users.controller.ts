@@ -30,7 +30,6 @@ export class UsersController {
 
   @Get('/auth')
   async login(@Body() login: CreateUserInput) {
-    console.log('REPO TEST');
     // const loginModel = login as LogInModelIn;
     throw new Error('Not implemented');
   }
