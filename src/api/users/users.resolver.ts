@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { LogInModelIn } from './dto/auth-input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -32,5 +33,10 @@ export class UsersResolver {
   @Mutation(() => User)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
+  }
+
+  @Mutation(() => User)
+  login(@Args('logInModelIn') logInModelIn: LogInModelIn) {
+    return this.usersService.login(logInModelIn);
   }
 }

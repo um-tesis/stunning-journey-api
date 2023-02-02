@@ -28,10 +28,13 @@ export class UsersController {
     return user;
   }
 
-  @Get('/auth')
-  async login(@Body() login: CreateUserInput) {
-    // const loginModel = login as LogInModelIn;
-    throw new Error('Not implemented');
+  @Post('/auth')
+  async login(@Res() res: Response, @Body() loginModel: LogInModelIn) {
+    const data = await this.usersResolver.login(loginModel);
+    res
+      .cookie('Authorization', `Bearer${data.token}`)
+      .status(200)
+      .json(data.user);
   }
 
   @Get(':id')

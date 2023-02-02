@@ -14,12 +14,3 @@ export class LogInModelIn {
   @Field({ nullable: true })
   phone: string;
 }
-
-@InputType()
-export class LogInModelOut {
-  @Field(Int)
-  id: number;
-
-  @Field(Int)
-  role: number;
-}

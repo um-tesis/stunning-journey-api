@@ -2,7 +2,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { hashPassword } from 'src/helpers/crypto.helper';
+import { compare, hashPassword } from 'src/helpers/crypto.helper';
+import { LogInModelIn } from './dto/auth-input';
+import { UnauthorizedError } from 'src/utils/errors';
+import { encode } from 'src/helpers/jwt.helper';
 
 @Injectable()
 export class UsersService {
@@ -46,5 +49,22 @@ export class UsersService {
         id,
       },
     });
+  }
+
+  public async login(logInModelIn: LogInModelIn) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: logInModelIn.email,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedError('User or password incorrect');
+    }
+    const isCorrectPassword = compare(logInModelIn.password, user.password);
+    if (!isCorrectPassword) {
+      throw new UnauthorizedError('User or password incorrect');
+    }
+    const token = encode(user.id);
+    return { user, token };
   }
 }
