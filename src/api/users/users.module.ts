@@ -4,7 +4,7 @@ import { UsersResolver } from './users.resolver';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersController } from './users.controller';
 import { JWTMiddleware } from 'src/middlewares/jwt.middleware';
-import { RoleAccessMiddleware } from 'src/middlewares/system-role.middleware';
+import { RoleAccessMiddlewareCreator } from 'src/middlewares/system-role.middleware';
 
 @Module({
   providers: [UsersResolver, UsersService, PrismaService],
@@ -12,6 +12,8 @@ import { RoleAccessMiddleware } from 'src/middlewares/system-role.middleware';
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JWTMiddleware, RoleAccessMiddleware).forRoutes('/users/1');
+    consumer
+      .apply(JWTMiddleware, RoleAccessMiddlewareCreator([1]))
+      .forRoutes('/users/1');
   }
 }
