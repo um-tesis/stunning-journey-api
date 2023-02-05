@@ -39,4 +39,11 @@ export class UsersResolver {
   login(@Args('logInModelIn') logInModelIn: LogInModelIn) {
     return this.usersService.login(logInModelIn);
   }
+
+  @Query(() => [User], { name: 'usersByOrganizationId' })
+  findAllByOrganizationId(
+    @Args('organization_id', { type: () => Int }) organization_id: number,
+  ) {
+    return this.usersService.findAllByOrganizationId(organization_id);
+  }
 }

@@ -7,10 +7,4 @@ export class LogInModelIn {
 
   @Field()
   password: string;
-
-  @Field(Int)
-  role: number;
-
-  @Field({ nullable: true })
-  phone: string;
 }

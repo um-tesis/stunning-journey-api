@@ -16,4 +16,19 @@ model User {
   password  String
   role Int
   phone String?
+  organization_id Int? 
+  organization Organization? @relation(fields: [organization_id], references: [organization_id])
+}
+
+model Organization {
+  organization_id    Int     @default(autoincrement()) @id
+  name  String  @unique
+  field String
+  web String?
+  address String?
+  email String?
+  facebook_account String?
+  instagram_account String?
+  twitter_account String?
+  users User[]
 }

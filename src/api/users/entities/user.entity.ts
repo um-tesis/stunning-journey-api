@@ -16,13 +16,7 @@ export class User {
 
   @Field({ nullable: true })
   phone: string;
-}
 
-@ObjectType()
-export class TestUser {
-  @Field()
-  email: string;
-
-  @Field()
-  role: number;
+  @Field(() => Int, { nullable: true })
+  organization_id: number;
 }

@@ -67,4 +67,12 @@ export class UsersService {
     const token = encode(user.id);
     return { user, token };
   }
+
+  public async findAllByOrganizationId(organization_id: number) {
+    return await this.prisma.user.findMany({
+      where: {
+        organization_id,
+      },
+    });
+  }
 }

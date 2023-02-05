@@ -2,36 +2,80 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateOrganizationInput {
+  address: String
+  email: String
+  facebook_account: String
+  field: String!
+  instagram_account: String
+  name: String!
+  organization_id: Int
+  twitter_account: String
+  web: String
+}
+
 input CreateUserInput {
   """
   The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
   """
   Int: Float!
   email: String!
+  organization_id: Int
   password: String!
   phone: String
 }
 
 input LogInModelIn {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
+  createUser(createUserInput: CreateUserInput!): User!
+  login(logInModelIn: LogInModelIn!): User!
+  removeOrganization(id: Int!): Organization!
+  removeUser(id: Int!): User!
+  updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type Organization {
   """
   The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
   """
   Int: Float!
-  email: String!
-  password: String!
-  phone: String
-}
-
-type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
-  login(logInModelIn: LogInModelIn!): User!
-  removeUser(id: Int!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  address: String
+  facebook_account: String
+  field: String!
+  instagram_account: String
+  name: String!
+  twitter_account: String
+  web: String
 }
 
 type Query {
+  organization(id: Int!): Organization!
+  organizations: [Organization!]!
   user(id: Int!): User!
   users: [User!]!
+  usersByOrganizationId(organization_id: Int!): [User!]!
+}
+
+input UpdateOrganizationInput {
+  """
+  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+  """
+  Int: Float!
+  address: String
+  email: String
+  facebook_account: String
+  field: String
+  instagram_account: String
+  name: String
+  organization_id: Int
+  twitter_account: String
+  web: String
 }
 
 input UpdateUserInput {
@@ -40,6 +84,7 @@ input UpdateUserInput {
   """
   Int: Float!
   email: String
+  organization_id: Int
   password: String
   phone: String
   role: Int
@@ -51,6 +96,7 @@ type User {
   """
   Int: Float!
   email: String!
+  organization_id: Int
   password: String!
   phone: String
 }

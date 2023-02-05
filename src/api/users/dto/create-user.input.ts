@@ -16,4 +16,7 @@ export class CreateUserInput {
 
   @Field({ nullable: true })
   phone: string;
+
+  @Field(() => Int, { nullable: true })
+  organization_id: number;
 }
