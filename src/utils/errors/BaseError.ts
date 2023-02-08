@@ -7,14 +7,7 @@ export class BaseError extends Error {
 
   public readonly data?: unknown;
 
-  constructor(
-    name: string,
-    message: any,
-    status: number,
-    errorPlace?: string,
-    code?: string,
-    data?: unknown
-  ) {
+  constructor(name: string, message: string, status: number, errorPlace?: string, code?: string, data?: unknown) {
     super(message);
     this.name = name;
     this.status = status;

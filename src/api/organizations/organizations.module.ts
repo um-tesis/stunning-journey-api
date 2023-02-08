@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { OrganizationsService } from './organizations.service';
-import { OrganizationsResolver } from './organizations.resolver';
 import { PrismaService } from 'src/prisma/prisma.service';
+
+import { OrganizationsResolver } from './organizations.resolver';
+import { OrganizationsService } from './organizations.service';
 
 @Module({
   providers: [OrganizationsResolver, OrganizationsService, PrismaService],

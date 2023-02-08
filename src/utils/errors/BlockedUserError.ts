@@ -1,12 +1,7 @@
-import {BaseError} from "./BaseError";
+import { BaseError } from './BaseError';
 
 export class BlockedUserError extends BaseError {
-  constructor(
-    message: any,
-    errorPlace?: string,
-    code?: string,
-    data?: unknown
-  ) {
-    super("Forbidden", message, 403, errorPlace, code, data);
+  constructor(message: string, errorPlace?: string, code?: string, data?: unknown) {
+    super('Forbidden', message, 403, errorPlace, code, data);
   }
 }

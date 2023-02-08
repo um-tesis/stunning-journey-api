@@ -31,7 +31,17 @@ module.exports = {
     // we are disabling the indent rule as per requirement of the @typescript-eslint/indent rule
     // (check https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/indent.md#how-to-use)
     indent: 'off',
-    '@typescript-eslint/indent': ['error', 2],
+    '@typescript-eslint/indent': [
+      'error',
+      2,
+      {
+        ignoredNodes: [
+          `FunctionExpression > .params[decorators.length > 0]`,
+          `FunctionExpression > .params > :matches(Decorator, :not(:first-child))`,
+          `ClassBody.body > PropertyDefinition[decorators.length > 0] > .key`,
+        ],
+      },
+    ],
     'object-curly-spacing': ['error', 'always'],
     'object-shorthand': ['error', 'always'],
     'prettier/prettier': [

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
 
@@ -25,10 +26,7 @@ export class OrganizationsService {
     });
   }
 
-  public async update(
-    organization_id: number,
-    updateOrganizationInput: UpdateOrganizationInput,
-  ) {
+  public async update(organization_id: number, updateOrganizationInput: UpdateOrganizationInput) {
     return await this.prisma.organization.update({
       where: {
         organization_id,

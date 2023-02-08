@@ -2,22 +2,12 @@ import { Response } from 'express';
 
 export default {
   ok: (res: Response, content?: any): Response =>
-    res
-      .status(200)
-      .json(
-        !content
-          ? { status: 200, message: 'OK', success: true }
-          : { data: content, success: true },
-      ),
+    res.status(200).json(!content ? { status: 200, message: 'OK', success: true } : { data: content, success: true }),
 
   noContent: (res: Response, content?: any): Response =>
     res
       .status(204)
-      .json(
-        !content
-          ? { status: 204, message: 'OK (No Content)', success: true }
-          : { data: content, success: true },
-      ),
+      .json(!content ? { status: 204, message: 'OK (No Content)', success: true } : { data: content, success: true }),
 
   badRequest: (res: Response, content?: any): Response =>
     res
@@ -31,11 +21,7 @@ export default {
   forbidden: (res: Response, content?: any): Response =>
     res
       .status(403)
-      .json(
-        !content
-          ? { status: 403, message: 'Forbidden', success: false }
-          : { error: content, success: false },
-      ),
+      .json(!content ? { status: 403, message: 'Forbidden', success: false } : { error: content, success: false }),
 
   unauthorized: (res: Response, content?: any): Response =>
     res
@@ -64,11 +50,7 @@ export default {
           : { status: 409, error: content, success: false },
       ),
 
-  unprocessableEntity: (
-    res: Response,
-    error?: any,
-    message?: string,
-  ): Response =>
+  unprocessableEntity: (res: Response, error?: any, message?: string): Response =>
     res.status(422).json({
       status: 422,
       error: error || 'Unprocessable Entity',
@@ -85,13 +67,11 @@ export default {
     }),
 
   serviceUnavailable: (res: Response, content?: any): Response =>
-    res.status(503).json(
-      !content
-        ? {
-            status: 503,
-            message: 'Service Temporarily Unavailable',
-            success: false,
-          }
-        : { error: content, success: false },
-    ),
+    res
+      .status(503)
+      .json(
+        !content
+          ? { status: 503, message: 'Service Temporarily Unavailable', success: false }
+          : { error: content, success: false },
+      ),
 };

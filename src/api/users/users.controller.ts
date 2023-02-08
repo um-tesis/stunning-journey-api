@@ -1,13 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Res,
-  Param,
-  HttpStatus,
-  Body,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
+
 import { LogInModelIn } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UsersResolver } from './users.resolver';
@@ -30,11 +23,8 @@ export class UsersController {
 
   @Post('/auth')
   async login(@Res() res: Response, @Body() loginModel: LogInModelIn) {
-    const data = await this.usersResolver.login(loginModel);
-    res
-      .cookie('Authorization', `Bearer${data.token}`)
-      .status(200)
-      .json(data.user);
+    const { user, token } = await this.usersResolver.login(loginModel);
+    res.cookie('Authorization', `Bearer ${token}`).status(200).json(user);
   }
 
   @Get(':id')

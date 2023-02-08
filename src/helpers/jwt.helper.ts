@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { DateTime } from 'luxon';
+
 import config from '../config/config';
 import { UnauthorizedError } from '../utils/errors';
 

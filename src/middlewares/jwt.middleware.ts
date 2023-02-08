@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { decode } from 'src/helpers/jwt.helper';
+
 import apiResponses from '../utils/api-responses';
 import { UnauthorizedError } from '../utils/errors';
 
@@ -15,8 +16,7 @@ export class JWTMiddleware implements NestMiddleware {
         req.claims = claims;
         next();
       } catch (error) {
-        if (error instanceof UnauthorizedError)
-          apiResponses.unauthorized(res, error.message);
+        if (error instanceof UnauthorizedError) apiResponses.unauthorized(res, error.message);
       }
     }
   }
