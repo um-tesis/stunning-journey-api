@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { compare, hashPassword } from 'src/helpers/crypto.helper';
 import { encode } from 'src/helpers/jwt.helper';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,6 +7,7 @@ import { UnauthorizedError } from 'src/utils/errors';
 import { LogInModelIn } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
