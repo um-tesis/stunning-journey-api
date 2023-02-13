@@ -23,7 +23,7 @@ export class OrganizationsResolver {
   }
 
   @Query(() => Organization, { name: 'organization' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('organization_id', { type: () => Int }) id: number) {
     return this.organizationsService.findOne(id);
   }
 
@@ -36,7 +36,7 @@ export class OrganizationsResolver {
   }
 
   @Mutation(() => Organization)
-  removeOrganization(@Args('id', { type: () => Int }) id: number) {
+  removeOrganization(@Args('organization_id', { type: () => Int }) id: number) {
     return this.organizationsService.remove(id);
   }
 }

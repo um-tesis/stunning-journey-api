@@ -8,6 +8,7 @@ import { UnauthorizedError } from '../utils/errors';
 @Injectable()
 export class JWTMiddleware implements NestMiddleware {
   use(req: Request & { claims: any }, res: Response, next: NextFunction) {
+    if (!req.headers.cookie) apiResponses.unauthorized(res, 'Expected token');
     const token = req.headers.cookie.replace('Authorization=Bearer', '');
     if (!token) apiResponses.unauthorized(res, 'Expected token');
     else {

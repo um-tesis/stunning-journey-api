@@ -1,6 +1,6 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { LogInModelIn } from './dto/auth-input';
+import { LogInModelIn, LogInModelOut } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
@@ -36,9 +36,10 @@ export class UsersResolver {
     return this.usersService.remove(id);
   }
 
-  @Mutation(() => User)
-  login(@Args('logInModelIn') logInModelIn: LogInModelIn) {
-    return this.usersService.login(logInModelIn);
+  @Query(() => LogInModelOut, { name: 'login' })
+  async login(@Args('logInModelIn') logInModelIn: LogInModelIn) {
+    const { user, token } = await this.usersService.login(logInModelIn);
+    return { user, token };
   }
 
   @Query(() => [User], { name: 'usersByOrganizationId' })

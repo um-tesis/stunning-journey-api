@@ -15,14 +15,12 @@ input CreateOrganizationInput {
 }
 
 input CreateUserInput {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   email: String!
+  id: Int
   organization_id: Int
   password: String!
   phone: String
+  role: Int!
 }
 
 input LogInModelIn {
@@ -30,32 +28,34 @@ input LogInModelIn {
   password: String!
 }
 
+type LogInModelOut {
+  token: String!
+  user: User!
+}
+
 type Mutation {
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createUser(createUserInput: CreateUserInput!): User!
-  login(logInModelIn: LogInModelIn!): User!
-  removeOrganization(id: Int!): Organization!
+  removeOrganization(organization_id: Int!): Organization!
   removeUser(id: Int!): User!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Organization {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   address: String
   facebook_account: String
   field: String!
   instagram_account: String
   name: String!
+  organization_id: Int!
   twitter_account: String
   web: String
 }
 
 type Query {
-  organization(id: Int!): Organization!
+  login(logInModelIn: LogInModelIn!): LogInModelOut!
+  organization(organization_id: Int!): Organization!
   organizations: [Organization!]!
   user(id: Int!): User!
   users: [User!]!
@@ -84,6 +84,7 @@ input UpdateUserInput {
   """
   Int: Float!
   email: String
+  id: Int
   organization_id: Int
   password: String
   phone: String
@@ -91,12 +92,10 @@ input UpdateUserInput {
 }
 
 type User {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   email: String!
+  id: Int!
   organization_id: Int
   password: String!
   phone: String
+  role: Int!
 }
