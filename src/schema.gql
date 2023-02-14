@@ -14,6 +14,16 @@ input CreateOrganizationInput {
   web: String
 }
 
+input CreateProjectInput {
+  end_date: DateTime
+  field: String!
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int
+  start_date: DateTime
+}
+
 input CreateUserInput {
   email: String!
   id: Int
@@ -22,6 +32,11 @@ input CreateUserInput {
   phone: String
   role: Int!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input LogInModelIn {
   email: String!
@@ -35,10 +50,13 @@ type LogInModelOut {
 
 type Mutation {
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
+  createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
   removeOrganization(organization_id: Int!): Organization!
+  removeProject(project_id: Int!): Project!
   removeUser(id: Int!): User!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
+  updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -53,10 +71,23 @@ type Organization {
   web: String
 }
 
+type Project {
+  end_date: DateTime
+  field: String!
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int!
+  start_date: DateTime
+}
+
 type Query {
   login(logInModelIn: LogInModelIn!): LogInModelOut!
   organization(organization_id: Int!): Organization!
+  organizationProjects(organization_id: Int!): [Project!]!
   organizations: [Organization!]!
+  project(project_id: Int!): Project!
+  projects: [Project!]!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!
@@ -76,6 +107,16 @@ input UpdateOrganizationInput {
   organization_id: Int
   twitter_account: String
   web: String
+}
+
+input UpdateProjectInput {
+  end_date: DateTime
+  field: String
+  monetary_objective: Int
+  name: String
+  organization_id: Int
+  project_id: Int!
+  start_date: DateTime
 }
 
 input UpdateUserInput {

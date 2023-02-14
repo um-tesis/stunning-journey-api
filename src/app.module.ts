@@ -6,6 +6,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { join } from 'path';
 
 import { OrganizationsModule } from './api/organizations/organizations.module';
+import { ProjectsModule } from './api/projects/projects.module';
 import { UsersModule } from './api/users/users.module';
 import { UsersService } from './api/users/users.service';
 import { AppController } from './app.controller';
@@ -25,6 +26,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
     UsersModule,
     OrganizationsModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [

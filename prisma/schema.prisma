@@ -18,6 +18,7 @@ model User {
   phone String?
   organization_id Int? 
   organization Organization? @relation(fields: [organization_id], references: [organization_id])
+  projects ProjectUser[]
 }
 
 model Organization {
@@ -31,4 +32,25 @@ model Organization {
   instagram_account String?
   twitter_account String?
   users User[]
+  projects Project[]
+}
+
+model Project {
+  project_id    Int     @default(autoincrement()) @id
+  name  String  @unique
+  field String
+  start_date DateTime?
+  end_date DateTime?
+  organization_id Int? 
+  organization Organization? @relation(fields: [organization_id], references: [organization_id])
+  users ProjectUser[]
+}
+
+model ProjectUser {
+  project_id Int
+  user_id Int
+  project Project @relation(fields: [project_id], references: [project_id])
+  user User @relation(fields: [user_id], references: [id])
+  @@id([project_id, user_id])
+  role Int?
 }
