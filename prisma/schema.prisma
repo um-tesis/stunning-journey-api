@@ -33,6 +33,7 @@ model Organization {
   twitter_account String?
   users User[]
   projects Project[]
+  events Event[]
 }
 
 model Project {
@@ -44,6 +45,7 @@ model Project {
   organization_id Int? 
   organization Organization? @relation(fields: [organization_id], references: [organization_id])
   users ProjectUser[]
+  events Event[]
 }
 
 model ProjectUser {
@@ -53,4 +55,18 @@ model ProjectUser {
   user User @relation(fields: [user_id], references: [id])
   @@id([project_id, user_id])
   role Int?
+}
+
+model Event {
+  event_id    Int     @default(autoincrement()) @id
+  name  String  @unique
+  description String
+  date DateTime?
+  location String?
+  monetary_objective Int?
+  volunteers_objective Int?
+  project_id Int
+  project Project @relation(fields: [project_id], references: [project_id])
+  organization_id Int
+  organization Organization @relation(fields: [organization_id], references: [organization_id])
 }

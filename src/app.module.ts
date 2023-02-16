@@ -13,6 +13,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SystemRoleGuard } from './guards/system-role.guard';
 import { PrismaModule } from './prisma/prisma.module';
+import { EventsModule } from './api/events/events.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PrismaModule } from './prisma/prisma.module';
     UsersModule,
     OrganizationsModule,
     ProjectsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [
