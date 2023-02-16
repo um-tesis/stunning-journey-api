@@ -30,8 +30,6 @@ export class ProjectsResolver {
 
   @Query(() => PopulatedProjectUser, { name: 'projectUsers' })
   async findProjectUsers(@Args('project_id', { type: () => Int }) id: number) {
-    console.log((await this.projectsService.findProjectUsers(id)).users[0]);
-
     return await this.projectsService.findProjectUsers(id);
   }
 
