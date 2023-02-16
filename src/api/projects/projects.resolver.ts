@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
-import { Project } from './entities/project.entity';
+import { Project, ProjectUser, PopulatedProjectUser } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 
@@ -28,6 +28,13 @@ export class ProjectsResolver {
     return this.projectsService.findOrganizationProjects(id);
   }
 
+  @Query(() => PopulatedProjectUser, { name: 'projectUsers' })
+  async findProjectUsers(@Args('project_id', { type: () => Int }) id: number) {
+    console.log((await this.projectsService.findProjectUsers(id)).users[0]);
+
+    return await this.projectsService.findProjectUsers(id);
+  }
+
   @Mutation(() => Project)
   updateProject(@Args('updateProjectInput') updateProjectInput: UpdateProjectInput) {
     return this.projectsService.update(updateProjectInput.project_id, updateProjectInput);
@@ -36,5 +43,13 @@ export class ProjectsResolver {
   @Mutation(() => Project)
   removeProject(@Args('project_id', { type: () => Int }) id: number) {
     return this.projectsService.remove(id);
+  }
+
+  @Mutation(() => ProjectUser, { name: 'assignUserToProject' })
+  assignUserToProject(
+    @Args('project_id', { type: () => Int }) project_id: number,
+    @Args('user_id', { type: () => Int }) user_id: number,
+  ) {
+    return this.projectsService.assignUserToProject(project_id, user_id);
   }
 }

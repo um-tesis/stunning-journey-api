@@ -50,4 +50,35 @@ export class ProjectsService {
       },
     });
   }
+
+  public async findProjectUsers(project_id: number) {
+    const users = (
+      await this.prisma.projectUser.findMany({
+        where: {
+          project_id,
+        },
+        select: {
+          project_id: false,
+          user: true,
+        },
+      })
+    ).map((projectUser) => projectUser.user);
+
+    const project = await this.prisma.project.findUnique({
+      where: {
+        project_id,
+      },
+    });
+
+    return { users, project };
+  }
+
+  public async assignUserToProject(project_id: number, user_id: number) {
+    return await this.prisma.projectUser.create({
+      data: {
+        project_id,
+        user_id,
+      },
+    });
+  }
 }

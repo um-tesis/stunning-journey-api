@@ -49,6 +49,7 @@ type LogInModelOut {
 }
 
 type Mutation {
+  assignUserToProject(project_id: Int!, user_id: Int!): ProjectUser!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
@@ -71,6 +72,11 @@ type Organization {
   web: String
 }
 
+type PopulatedProjectUser {
+  project: Project!
+  users: [User!]!
+}
+
 type Project {
   end_date: DateTime
   field: String!
@@ -81,12 +87,19 @@ type Project {
   start_date: DateTime
 }
 
+type ProjectUser {
+  project_id: Int!
+  role: Int
+  user_id: Int!
+}
+
 type Query {
   login(logInModelIn: LogInModelIn!): LogInModelOut!
   organization(organization_id: Int!): Organization!
   organizationProjects(organization_id: Int!): [Project!]!
   organizations: [Organization!]!
   project(project_id: Int!): Project!
+  projectUsers(project_id: Int!): PopulatedProjectUser!
   projects: [Project!]!
   user(id: Int!): User!
   users: [User!]!
