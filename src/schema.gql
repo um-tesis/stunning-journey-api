@@ -131,7 +131,7 @@ type Query {
   organizations: [Organization!]!
   project(project_id: Int!): Project!
   projectUsers(project_id: Int!): PopulatedProjectUser!
-  projects: [Project!]!
+  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!

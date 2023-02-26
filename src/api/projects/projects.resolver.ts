@@ -3,6 +3,7 @@ import { ProjectsService } from './projects.service';
 import { Project, ProjectUser, PopulatedProjectUser } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => Project)
 export class ProjectsResolver {
@@ -14,8 +15,8 @@ export class ProjectsResolver {
   }
 
   @Query(() => [Project], { name: 'projects' })
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@Args() args: PaginationArgs) {
+    return this.projectsService.findAll(args);
   }
 
   @Query(() => Project, { name: 'project' })

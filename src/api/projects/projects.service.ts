@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
+import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotFoundError } from 'src/utils/errors';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 
@@ -14,8 +17,13 @@ export class ProjectsService {
     });
   }
 
-  public async findAll() {
-    return await this.prisma.project.findMany();
+  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }) {
+    const projects = await this.prisma.project.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+    });
+
+    return projects;
   }
 
   public async findOne(project_id: number) {
@@ -69,6 +77,8 @@ export class ProjectsService {
         project_id,
       },
     });
+
+    if (!users || users.length === 0) throw new NotFoundError('Users not found for this project');
 
     return { users, project };
   }
