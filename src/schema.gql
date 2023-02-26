@@ -190,7 +190,7 @@ input UpdateUserInput {
 
 type User {
   email: String!
-  id: Int!
+  id: Int
   organization_id: Int
   password: String!
   phone: String
