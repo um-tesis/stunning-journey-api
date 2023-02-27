@@ -25,11 +25,7 @@ RUN npm install -g @prisma/client
 RUN npm install -g @nestjs/cli
 RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
 
-
 # Bundle app source
 COPY . .
-
-ENV PORT 5000
-EXPOSE 5000
 
 CMD ["npm", "run", "start:dev"]
