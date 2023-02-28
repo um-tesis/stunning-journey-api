@@ -55,7 +55,7 @@ module.exports = {
         printWidth: 120,
       },
     ],
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
+    // 'simple-import-sort/imports': 'error',
+    // 'simple-import-sort/exports': 'error',
   },
 };

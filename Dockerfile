@@ -1,4 +1,4 @@
-FROM node:17-alpine
+FROM node:16-alpine
 
 # Create app directory
 WORKDIR /usr/src/stunning-journey-api
@@ -18,17 +18,14 @@ RUN apk add --no-cache \
   ttf-freefont \
   nodejs \
   yarn
-RUN npm install -g npm@latest
+
+RUN npm install --legacy-peer-deps
+RUN npm install -g prisma
+RUN npm install -g @prisma/client
 RUN npm install -g @nestjs/cli
-RUN npm install @prisma/client
-RUN npm install
-RUN prisma generate
-RUN npx prisma migrate dev --name init
+RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
 
 # Bundle app source
 COPY . .
-
-ENV PORT 5000
-EXPOSE 5000
 
 CMD ["npm", "run", "start:dev"]

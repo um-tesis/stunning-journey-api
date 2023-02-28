@@ -1,4 +1,8 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Roles } from 'src/decorators/roles.decorator';
+import { SystemRoleGuard } from 'src/guards/system-role.guard';
+import { SYSTEM_ROLES_ID } from 'src/helpers/constants';
 
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
@@ -22,11 +26,15 @@ export class OrganizationsResolver {
     return this.organizationsService.findAll();
   }
 
+  @UseGuards(SystemRoleGuard)
+  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
   @Query(() => Organization, { name: 'organization' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('organization_id', { type: () => Int }) id: number) {
     return this.organizationsService.findOne(id);
   }
 
+  @UseGuards(SystemRoleGuard)
+  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
   @Mutation(() => Organization)
   updateOrganization(
     @Args('updateOrganizationInput')
@@ -35,8 +43,10 @@ export class OrganizationsResolver {
     return this.organizationsService.update(updateOrganizationInput.organization_id, updateOrganizationInput);
   }
 
+  @UseGuards(SystemRoleGuard)
+  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
   @Mutation(() => Organization)
-  removeOrganization(@Args('id', { type: () => Int }) id: number) {
+  removeOrganization(@Args('organization_id', { type: () => Int }) id: number) {
     return this.organizationsService.remove(id);
   }
 }

@@ -1,6 +1,10 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Roles } from 'src/decorators/roles.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { SYSTEM_ROLES_ID } from 'src/helpers/constants';
 
-import { LogInModelIn } from './dto/auth-input';
+import { LogInModelIn, LogInModelOut } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
@@ -15,13 +19,14 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
-  // here we name the query that we want to use in the client, that's why we don't need the controller
   @Query(() => [User], { name: 'users' })
+  @UseGuards(AuthGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Query(() => User, { name: 'user' })
+  @Roles(SYSTEM_ROLES_ID.SYSTEM_ADMIN)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.findOne(id);
   }
@@ -36,9 +41,11 @@ export class UsersResolver {
     return this.usersService.remove(id);
   }
 
-  @Mutation(() => User)
-  login(@Args('logInModelIn') logInModelIn: LogInModelIn) {
-    return this.usersService.login(logInModelIn);
+  @Query(() => LogInModelOut, { name: 'login' })
+  async login(@Args('logInModelIn') logInModelIn: LogInModelIn, @Context() context) {
+    const { user, token } = await this.usersService.login(logInModelIn);
+    context.req.headers.authorization = `Bearer ${token}`;
+    return { user, token };
   }
 
   @Query(() => [User], { name: 'usersByOrganizationId' })

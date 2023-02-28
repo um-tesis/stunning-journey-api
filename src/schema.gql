@@ -2,6 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateEventInput {
+  date: DateTime!
+  description: String
+  event_id: Int
+  location: String
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int!
+  volunteers_objective: Int
+}
+
 input CreateOrganizationInput {
   address: String
   email: String
@@ -14,15 +26,40 @@ input CreateOrganizationInput {
   web: String
 }
 
+input CreateProjectInput {
+  end_date: DateTime
+  field: String!
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int
+  start_date: DateTime
+}
+
 input CreateUserInput {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   email: String!
+  id: Int
   organization_id: Int
   password: String!
   phone: String
+  role: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Event {
+  date: DateTime
+  description: String
+  event_id: Int!
+  location: String
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int!
+  volunteers_objective: Int
 }
 
 input LogInModelIn {
@@ -30,36 +67,86 @@ input LogInModelIn {
   password: String!
 }
 
+type LogInModelOut {
+  token: String!
+  user: User!
+}
+
 type Mutation {
+  assignUserToProject(project_id: Int!, user_id: Int!): ProjectUser!
+  createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
+  createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
-  login(logInModelIn: LogInModelIn!): User!
-  removeOrganization(id: Int!): Organization!
+  removeEvent(event_id: Int!): Event!
+  removeOrganization(organization_id: Int!): Organization!
+  removeProject(project_id: Int!): Project!
   removeUser(id: Int!): User!
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
+  updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Organization {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   address: String
   facebook_account: String
   field: String!
   instagram_account: String
   name: String!
+  organization_id: Int!
   twitter_account: String
   web: String
 }
 
+type PopulatedProjectUser {
+  project: Project!
+  users: [User!]!
+}
+
+type Project {
+  end_date: DateTime
+  field: String!
+  monetary_objective: Int
+  name: String!
+  organization_id: Int!
+  project_id: Int!
+  start_date: DateTime
+}
+
+type ProjectUser {
+  project_id: Int!
+  role: Int
+  user_id: Int!
+}
+
 type Query {
-  organization(id: Int!): Organization!
+  event(event_id: Int!): Event!
+  events: [Event!]!
+  eventsByOrganization(organization_id: Int!): [Event!]!
+  eventsByProject(project_id: Int!): [Event!]!
+  login(logInModelIn: LogInModelIn!): LogInModelOut!
+  organization(organization_id: Int!): Organization!
+  organizationProjects(organization_id: Int!): [Project!]!
   organizations: [Organization!]!
+  project(project_id: Int!): Project!
+  projectUsers(project_id: Int!): PopulatedProjectUser!
+  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!
+}
+
+input UpdateEventInput {
+  date: DateTime
+  description: String
+  event_id: Int!
+  location: String
+  monetary_objective: Int
+  name: String
+  organization_id: Int
+  project_id: Int
+  volunteers_objective: Int
 }
 
 input UpdateOrganizationInput {
@@ -78,12 +165,23 @@ input UpdateOrganizationInput {
   web: String
 }
 
+input UpdateProjectInput {
+  end_date: DateTime
+  field: String
+  monetary_objective: Int
+  name: String
+  organization_id: Int
+  project_id: Int!
+  start_date: DateTime
+}
+
 input UpdateUserInput {
   """
   The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
   """
   Int: Float!
   email: String
+  id: Int
   organization_id: Int
   password: String
   phone: String
@@ -91,12 +189,10 @@ input UpdateUserInput {
 }
 
 type User {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   email: String!
+  id: Int
   organization_id: Int
   password: String!
   phone: String
+  role: Int!
 }

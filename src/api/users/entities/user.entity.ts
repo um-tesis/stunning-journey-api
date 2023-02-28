@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class User {
-  @Field(Int)
+  @Field(() => Int, { nullable: true })
   id: number;
 
   @Field()
@@ -11,7 +11,7 @@ export class User {
   @Field()
   password: string;
 
-  @Field(Int)
+  @Field(() => Int)
   role: number;
 
   @Field({ nullable: true })
