@@ -128,12 +128,12 @@ type Query {
   login(logInModelIn: LogInModelIn!): LogInModelOut!
   organization(organization_id: Int!): Organization!
   organizationProjects(organization_id: Int!): [Project!]!
-  organizations: [Organization!]!
+  organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(project_id: Int!): Project!
   projectUsers(project_id: Int!): PopulatedProjectUser!
-  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
+  projects(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
   user(id: Int!): User!
-  users: [User!]!
+  users(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!
 }
 

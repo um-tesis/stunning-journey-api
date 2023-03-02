@@ -8,6 +8,7 @@ import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
 import { Organization } from './entities/organization.entity';
 import { OrganizationsService } from './organizations.service';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => Organization)
 export class OrganizationsResolver {
@@ -22,8 +23,8 @@ export class OrganizationsResolver {
   }
 
   @Query(() => [Organization], { name: 'organizations' })
-  findAll() {
-    return this.organizationsService.findAll();
+  findAll(@Args() args: PaginationArgs, @Args('filter', { nullable: true }) filter?: string) {
+    return this.organizationsService.findAll(args, filter);
   }
 
   @UseGuards(SystemRoleGuard)

@@ -15,8 +15,8 @@ export class ProjectsResolver {
   }
 
   @Query(() => [Project], { name: 'projects' })
-  findAll(@Args() args: PaginationArgs) {
-    return this.projectsService.findAll(args);
+  findAll(@Args() args: PaginationArgs, @Args('filter', { nullable: true }) filter?: string) {
+    return this.projectsService.findAll(args, filter);
   }
 
   @Query(() => Project, { name: 'project' })
