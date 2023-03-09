@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config({
-  path: path.resolve(__dirname, '../../.env'),
+  path: path.resolve(__dirname, '../../../.env'),
 });
 
 const config = {
@@ -20,6 +20,8 @@ const config = {
   SALT_ROUNDS: process.env.SALT_ROUNDS,
 
   GRAPHQL_PLAYGROUND: process.env.GRAPHQL_PLAYGROUND,
+
+  NODEMAILER_PASSWORD: process.env.NODEMAILER_PASSWORD,
 };
 
 if (require.main === module && process.env.NODE_ENV === 'development') {

@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ContactDto {
+  email: String!
+  message: String!
+  name: String!
+}
+
 input CreateEventInput {
   date: DateTime!
   description: String
@@ -78,6 +84,7 @@ type Mutation {
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
+  postContactForm(contactInput: ContactDto!): Boolean!
   removeEvent(event_id: Int!): Event!
   removeOrganization(organization_id: Int!): Organization!
   removeProject(project_id: Int!): Project!
