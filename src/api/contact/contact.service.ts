@@ -3,6 +3,8 @@ import { ContactDto } from './dto/contact.dto';
 import * as nodemailer from 'nodemailer';
 import config from 'src/config/config';
 
+const { NODEMAILER_PASSWORD, LIBERA_EMAIL_ACCOUNT } = config;
+
 @Injectable()
 export class ContactService {
   async sendContactForm(contactDto: ContactDto) {
@@ -11,15 +13,15 @@ export class ContactService {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'librera.emailing@gmail.com',
-        pass: config.NODEMAILER_PASSWORD,
+        user: LIBERA_EMAIL_ACCOUNT,
+        pass: NODEMAILER_PASSWORD,
       },
     });
 
     // Set up the email message using the "Get in Touch" form data
     const message = {
-      from: 'librera.emailing@gmail.com',
-      to: 'librera.emailing@gmail.com',
+      from: LIBERA_EMAIL_ACCOUNT,
+      to: LIBERA_EMAIL_ACCOUNT,
       subject: 'Libera Test',
       text: `
         Name: ${contactDto.name}
