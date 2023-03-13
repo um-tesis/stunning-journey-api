@@ -28,6 +28,7 @@ RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
 # Bundle app source
 COPY . .
 
+EXPOSE 5432
 EXPOSE 5001
 
 CMD ["npm", "run", "start:dev"]
