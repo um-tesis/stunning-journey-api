@@ -9,5 +9,11 @@ export class ContactDto {
   email: string;
 
   @Field()
+  phone: string;
+
+  @Field()
+  company: string;
+
+  @Field()
   message: string;
 }

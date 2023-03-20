@@ -3,9 +3,11 @@
 # ------------------------------------------------------
 
 input ContactDto {
+  company: String!
   email: String!
   message: String!
   name: String!
+  phone: String!
 }
 
 input CreateEventInput {
