@@ -6,6 +6,7 @@ import { Project } from '@prisma/client';
 export const projectFactory = Factory.define<Project>(({ associations }) => ({
   project_id: undefined,
   name: faker.name.jobTitle(),
+  description: faker.lorem.paragraph(),
   organization_id: associations.organization_id || faker.datatype.number(),
   field: faker.company.companySuffix(),
   end_date: faker.date.future(),
