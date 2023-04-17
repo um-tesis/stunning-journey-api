@@ -9,7 +9,6 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
-import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -22,8 +21,8 @@ export class UsersResolver {
 
   @Query(() => [User], { name: 'users' })
   @UseGuards(AuthGuard)
-  findAll(@Args() args: PaginationArgs, @Args('filter', { nullable: true }) filter?: string) {
-    return this.usersService.findAll(args, filter);
+  findAll() {
+    return this.usersService.findAll();
   }
 
   @Query(() => User, { name: 'user' })

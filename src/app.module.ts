@@ -14,12 +14,9 @@ import { AppService } from './app.service';
 import { SystemRoleGuard } from './guards/system-role.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { EventsModule } from './api/events/events.module';
-import { ContactModule } from './api/contact/contact.module';
-import { HealthModule } from './api/health/health.module';
 
 @Module({
   imports: [
-    HealthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -32,7 +29,6 @@ import { HealthModule } from './api/health/health.module';
     OrganizationsModule,
     ProjectsModule,
     EventsModule,
-    ContactModule,
   ],
   controllers: [AppController],
   providers: [

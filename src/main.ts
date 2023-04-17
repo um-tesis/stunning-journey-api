@@ -11,7 +11,6 @@ const { PORT } = config;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalGuards(new SystemRoleGuard(new Reflector(), new UsersService(new PrismaService())));
-  app.enableCors();
   await app.listen(PORT);
 }
 

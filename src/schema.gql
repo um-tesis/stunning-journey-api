@@ -2,14 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input ContactDto {
-  company: String!
-  email: String!
-  message: String!
-  name: String!
-  phone: String!
-}
-
 input CreateEventInput {
   date: DateTime!
   description: String
@@ -86,7 +78,6 @@ type Mutation {
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
-  postContactForm(contactInput: ContactDto!): Boolean!
   removeEvent(event_id: Int!): Event!
   removeOrganization(organization_id: Int!): Organization!
   removeProject(project_id: Int!): Project!
@@ -137,12 +128,12 @@ type Query {
   login(logInModelIn: LogInModelIn!): LogInModelOut!
   organization(organization_id: Int!): Organization!
   organizationProjects(organization_id: Int!): [Project!]!
-  organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
+  organizations: [Organization!]!
   project(project_id: Int!): Project!
   projectUsers(project_id: Int!): PopulatedProjectUser!
-  projects(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
+  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
   user(id: Int!): User!
-  users(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [User!]!
+  users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!
 }
 

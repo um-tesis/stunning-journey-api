@@ -1,14 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Args } from '@nestjs/graphql';
+import { Injectable } from '@nestjs/common';
 import { compare, hashPassword } from 'src/helpers/crypto.helper';
 import { encode } from 'src/helpers/jwt.helper';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UnauthorizedError } from 'src/utils/errors';
 
 import { LogInModelIn } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
-import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Injectable()
 export class UsersService {
@@ -20,29 +19,13 @@ export class UsersService {
       ...createUserInput,
       password: hashedPassword,
     };
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: newUser.email,
-      },
-    });
-    if (user) throw new UnauthorizedException('User with this email already exists');
-
     return await this.prisma.user.create({
       data: newUser,
     });
   }
 
-  public async findAll(@Args() args: PaginationArgs, @Args('filter', { nullable: true }) filter?: string) {
-    return await this.prisma.user.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
-      where: {
-        email: {
-          contains: filter,
-          mode: 'insensitive',
-        },
-      },
-    });
+  public async findAll() {
+    return await this.prisma.user.findMany();
   }
 
   public async findOne(id: number) {
@@ -77,11 +60,11 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UnauthorizedException('User or password incorrect');
+      throw new UnauthorizedError('User or password incorrect');
     }
     const isCorrectPassword = compare(logInModelIn.password, user.password);
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('User or password incorrect');
+      throw new UnauthorizedError('User or password incorrect');
     }
     const token = encode(user.id);
     return { user, token };

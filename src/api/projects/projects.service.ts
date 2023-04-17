@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
@@ -10,28 +12,15 @@ export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createProjectInput: CreateProjectInput) {
-    const project = await this.prisma.project.findUnique({
-      where: {
-        name: createProjectInput.name,
-      },
-    });
-    if (project) throw new NotFoundException('Project with this name already exists');
-
     return await this.prisma.project.create({
       data: createProjectInput,
     });
   }
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 6 }, filter?: string) {
+  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }) {
     const projects = await this.prisma.project.findMany({
       skip: (args.page - 1) * args.itemsPerPage,
       take: args.itemsPerPage,
-      where: {
-        name: {
-          contains: filter,
-          mode: 'insensitive',
-        },
-      },
     });
 
     return projects;
@@ -89,7 +78,7 @@ export class ProjectsService {
       },
     });
 
-    if (!users || users.length === 0) throw new NotFoundException('Users not found for this project');
+    if (!users || users.length === 0) throw new NotFoundError('Users not found for this project');
 
     return { users, project };
   }
