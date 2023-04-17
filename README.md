@@ -1,9 +1,9 @@
-# Thesis (name TBD) - API
+# Libera - Charity Platform - API
 
 ## Introduction
 
 ## Services
-s
+
 ## Installation
 
 ## Usage
