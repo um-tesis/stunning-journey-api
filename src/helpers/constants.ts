@@ -1,5 +1,0 @@
-export const SYSTEM_ROLES_ID = {
-  SYSTEM_ADMIN: 1,
-  ORGANIZATION_ADMIN: 2,
-  DONATOR: 2,
-};

@@ -1,31 +1,28 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, GraphQLISODateTime } from '@nestjs/graphql';
 
 @InputType()
 export class CreateEventInput {
-  @Field(() => Int, { nullable: true })
-  event_id: number;
-
   @Field()
   name: string;
 
   @Field({ nullable: true })
   description: string;
 
-  @Field()
+  @Field(() => GraphQLISODateTime)
   date: Date;
 
   @Field({ nullable: true })
   location: string;
 
   @Field(() => Int, { nullable: true })
-  monetary_objective: number;
+  monetaryGoal: number;
 
   @Field(() => Int, { nullable: true })
-  volunteers_objective: number;
+  volunteersGoal: number;
 
   @Field(() => Int)
-  organization_id: number;
+  organizationId: number;
 
   @Field(() => Int)
-  project_id: number;
+  projectId: number;
 }

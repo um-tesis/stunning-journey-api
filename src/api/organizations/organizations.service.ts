@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 
@@ -15,15 +15,15 @@ export class OrganizationsService {
         name: createOrganizationInput.name,
       },
     });
-    if (organization) throw new UnauthorizedException('Organization with this name already exists');
+    if (organization) throw new BadRequestException('Organization with this name already exists');
 
-    return await this.prisma.organization.create({
+    return this.prisma.organization.create({
       data: createOrganizationInput,
     });
   }
 
   public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }, filter?: string) {
-    return await this.prisma.organization.findMany({
+    return this.prisma.organization.findMany({
       skip: (args.page - 1) * args.itemsPerPage,
       take: args.itemsPerPage,
       where: {
@@ -35,27 +35,27 @@ export class OrganizationsService {
     });
   }
 
-  public async findOne(organization_id: number) {
-    return await this.prisma.organization.findUnique({
+  public async findOne(id: number) {
+    return this.prisma.organization.findUnique({
       where: {
-        organization_id,
+        id,
       },
     });
   }
 
-  public async update(organization_id: number, updateOrganizationInput: UpdateOrganizationInput) {
-    return await this.prisma.organization.update({
+  public async update(id: number, updateOrganizationInput: UpdateOrganizationInput) {
+    return this.prisma.organization.update({
       where: {
-        organization_id,
+        id,
       },
       data: updateOrganizationInput,
     });
   }
 
-  public async remove(organization_id: number) {
-    return await this.prisma.organization.delete({
+  public async remove(id: number) {
+    return this.prisma.organization.delete({
       where: {
-        organization_id,
+        id,
       },
     });
   }

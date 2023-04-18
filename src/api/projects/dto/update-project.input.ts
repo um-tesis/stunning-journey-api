@@ -1,10 +1,10 @@
 import { CreateProjectInput } from './create-project.input';
-import { InputType, Field, GraphQLISODateTime, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, GraphQLISODateTime, PartialType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field(() => Int)
-  project_id: number;
+  id: number;
 
   @Field({ nullable: true })
   name: string;
@@ -13,14 +13,14 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   field: string;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  start_date: Date;
+  startDate: Date;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  end_date: Date;
+  endDate: Date;
 
   @Field(() => Int, { nullable: true })
-  organization_id: number;
+  organizationId: number;
 
   @Field(() => Int, { nullable: true })
-  monetary_objective: number;
+  monetaryGoal: number;
 }

@@ -1,9 +1,9 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, GraphQLISODateTime } from '@nestjs/graphql';
 
 @ObjectType()
 export class Event {
   @Field(() => Int)
-  event_id: number;
+  id: number;
 
   @Field()
   name: string;
@@ -11,21 +11,21 @@ export class Event {
   @Field({ nullable: true })
   description: string;
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   date: Date;
 
   @Field({ nullable: true })
   location: string;
 
   @Field(() => Int, { nullable: true })
-  monetary_objective: number;
+  monetaryGoal: number;
 
   @Field(() => Int, { nullable: true })
-  volunteers_objective: number;
+  volunteersGoal: number;
 
   @Field(() => Int)
-  organization_id: number;
+  organizationId: number;
 
   @Field(() => Int)
-  project_id: number;
+  projectId: number;
 }

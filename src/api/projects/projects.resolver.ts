@@ -20,27 +20,27 @@ export class ProjectsResolver {
   }
 
   @Query(() => Project, { name: 'project' })
-  findOne(@Args('project_id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Int }) id: number) {
     return this.projectsService.findOne(id);
   }
 
   @Query(() => [Project], { name: 'organizationProjects' })
-  findOrganizationProjects(@Args('organization_id', { type: () => Int }) id: number) {
+  findOrganizationProjects(@Args('organizationId', { type: () => Int }) id: number) {
     return this.projectsService.findOrganizationProjects(id);
   }
 
   @Query(() => PopulatedProjectUser, { name: 'projectUsers' })
-  async findProjectUsers(@Args('project_id', { type: () => Int }) id: number) {
+  async findProjectUsers(@Args('projectId', { type: () => Int }) id: number) {
     return await this.projectsService.findProjectUsers(id);
   }
 
   @Mutation(() => Project)
   updateProject(@Args('updateProjectInput') updateProjectInput: UpdateProjectInput) {
-    return this.projectsService.update(updateProjectInput.project_id, updateProjectInput);
+    return this.projectsService.update(updateProjectInput.id, updateProjectInput);
   }
 
   @Mutation(() => Project)
-  removeProject(@Args('project_id', { type: () => Int }) id: number) {
+  removeProject(@Args('id', { type: () => Int }) id: number) {
     return this.projectsService.remove(id);
   }
 

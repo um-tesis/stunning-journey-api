@@ -1,10 +1,11 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/api/users/entities/user.entity';
+import { ProjectRole } from '@prisma/client';
 
 @ObjectType()
 export class Project {
   @Field(() => Int)
-  project_id: number;
+  id: number;
 
   @Field()
   name: string;
@@ -13,29 +14,30 @@ export class Project {
   field: string;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  start_date: Date;
+  startDate: Date;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  end_date: Date;
+  endDate: Date;
 
   @Field(() => Int)
-  organization_id: number;
+  organizationId: number;
 
   @Field(() => Int, { nullable: true })
-  monetary_objective: number;
+  monetaryGoal: number;
 }
 
 @ObjectType()
 export class ProjectUser {
   @Field(() => Int)
-  project_id: number;
+  projectId: number;
 
   @Field(() => Int)
-  user_id: number;
+  userId: number;
 
-  @Field(() => Int, { nullable: true })
-  role: number;
+  @Field(() => ProjectRole, { nullable: true })
+  role: ProjectRole;
 }
+
 @ObjectType()
 export class PopulatedProjectUser {
   @Field(() => Project)
@@ -44,3 +46,7 @@ export class PopulatedProjectUser {
   @Field(() => [User])
   users: [User];
 }
+
+registerEnumType(ProjectRole, {
+  name: 'ProjectRole',
+});

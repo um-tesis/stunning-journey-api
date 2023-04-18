@@ -2,13 +2,13 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Roles } from 'src/decorators/roles.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { SYSTEM_ROLES_ID } from 'src/helpers/constants';
 
 import { LogInModelIn, LogInModelOut } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { Role } from '@prisma/client';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -26,7 +26,7 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  @Roles(SYSTEM_ROLES_ID.SYSTEM_ADMIN)
+  @Roles(Role.SYSADMIN)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.findOne(id);
   }
