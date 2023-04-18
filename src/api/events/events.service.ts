@@ -9,52 +9,52 @@ export class EventsService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createEventInput: CreateEventInput) {
-    return await this.prisma.event.create({
+    return this.prisma.event.create({
       data: createEventInput,
     });
   }
 
   public async findAll() {
-    return await this.prisma.event.findMany();
+    return this.prisma.event.findMany();
   }
 
-  public async findOne(event_id: number) {
-    return await this.prisma.event.findUnique({
+  public async findOne(id: number) {
+    return this.prisma.event.findUnique({
       where: {
-        event_id,
+        id,
       },
     });
   }
 
-  public async update(event_id: number, updateEventInput: UpdateEventInput) {
-    return await this.prisma.event.update({
+  public async update(id: number, updateEventInput: UpdateEventInput) {
+    return this.prisma.event.update({
       where: {
-        event_id,
+        id,
       },
       data: updateEventInput,
     });
   }
 
-  public async remove(event_id: number) {
-    return await this.prisma.event.delete({
+  public async remove(id: number) {
+    return this.prisma.event.delete({
       where: {
-        event_id,
+        id,
       },
     });
   }
 
-  public async getEventsByOrganization(organization_id: number) {
+  public async getEventsByOrganization(organizationId: number) {
     return await this.prisma.event.findMany({
       where: {
-        organization_id,
+        organizationId,
       },
     });
   }
 
-  public async getEventsByProject(project_id: number) {
-    return await this.prisma.event.findMany({
+  public async getEventsByProject(projectId: number) {
+    return this.prisma.event.findMany({
       where: {
-        project_id,
+        projectId,
       },
     });
   }

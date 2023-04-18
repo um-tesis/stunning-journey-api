@@ -1,4 +1,4 @@
-import { PrismaClient, Project } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 import { projectFactory } from './factory';
 const prisma = new PrismaClient();
@@ -13,8 +13,8 @@ async function seedRandomProjects() {
   const organizations = await prisma.organization.findMany();
 
   for (let i = 0; i < 10; i++) {
-    const randomProject: Project = projectFactory.build({
-      organization_id: organizations[Math.floor(Math.random() * organizations.length)].organization_id,
+    const randomProject = projectFactory.build({
+      organizationId: organizations[Math.floor(Math.random() * organizations.length)].id,
     });
     const project = await prisma.project.findUnique({
       where: {

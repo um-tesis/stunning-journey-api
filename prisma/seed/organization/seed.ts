@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-import { Organization } from '@prisma/client';
 import { organizationFactory } from './factory';
 
 const prisma = new PrismaClient();
@@ -13,7 +12,7 @@ export async function organizationSeed() {
 }
 
 async function seedRandomOrganizations() {
-  const organizations: Organization[] = organizationFactory.buildList(10);
+  const organizations = organizationFactory.buildList(10);
 
   await prisma.organization.createMany({
     data: organizations,
@@ -26,7 +25,7 @@ async function seedDefaultOrganizations() {
     where: { name: 'Example Organization' },
     update: {},
     create: {
-      organization_id: 1,
+      id: 1,
       name: 'Example Organization',
       field: 'Example Field',
       address: 'Example Address',

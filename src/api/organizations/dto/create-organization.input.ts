@@ -1,31 +1,28 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateOrganizationInput {
-  @Field(() => Int, { nullable: true })
-  organization_id: number;
-
   @Field()
   name: string;
 
   @Field()
   field: string;
 
-  @Field({ nullable: true })
+  @Field()
   web: string;
 
   @Field({ nullable: true })
   address: string;
 
-  @Field({ nullable: true })
+  @Field()
   email: string;
 
   @Field({ nullable: true })
-  facebook_account: string;
+  facebookAccount: string;
 
   @Field({ nullable: true })
-  twitter_account: string;
+  twitterAccount: string;
 
   @Field({ nullable: true })
-  instagram_account: string;
+  instagramAccount: string;
 }

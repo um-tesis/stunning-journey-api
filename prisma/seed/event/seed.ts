@@ -1,4 +1,4 @@
-import { PrismaClient, Event } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 import { eventFactory } from './factory';
 const prisma = new PrismaClient();
@@ -15,13 +15,13 @@ async function seedRandomEvents() {
   for (let i = 0; i < 10; i++) {
     const projectsFromOrganization = await prisma.project.findMany({
       where: {
-        organization_id: organizations[Math.floor(Math.random() * organizations.length)].organization_id,
+        organizationId: organizations[Math.floor(Math.random() * organizations.length)].id,
       },
     });
     if (projectsFromOrganization.length === 0) continue;
-    const randomEvent: Event = eventFactory.build({
-      organization_id: organizations[Math.floor(Math.random() * organizations.length)].organization_id,
-      project_id: projectsFromOrganization[Math.floor(Math.random() * projectsFromOrganization.length)].project_id,
+    const randomEvent = eventFactory.build({
+      organizationId: organizations[Math.floor(Math.random() * organizations.length)].id,
+      projectId: projectsFromOrganization[Math.floor(Math.random() * projectsFromOrganization.length)].id,
     });
     const event = await prisma.event.findUnique({
       where: {

@@ -19,27 +19,27 @@ export class EventsResolver {
   }
 
   @Query(() => Event, { name: 'event' })
-  findOne(@Args('event_id', { type: () => Int }) event_id: number) {
-    return this.eventsService.findOne(event_id);
+  findOne(@Args('eventId', { type: () => Int }) id: number) {
+    return this.eventsService.findOne(id);
   }
 
   @Query(() => [Event], { name: 'eventsByOrganization' })
-  getEventsByOrganization(@Args('organization_id', { type: () => Int }) organization_id: number) {
-    return this.eventsService.getEventsByOrganization(organization_id);
+  getEventsByOrganization(@Args('organizationId', { type: () => Int }) organizationId: number) {
+    return this.eventsService.getEventsByOrganization(organizationId);
   }
 
   @Query(() => [Event], { name: 'eventsByProject' })
-  getEventsByProject(@Args('project_id', { type: () => Int }) project_id: number) {
-    return this.eventsService.getEventsByProject(project_id);
+  getEventsByProject(@Args('projectId', { type: () => Int }) projectId: number) {
+    return this.eventsService.getEventsByProject(projectId);
   }
 
   @Mutation(() => Event)
   updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
-    return this.eventsService.update(updateEventInput.event_id, updateEventInput);
+    return this.eventsService.update(updateEventInput.id, updateEventInput);
   }
 
   @Mutation(() => Event)
-  removeEvent(@Args('event_id', { type: () => Int }) event_id: number) {
-    return this.eventsService.remove(event_id);
+  removeEvent(@Args('eventId', { type: () => Int }) id: number) {
+    return this.eventsService.remove(id);
   }
 }

@@ -11,7 +11,7 @@ import { UsersModule } from './api/users/users.module';
 import { UsersService } from './api/users/users.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SystemRoleGuard } from './guards/system-role.guard';
+import { RoleGuard } from './guards/role.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { EventsModule } from './api/events/events.module';
 
@@ -36,7 +36,7 @@ import { EventsModule } from './api/events/events.module';
     UsersService,
     {
       provide: APP_GUARD,
-      useClass: SystemRoleGuard,
+      useClass: RoleGuard,
     },
   ],
 })
