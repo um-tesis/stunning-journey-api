@@ -12,6 +12,7 @@ datasource db {
 
 model User {
   id             Int           @id @default(autoincrement())
+  name           String
   email          String        @unique
   password       String
   role           Role          @default(USER)
@@ -19,6 +20,8 @@ model User {
   organizationId Int?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   projects       ProjectUser[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model Organization {
@@ -34,6 +37,8 @@ model Organization {
   users            User[]
   projects         Project[]
   events           Event[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Project {
@@ -47,6 +52,8 @@ model Project {
   organization   Organization? @relation(fields: [organizationId], references: [id])
   users          ProjectUser[]
   events         Event[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model ProjectUser {
@@ -71,6 +78,9 @@ model Event {
   project        Project      @relation(fields: [projectId], references: [id])
   organizationId Int
   organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

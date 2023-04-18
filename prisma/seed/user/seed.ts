@@ -1,6 +1,7 @@
 import { PrismaClient, Role } from '@prisma/client';
 import { hashPassword } from '../../../src/helpers/crypto.helper';
 import { userFactory } from './factory';
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,7 @@ async function seedDefaultUsers() {
     where: { email: 'sysAdminEx@prisma.io' },
     update: {},
     create: {
+      name: faker.name.firstName(),
       email: 'sysAdminEx@prisma.io',
       role: Role.SYSADMIN,
       password: sysAdminHashedPassword,
@@ -27,6 +29,7 @@ async function seedDefaultUsers() {
     where: { email: 'orgAdminEx@prisma.io' },
     update: {},
     create: {
+      name: faker.name.firstName(),
       email: 'orgAdminEx@prisma.io',
       password: orgAdminHashedPassword,
       role: Role.ORGADMIN,
@@ -38,6 +41,7 @@ async function seedDefaultUsers() {
     where: { email: 'regularUserEx@prisma.io' },
     update: {},
     create: {
+      name: faker.name.firstName(),
       email: 'regularUserEx@prisma.io',
       password: userHashedPassword,
       role: Role.USER,
