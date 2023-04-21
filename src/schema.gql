@@ -34,6 +34,7 @@ input CreateProjectInput {
 
 input CreateUserInput {
   email: String!
+  name: String!
   organizationId: Int
   password: String!
   phone: String
@@ -180,6 +181,7 @@ input UpdateProjectInput {
 input UpdateUserInput {
   email: String
   id: Int!
+  name: String
   organizationId: Int
   password: String
   phone: String
@@ -188,8 +190,8 @@ input UpdateUserInput {
 type User {
   email: String!
   id: Int!
+  name: String!
   organizationId: Int
-  password: String!
   phone: String
   role: Role!
 }
