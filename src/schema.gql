@@ -15,6 +15,7 @@ input CreateEventInput {
 
 input CreateOrganizationInput {
   address: String
+  description: String!
   email: String!
   facebookAccount: String
   field: String!
@@ -25,6 +26,7 @@ input CreateOrganizationInput {
 }
 
 input CreateProjectInput {
+  description: String!
   endDate: DateTime
   field: String!
   name: String!
@@ -85,6 +87,7 @@ type Mutation {
 
 type Organization {
   address: String
+  description: String!
   facebookAccount: String
   field: String!
   id: Int!
@@ -100,6 +103,7 @@ type PopulatedProjectUser {
 }
 
 type Project {
+  description: String!
   endDate: DateTime
   field: String!
   id: Int!
@@ -163,6 +167,7 @@ input UpdateEventInput {
 
 input UpdateOrganizationInput {
   address: String
+  description: String
   email: String
   facebookAccount: String
   field: String
@@ -174,6 +179,7 @@ input UpdateOrganizationInput {
 }
 
 input UpdateProjectInput {
+  description: String
   endDate: DateTime
   field: String
   id: Int!

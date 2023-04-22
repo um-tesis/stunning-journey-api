@@ -27,6 +27,7 @@ async function seedDefaultOrganizations() {
     create: {
       id: 1,
       name: 'Example Organization',
+      description: 'Example Description',
       field: 'Example Field',
       address: 'Example Address',
       email: 'exampleOrg@prisma.io',

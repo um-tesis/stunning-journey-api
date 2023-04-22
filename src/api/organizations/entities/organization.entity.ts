@@ -11,6 +11,9 @@ export class Organization {
   @Field()
   field: string;
 
+  @Field()
+  description: string;
+
   @Field({ nullable: true })
   web: string;
 

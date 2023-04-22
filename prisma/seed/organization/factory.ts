@@ -6,6 +6,7 @@ import { CreateOrganizationInput } from '../../../src/api/organizations/dto/crea
 export const organizationFactory = Factory.define<CreateOrganizationInput, any, Organization>(() => ({
   name: faker.company.name(),
   field: faker.name.jobArea(),
+  description: faker.lorem.paragraph(),
   address: faker.address.streetAddress(),
   email: faker.internet.email(),
   web: faker.internet.url(),

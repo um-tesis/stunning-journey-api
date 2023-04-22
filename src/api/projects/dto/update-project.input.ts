@@ -12,6 +12,9 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field({ nullable: true })
   field: string;
 
+  @Field({ nullable: true })
+  description: string;
+
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 

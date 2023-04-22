@@ -28,6 +28,7 @@ model Organization {
   id               Int       @id @default(autoincrement())
   name             String    @unique
   field            String
+  description      String
   web              String?
   address          String?
   email            String?
@@ -45,6 +46,7 @@ model Project {
   id             Int           @id @default(autoincrement())
   name           String        @unique
   field          String
+  description    String
   startDate      DateTime?
   endDate        DateTime?
   organizationId Int?
