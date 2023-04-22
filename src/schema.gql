@@ -121,6 +121,11 @@ type ProjectUser {
   userId: Int!
 }
 
+type ProjectsPagination {
+  projects: [Project!]!
+  total: Int!
+}
+
 type Query {
   event(eventId: Int!): Event!
   events: [Event!]!
@@ -132,7 +137,7 @@ type Query {
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(id: Int!): Project!
   projectUsers(projectId: Int!): PopulatedProjectUser!
-  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
+  projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!

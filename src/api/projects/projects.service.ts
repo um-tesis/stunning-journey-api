@@ -15,11 +15,26 @@ export class ProjectsService {
     });
   }
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }) {
-    return this.prisma.project.findMany({
+  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+    const projects = await this.prisma.project.findMany({
       skip: (args.page - 1) * args.itemsPerPage,
       take: args.itemsPerPage,
+      where: {
+        name: {
+          contains: args.filter,
+        },
+      },
     });
+
+    const total = await this.prisma.project.count({
+      where: {
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    return { projects, total };
   }
 
   public async findOne(id: number) {

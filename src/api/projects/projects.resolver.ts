@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
-import { Project, ProjectUser, PopulatedProjectUser } from './entities/project.entity';
+import { Project, ProjectUser, PopulatedProjectUser, ProjectsPagination } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
@@ -14,9 +14,10 @@ export class ProjectsResolver {
     return this.projectsService.create(createProjectInput);
   }
 
-  @Query(() => [Project], { name: 'projects' })
-  findAll(@Args() args: PaginationArgs) {
-    return this.projectsService.findAll(args);
+  @Query(() => ProjectsPagination, { name: 'projects' })
+  async findAll(@Args() args: PaginationArgs) {
+    const res = await this.projectsService.findAll(args);
+    return { projects: res.projects, total: res.total };
   }
 
   @Query(() => Project, { name: 'project' })

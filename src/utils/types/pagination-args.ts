@@ -7,4 +7,7 @@ export class PaginationArgs {
 
   @Field(() => Int)
   itemsPerPage = 5;
+
+  @Field(() => String, { nullable: true })
+  filter? = '';
 }
