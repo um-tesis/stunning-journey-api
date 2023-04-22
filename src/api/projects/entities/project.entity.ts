@@ -13,6 +13,9 @@ export class Project {
   @Field()
   field: string;
 
+  @Field()
+  description: string;
+
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 

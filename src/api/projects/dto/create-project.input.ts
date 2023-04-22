@@ -8,6 +8,9 @@ export class CreateProjectInput {
   @Field()
   field: string;
 
+  @Field()
+  description: string;
+
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 

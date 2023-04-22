@@ -14,6 +14,9 @@ export class UpdateOrganizationInput extends PartialType(CreateOrganizationInput
   field: string;
 
   @Field({ nullable: true })
+  description: string;
+
+  @Field({ nullable: true })
   web: string;
 
   @Field({ nullable: true })

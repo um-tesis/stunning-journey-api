@@ -9,6 +9,9 @@ export class CreateOrganizationInput {
   field: string;
 
   @Field()
+  description: string;
+
+  @Field()
   web: string;
 
   @Field({ nullable: true })
