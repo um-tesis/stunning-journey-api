@@ -17,9 +17,7 @@ export class ProjectsResolver {
   @Query(() => ProjectsPagination, { name: 'projects' })
   async findAll(@Args() args: PaginationArgs) {
     const res = await this.projectsService.findAll(args);
-    const projects = res.projects;
-    const total = res.total;
-    return { projects, total };
+    return { projects: res.projects, total: res.total };
   }
 
   @Query(() => Project, { name: 'project' })
