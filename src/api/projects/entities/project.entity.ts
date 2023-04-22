@@ -50,3 +50,12 @@ export class PopulatedProjectUser {
 registerEnumType(ProjectRole, {
   name: 'ProjectRole',
 });
+
+@ObjectType()
+export class ProjectsPagination {
+  @Field(() => [Project])
+  projects: [Project];
+
+  @Field(() => Int)
+  total: [User];
+}
