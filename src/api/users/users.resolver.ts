@@ -26,7 +26,7 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  @Roles(Role.SYSADMIN)
+  @UseGuards(AuthGuard)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.findOne(id);
   }
@@ -37,6 +37,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
+  @Roles(Role.SYSADMIN)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
   }
