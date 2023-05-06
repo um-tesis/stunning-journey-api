@@ -1,13 +1,14 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Roles } from 'src/decorators/roles.decorator';
-import { SystemRoleGuard } from 'src/guards/system-role.guard';
-import { SYSTEM_ROLES_ID } from 'src/helpers/constants';
+import { RoleGuard } from 'src/guards/role.guard';
 
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
 import { Organization } from './entities/organization.entity';
 import { OrganizationsService } from './organizations.service';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
+import { Role } from '@prisma/client';
 
 @Resolver(() => Organization)
 export class OrganizationsResolver {
@@ -22,31 +23,31 @@ export class OrganizationsResolver {
   }
 
   @Query(() => [Organization], { name: 'organizations' })
-  findAll() {
-    return this.organizationsService.findAll();
+  findAll(@Args() args: PaginationArgs, @Args('filter', { nullable: true }) filter?: string) {
+    return this.organizationsService.findAll(args, filter);
   }
 
-  @UseGuards(SystemRoleGuard)
-  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
+  @UseGuards(RoleGuard)
+  @Roles(Role.ORGADMIN)
   @Query(() => Organization, { name: 'organization' })
-  findOne(@Args('organization_id', { type: () => Int }) id: number) {
+  findOne(@Args('organizationId', { type: () => Int }) id: number) {
     return this.organizationsService.findOne(id);
   }
 
-  @UseGuards(SystemRoleGuard)
-  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
+  @UseGuards(RoleGuard)
+  @Roles(Role.ORGADMIN)
   @Mutation(() => Organization)
   updateOrganization(
     @Args('updateOrganizationInput')
     updateOrganizationInput: UpdateOrganizationInput,
   ) {
-    return this.organizationsService.update(updateOrganizationInput.organization_id, updateOrganizationInput);
+    return this.organizationsService.update(updateOrganizationInput.id, updateOrganizationInput);
   }
 
-  @UseGuards(SystemRoleGuard)
-  @Roles(SYSTEM_ROLES_ID.ORGANIZATION_ADMIN)
+  @UseGuards(RoleGuard)
+  @Roles(Role.ORGADMIN)
   @Mutation(() => Organization)
-  removeOrganization(@Args('organization_id', { type: () => Int }) id: number) {
+  removeOrganization(@Args('organizationId', { type: () => Int }) id: number) {
     return this.organizationsService.remove(id);
   }
 }

@@ -20,6 +20,9 @@ const config = {
   SALT_ROUNDS: process.env.SALT_ROUNDS,
 
   GRAPHQL_PLAYGROUND: process.env.GRAPHQL_PLAYGROUND,
+
+  NODEMAILER_PASSWORD: process.env.NODEMAILER_PASSWORD,
+  LIBERA_EMAIL_ACCOUNT: process.env.LIBERA_EMAIL_ACCOUNT,
 };
 
 if (require.main === module && process.env.NODE_ENV === 'development') {

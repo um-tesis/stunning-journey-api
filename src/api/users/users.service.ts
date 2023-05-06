@@ -19,17 +19,17 @@ export class UsersService {
       ...createUserInput,
       password: hashedPassword,
     };
-    return await this.prisma.user.create({
+    return this.prisma.user.create({
       data: newUser,
     });
   }
 
   public async findAll() {
-    return await this.prisma.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   public async findOne(id: number) {
-    return await this.prisma.user.findUnique({
+    return this.prisma.user.findUnique({
       where: {
         id,
       },
@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   public async update(id: number, updateUserInput: UpdateUserInput) {
-    return await this.prisma.user.update({
+    return this.prisma.user.update({
       where: {
         id,
       },
@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   public async remove(id: number) {
-    return await this.prisma.user.delete({
+    return this.prisma.user.delete({
       where: {
         id,
       },
@@ -70,10 +70,10 @@ export class UsersService {
     return { user, token };
   }
 
-  public async findAllByOrganizationId(organization_id: number) {
-    return await this.prisma.user.findMany({
+  public async findAllByOrganizationId(organizationId: number) {
+    return this.prisma.user.findMany({
       where: {
-        organization_id,
+        organizationId,
       },
     });
   }

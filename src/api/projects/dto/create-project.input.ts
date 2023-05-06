@@ -1,25 +1,22 @@
-import { InputType, GraphQLISODateTime, Int, Field } from '@nestjs/graphql';
+import { InputType, GraphQLISODateTime, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateProjectInput {
-  @Field(() => Int, { nullable: true })
-  project_id: number;
-
   @Field()
   name: string;
 
   @Field()
   field: string;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  start_date: Date;
+  @Field()
+  description: string;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  end_date: Date;
+  startDate: Date;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  endDate: Date;
 
   @Field(() => Int)
-  organization_id: number;
-
-  @Field(() => Int, { nullable: true })
-  monetary_objective: number;
+  organizationId: number;
 }

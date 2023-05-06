@@ -2,12 +2,13 @@ import { Factory } from 'fishery';
 import { faker } from '@faker-js/faker';
 
 import { Project } from '@prisma/client';
+import { CreateProjectInput } from '../../../src/api/projects/dto/create-project.input';
 
-export const projectFactory = Factory.define<Project>(({ associations }) => ({
-  project_id: undefined,
+export const projectFactory = Factory.define<CreateProjectInput, any, Project>(({ associations }) => ({
   name: faker.name.jobTitle(),
-  organization_id: associations.organization_id || faker.datatype.number(),
+  organizationId: associations.organizationId || faker.datatype.number(),
   field: faker.company.companySuffix(),
-  end_date: faker.date.future(),
-  start_date: faker.date.past(),
+  description: faker.lorem.paragraph(),
+  endDate: faker.date.future(),
+  startDate: faker.date.past(),
 }));

@@ -4,14 +4,17 @@ import { CreateOrganizationInput } from './create-organization.input';
 
 @InputType()
 export class UpdateOrganizationInput extends PartialType(CreateOrganizationInput) {
-  @Field(Int)
-  organization_id: number;
+  @Field(() => Int)
+  id: number;
 
   @Field({ nullable: true })
   name: string;
 
   @Field({ nullable: true })
   field: string;
+
+  @Field({ nullable: true })
+  description: string;
 
   @Field({ nullable: true })
   web: string;
@@ -23,11 +26,11 @@ export class UpdateOrganizationInput extends PartialType(CreateOrganizationInput
   email: string;
 
   @Field({ nullable: true })
-  facebook_account: string;
+  facebookAccount: string;
 
   @Field({ nullable: true })
-  twitter_account: string;
+  twitterAccount: string;
 
   @Field({ nullable: true })
-  instagram_account: string;
+  instagramAccount: string;
 }

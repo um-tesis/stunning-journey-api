@@ -3,13 +3,16 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class Organization {
   @Field(() => Int)
-  organization_id: number;
+  id: number;
 
   @Field()
   name: string;
 
   @Field()
   field: string;
+
+  @Field()
+  description: string;
 
   @Field({ nullable: true })
   web: string;
@@ -18,11 +21,11 @@ export class Organization {
   address: string;
 
   @Field({ nullable: true })
-  facebook_account: string;
+  facebookAccount: string;
 
   @Field({ nullable: true })
-  twitter_account: string;
+  twitterAccount: string;
 
   @Field({ nullable: true })
-  instagram_account: string;
+  instagramAccount: string;
 }

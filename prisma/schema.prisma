@@ -11,62 +11,88 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  password  String
-  role Int
-  phone String?
-  organization_id Int? 
-  organization Organization? @relation(fields: [organization_id], references: [organization_id])
-  projects ProjectUser[]
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  password       String
+  role           Role          @default(USER)
+  phone          String?
+  organizationId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  projects       ProjectUser[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model Organization {
-  organization_id    Int     @default(autoincrement()) @id
-  name  String  @unique
-  field String
-  web String?
-  address String?
-  email String?
-  facebook_account String?
-  instagram_account String?
-  twitter_account String?
-  users User[]
-  projects Project[]
-  events Event[]
+  id               Int       @id @default(autoincrement())
+  name             String    @unique
+  field            String
+  description      String
+  web              String?
+  address          String?
+  email            String?
+  facebookAccount  String?
+  instagramAccount String?
+  twitterAccount   String?
+  users            User[]
+  projects         Project[]
+  events           Event[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Project {
-  project_id    Int     @default(autoincrement()) @id
-  name  String  @unique
-  field String
-  start_date DateTime?
-  end_date DateTime?
-  organization_id Int? 
-  organization Organization? @relation(fields: [organization_id], references: [organization_id])
-  users ProjectUser[]
-  events Event[]
+  id             Int           @id @default(autoincrement())
+  name           String        @unique
+  field          String
+  description    String
+  startDate      DateTime?
+  endDate        DateTime?
+  organizationId Int?
+  monetaryGoal   Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  users          ProjectUser[]
+  events         Event[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model ProjectUser {
-  project_id Int
-  user_id Int
-  project Project @relation(fields: [project_id], references: [project_id])
-  user User @relation(fields: [user_id], references: [id])
-  @@id([project_id, user_id])
-  role Int?
+  projectId Int
+  project   Project     @relation(fields: [projectId], references: [id])
+  userId    Int
+  user      User        @relation(fields: [userId], references: [id])
+  role      ProjectRole @default(MEMBER)
+
+  @@id([projectId, userId])
 }
 
 model Event {
-  event_id    Int     @default(autoincrement()) @id
-  name  String  @unique
-  description String
-  date DateTime?
-  location String?
-  monetary_objective Int?
-  volunteers_objective Int?
-  project_id Int
-  project Project @relation(fields: [project_id], references: [project_id])
-  organization_id Int
-  organization Organization @relation(fields: [organization_id], references: [organization_id])
+  id             Int          @id @default(autoincrement())
+  name           String       @unique
+  description    String
+  date           DateTime?
+  location       String?
+  monetaryGoal   Int?
+  volunteersGoal Int?
+  projectId      Int
+  project        Project      @relation(fields: [projectId], references: [id])
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  SYSADMIN
+  ORGADMIN
+  USER
+}
+
+enum ProjectRole {
+  OWNER
+  MEMBER
+  VOLUNTEER
 }

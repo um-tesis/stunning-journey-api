@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { Project } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
@@ -12,61 +10,74 @@ export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createProjectInput: CreateProjectInput) {
-    return await this.prisma.project.create({
+    return this.prisma.project.create({
       data: createProjectInput,
     });
   }
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }) {
+  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
     const projects = await this.prisma.project.findMany({
       skip: (args.page - 1) * args.itemsPerPage,
       take: args.itemsPerPage,
+      where: {
+        name: {
+          contains: args.filter,
+        },
+      },
     });
 
-    return projects;
+    const total = await this.prisma.project.count({
+      where: {
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    return { projects, total };
   }
 
-  public async findOne(project_id: number) {
-    return await this.prisma.project.findUnique({
+  public async findOne(id: number) {
+    return this.prisma.project.findUnique({
       where: {
-        project_id,
+        id,
       },
     });
   }
 
-  public async update(project_id: number, updateProjectInput: UpdateProjectInput) {
-    return await this.prisma.project.update({
+  public async update(id: number, updateProjectInput: UpdateProjectInput) {
+    return this.prisma.project.update({
       where: {
-        project_id,
+        id,
       },
       data: updateProjectInput,
     });
   }
 
-  public async remove(project_id: number) {
-    return await this.prisma.project.delete({
+  public async remove(id: number) {
+    return this.prisma.project.delete({
       where: {
-        project_id,
+        id,
       },
     });
   }
 
-  public async findOrganizationProjects(organization_id: number) {
-    return await this.prisma.project.findMany({
+  public async findOrganizationProjects(organizationId: number) {
+    return this.prisma.project.findMany({
       where: {
-        organization_id,
+        organizationId,
       },
     });
   }
 
-  public async findProjectUsers(project_id: number) {
+  public async findProjectUsers(projectId: number) {
     const users = (
       await this.prisma.projectUser.findMany({
         where: {
-          project_id,
+          projectId,
         },
         select: {
-          project_id: false,
+          projectId: false,
           user: true,
         },
       })
@@ -74,7 +85,7 @@ export class ProjectsService {
 
     const project = await this.prisma.project.findUnique({
       where: {
-        project_id,
+        id: projectId,
       },
     });
 
@@ -83,11 +94,11 @@ export class ProjectsService {
     return { users, project };
   }
 
-  public async assignUserToProject(project_id: number, user_id: number) {
-    return await this.prisma.projectUser.create({
+  public async assignUserToProject(projectId: number, userId: number) {
+    return this.prisma.projectUser.create({
       data: {
-        project_id,
-        user_id,
+        projectId,
+        userId,
       },
     });
   }

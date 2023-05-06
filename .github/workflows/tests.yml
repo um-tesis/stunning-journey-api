@@ -1,0 +1,15 @@
+name: Tests
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run tests
+        run: | # Add test commands here
+          sleep 5
+        # Fail the job if any of the previous steps fail
+        continue-on-error: false

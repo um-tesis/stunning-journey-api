@@ -5,44 +5,41 @@
 input CreateEventInput {
   date: DateTime!
   description: String
-  event_id: Int
   location: String
-  monetary_objective: Int
+  monetaryGoal: Int
   name: String!
-  organization_id: Int!
-  project_id: Int!
-  volunteers_objective: Int
+  organizationId: Int!
+  projectId: Int!
+  volunteersGoal: Int
 }
 
 input CreateOrganizationInput {
   address: String
-  email: String
-  facebook_account: String
+  description: String!
+  email: String!
+  facebookAccount: String
   field: String!
-  instagram_account: String
+  instagramAccount: String
   name: String!
-  organization_id: Int
-  twitter_account: String
-  web: String
+  twitterAccount: String
+  web: String!
 }
 
 input CreateProjectInput {
-  end_date: DateTime
+  description: String!
+  endDate: DateTime
   field: String!
-  monetary_objective: Int
   name: String!
-  organization_id: Int!
-  project_id: Int
-  start_date: DateTime
+  organizationId: Int!
+  startDate: DateTime
 }
 
 input CreateUserInput {
   email: String!
-  id: Int
-  organization_id: Int
+  name: String!
+  organizationId: Int
   password: String!
   phone: String
-  role: Int!
 }
 
 """
@@ -53,13 +50,13 @@ scalar DateTime
 type Event {
   date: DateTime
   description: String
-  event_id: Int!
+  id: Int!
   location: String
-  monetary_objective: Int
+  monetaryGoal: Int
   name: String!
-  organization_id: Int!
-  project_id: Int!
-  volunteers_objective: Int
+  organizationId: Int!
+  projectId: Int!
+  volunteersGoal: Int
 }
 
 input LogInModelIn {
@@ -78,9 +75,9 @@ type Mutation {
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
-  removeEvent(event_id: Int!): Event!
-  removeOrganization(organization_id: Int!): Organization!
-  removeProject(project_id: Int!): Project!
+  removeEvent(eventId: Int!): Event!
+  removeOrganization(organizationId: Int!): Organization!
+  removeProject(id: Int!): Project!
   removeUser(id: Int!): User!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
@@ -90,12 +87,13 @@ type Mutation {
 
 type Organization {
   address: String
-  facebook_account: String
+  description: String!
+  facebookAccount: String
   field: String!
-  instagram_account: String
+  id: Int!
+  instagramAccount: String
   name: String!
-  organization_id: Int!
-  twitter_account: String
+  twitterAccount: String
   web: String
 }
 
@@ -105,94 +103,106 @@ type PopulatedProjectUser {
 }
 
 type Project {
-  end_date: DateTime
+  description: String!
+  endDate: DateTime
   field: String!
-  monetary_objective: Int
+  id: Int!
+  monetaryGoal: Int
   name: String!
-  organization_id: Int!
-  project_id: Int!
-  start_date: DateTime
+  organizationId: Int!
+  startDate: DateTime
+}
+
+enum ProjectRole {
+  MEMBER
+  OWNER
+  VOLUNTEER
 }
 
 type ProjectUser {
-  project_id: Int!
-  role: Int
-  user_id: Int!
+  projectId: Int!
+  role: ProjectRole
+  userId: Int!
+}
+
+type ProjectsPagination {
+  projects: [Project!]!
+  total: Int!
 }
 
 type Query {
-  event(event_id: Int!): Event!
+  event(eventId: Int!): Event!
   events: [Event!]!
-  eventsByOrganization(organization_id: Int!): [Event!]!
-  eventsByProject(project_id: Int!): [Event!]!
+  eventsByOrganization(organizationId: Int!): [Event!]!
+  eventsByProject(projectId: Int!): [Event!]!
   login(logInModelIn: LogInModelIn!): LogInModelOut!
-  organization(organization_id: Int!): Organization!
-  organizationProjects(organization_id: Int!): [Project!]!
-  organizations: [Organization!]!
-  project(project_id: Int!): Project!
-  projectUsers(project_id: Int!): PopulatedProjectUser!
-  projects(itemsPerPage: Int! = 5, page: Int! = 1): [Project!]!
+  organization(organizationId: Int!): Organization!
+  organizationProjects(organizationId: Int!): [Project!]!
+  organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
+  project(id: Int!): Project!
+  projectUsers(projectId: Int!): PopulatedProjectUser!
+  projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organization_id: Int!): [User!]!
 }
 
+enum Role {
+  ORGADMIN
+  SYSADMIN
+  USER
+}
+
 input UpdateEventInput {
   date: DateTime
   description: String
-  event_id: Int!
+  id: Int!
   location: String
-  monetary_objective: Int
+  monetaryGoal: Int
   name: String
-  organization_id: Int
-  project_id: Int
-  volunteers_objective: Int
+  organizationId: Int
+  projectId: Int
+  volunteersGoal: Int
 }
 
 input UpdateOrganizationInput {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   address: String
+  description: String
   email: String
-  facebook_account: String
+  facebookAccount: String
   field: String
-  instagram_account: String
+  id: Int!
+  instagramAccount: String
   name: String
-  organization_id: Int
-  twitter_account: String
+  twitterAccount: String
   web: String
 }
 
 input UpdateProjectInput {
-  end_date: DateTime
+  description: String
+  endDate: DateTime
   field: String
-  monetary_objective: Int
+  id: Int!
+  monetaryGoal: Int
   name: String
-  organization_id: Int
-  project_id: Int!
-  start_date: DateTime
+  organizationId: Int
+  startDate: DateTime
 }
 
 input UpdateUserInput {
-  """
-  The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-  """
-  Int: Float!
   email: String
-  id: Int
-  organization_id: Int
+  id: Int!
+  name: String
+  organizationId: Int
   password: String
   phone: String
-  role: Int
 }
 
 type User {
   email: String!
-  id: Int
-  organization_id: Int
-  password: String!
+  id: Int!
+  name: String!
+  organizationId: Int
   phone: String
-  role: Int!
+  role: Role!
 }
