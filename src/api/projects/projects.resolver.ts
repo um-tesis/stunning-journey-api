@@ -25,9 +25,13 @@ export class ProjectsResolver {
     return this.projectsService.findOne(id);
   }
 
-  @Query(() => [Project], { name: 'organizationProjects' })
-  findOrganizationProjects(@Args('organizationId', { type: () => Int }) id: number) {
-    return this.projectsService.findOrganizationProjects(id);
+  @Query(() => ProjectsPagination, { name: 'organizationProjects' })
+  async findOrganizationProjects(
+    @Args('organizationId', { type: () => Int }) id: number,
+    @Args() args: PaginationArgs,
+  ) {
+    const res = await this.projectsService.findOrganizationProjects(id, args);
+    return { projects: res.projects, total: res.total };
   }
 
   @Query(() => PopulatedProjectUser, { name: 'projectUsers' })

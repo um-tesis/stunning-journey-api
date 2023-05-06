@@ -137,7 +137,7 @@ type Query {
   eventsByProject(projectId: Int!): [Event!]!
   login(logInModelIn: LogInModelIn!): LogInModelOut!
   organization(organizationId: Int!): Organization!
-  organizationProjects(organizationId: Int!): [Project!]!
+  organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(id: Int!): Project!
   projectUsers(projectId: Int!): PopulatedProjectUser!

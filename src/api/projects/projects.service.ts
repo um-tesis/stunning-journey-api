@@ -62,12 +62,25 @@ export class ProjectsService {
     });
   }
 
-  public async findOrganizationProjects(organizationId: number) {
-    return this.prisma.project.findMany({
+  public async findOrganizationProjects(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const projects = await this.prisma.project.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
       where: {
         organizationId,
       },
     });
+
+    const total = await this.prisma.project.count({
+      where: {
+        organizationId,
+      },
+    });
+
+    return { projects, total };
   }
 
   public async findProjectUsers(projectId: number) {
