@@ -28,4 +28,6 @@ RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
 # Bundle app source
 COPY . .
 
+RUN npm run build
+
 CMD ["npm", "run", "start:dev"]
