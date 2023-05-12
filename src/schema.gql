@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ContactDto {
+  company: String!
+  email: String!
+  message: String!
+  name: String!
+  phone: String!
+}
+
 input CreateEventInput {
   date: DateTime!
   description: String
@@ -26,12 +34,18 @@ input CreateOrganizationInput {
 }
 
 input CreateProjectInput {
+  acceptsVolunteers: Boolean!
+  coverPhoto: String
   description: String!
   endDate: DateTime
   field: String!
+  location: String
+  monetaryGoal: Int
   name: String!
   organizationId: Int!
+  photoGallery: [String!]
   startDate: DateTime
+  video: String
 }
 
 input CreateUserInput {
@@ -40,12 +54,19 @@ input CreateUserInput {
   organizationId: Int
   password: String!
   phone: String
+  role: Role!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input EmailVolunteers {
+  body: String!
+  projectId: Float!
+  subject: String!
+}
 
 type Event {
   date: DateTime
@@ -70,11 +91,14 @@ type LogInModelOut {
 }
 
 type Mutation {
-  assignUserToProject(project_id: Int!, user_id: Int!): ProjectUser!
+  assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createUser(createUserInput: CreateUserInput!): User!
+  emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
+  loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
+  postContactForm(contactInput: ContactDto!): Boolean!
   removeEvent(eventId: Int!): Event!
   removeOrganization(organizationId: Int!): Organization!
   removeProject(id: Int!): Project!
@@ -98,31 +122,38 @@ type Organization {
 }
 
 type PopulatedProjectUser {
+  hours: Int
   project: Project!
-  users: [User!]!
+  user: User!
 }
 
 type Project {
+  acceptsVolunteers: Boolean!
+  coverPhoto: String
   description: String!
   endDate: DateTime
   field: String!
   id: Int!
+  location: String
   monetaryGoal: Int
   name: String!
+  organization: Organization
   organizationId: Int!
+  photoGallery: [String!]
   startDate: DateTime
-}
-
-enum ProjectRole {
-  MEMBER
-  OWNER
-  VOLUNTEER
+  video: String
 }
 
 type ProjectUser {
+  hours: Int!
   projectId: Int!
-  role: ProjectRole
+  user: User
   userId: Int!
+}
+
+type ProjectUserPagination {
+  total: Int!
+  volunteers: [ProjectUser!]
 }
 
 type ProjectsPagination {
@@ -144,7 +175,8 @@ type Query {
   projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
   user(id: Int!): User!
   users: [User!]!
-  usersByOrganizationId(organization_id: Int!): [User!]!
+  usersByOrganizationId(organizationId: Int!): [User!]!
+  volunteersByProjectId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): ProjectUserPagination!
 }
 
 enum Role {
@@ -179,14 +211,19 @@ input UpdateOrganizationInput {
 }
 
 input UpdateProjectInput {
+  acceptsVolunteers: Boolean
+  coverPhoto: String
   description: String
   endDate: DateTime
   field: String
   id: Int!
+  location: String
   monetaryGoal: Int
   name: String
   organizationId: Int
+  photoGallery: [String!]
   startDate: DateTime
+  video: String
 }
 
 input UpdateUserInput {
@@ -196,6 +233,7 @@ input UpdateUserInput {
   organizationId: Int
   password: String
   phone: String
+  role: Role
 }
 
 type User {

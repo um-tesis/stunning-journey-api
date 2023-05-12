@@ -9,6 +9,8 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { Role } from '@prisma/client';
+import { ProjectUserPagination } from '../projects/entities/project.entity';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -50,7 +52,13 @@ export class UsersResolver {
   }
 
   @Query(() => [User], { name: 'usersByOrganizationId' })
-  findAllByOrganizationId(@Args('organization_id', { type: () => Int }) organization_id: number) {
-    return this.usersService.findAllByOrganizationId(organization_id);
+  findAllByOrganizationId(@Args('organizationId', { type: () => Int }) organizationId: number) {
+    return this.usersService.findAllByOrganizationId(organizationId);
+  }
+
+  @Query(() => ProjectUserPagination, { name: 'volunteersByProjectId' })
+  async findAllByProjectId(@Args('projectId', { type: () => Int }) projectId: number, @Args() args: PaginationArgs) {
+    const res = await this.usersService.findAllByProjectId(projectId, args);
+    return { volunteers: res.volunteers, total: res.total };
   }
 }

@@ -1,10 +1,10 @@
 import { Factory } from 'fishery';
 import { faker } from '@faker-js/faker';
 
-import { ProjectRole, ProjectUser } from '@prisma/client';
+import { ProjectUser } from '@prisma/client';
 
 export const projectUsersFactory = Factory.define<ProjectUser>(({ associations }) => ({
   userId: associations.userId || faker.datatype.number(),
   projectId: associations.projectId || faker.datatype.number(),
-  role: ProjectRole.MEMBER,
+  hours: faker.datatype.number(),
 }));
