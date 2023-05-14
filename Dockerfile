@@ -29,5 +29,6 @@ RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
 COPY . .
 
 RUN prisma generate
+RUN npm run build
 
 CMD ["npm", "run", "start:dev"]
