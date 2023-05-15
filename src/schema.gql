@@ -16,13 +16,13 @@ input CreateEventInput {
 input CreateOrganizationInput {
   address: String
   description: String!
-  email: String!
+  email: String
   facebookAccount: String
   field: String!
   instagramAccount: String
   name: String!
   twitterAccount: String
-  web: String!
+  web: String
 }
 
 input CreateProjectInput {

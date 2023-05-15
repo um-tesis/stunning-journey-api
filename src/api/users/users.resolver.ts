@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Roles } from 'src/decorators/roles.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { Roles } from 'src/api/common/decorators/roles.decorator';
+import { AuthGuard } from 'src/api/common/guards/auth.guard';
 
 import { LogInModelIn, LogInModelOut } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';

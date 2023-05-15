@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { DateTime } from 'luxon';
 
-import config from '../config/config';
+import config from '../api/config';
 import { UnauthorizedError } from '../utils/errors';
 
 const { JWT_PRIVATE_KEY, JWT_EXPIRE_TIME } = config;

@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RoleGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/api/common/decorators/roles.decorator';
+import { RoleGuard } from 'src/api/common/guards/role.guard';
 
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';

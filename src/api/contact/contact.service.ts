@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ContactDto } from './dto/contact.dto';
 import * as nodemailer from 'nodemailer';
-import config from 'src/config/config';
+import config from 'src/api/config';
 
 const { NODEMAILER_PASSWORD, LIBERA_EMAIL_ACCOUNT } = config;
 

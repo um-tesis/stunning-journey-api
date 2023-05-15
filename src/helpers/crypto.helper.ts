@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import bcrypt from 'bcryptjs';
 
-import config from '../config/config';
+import config from '../api/config';
 
 const { SALT_ROUNDS } = config;
 
