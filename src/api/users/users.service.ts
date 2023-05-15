@@ -8,6 +8,7 @@ import { LogInModelIn } from './dto/auth-input';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Injectable()
 export class UsersService {
@@ -76,5 +77,25 @@ export class UsersService {
         organizationId,
       },
     });
+  }
+  public async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+    const volunteers = await this.prisma.projectUser.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        projectId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const total = await this.prisma.projectUser.count({
+      where: {
+        projectId,
+      },
+    });
+
+    return { volunteers, total };
   }
 }

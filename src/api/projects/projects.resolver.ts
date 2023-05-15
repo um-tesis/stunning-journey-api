@@ -51,9 +51,18 @@ export class ProjectsResolver {
 
   @Mutation(() => ProjectUser, { name: 'assignUserToProject' })
   assignUserToProject(
-    @Args('project_id', { type: () => Int }) project_id: number,
-    @Args('user_id', { type: () => Int }) user_id: number,
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('userId', { type: () => Int }) userId: number,
   ) {
-    return this.projectsService.assignUserToProject(project_id, user_id);
+    return this.projectsService.assignUserToProject(projectId, userId);
+  }
+
+  @Mutation(() => ProjectUser, { name: 'loadProjectHours' })
+  loadProjectHours(
+    @Args('projectId', { type: () => Int }) projectId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('hours', { type: () => Int }) hours: number,
+  ) {
+    return this.projectsService.loadProjectHours(projectId, userId, hours);
   }
 }

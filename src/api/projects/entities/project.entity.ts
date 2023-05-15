@@ -1,6 +1,6 @@
-import { Field, GraphQLISODateTime, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
+import { Organization } from 'src/api/organizations/entities/organization.entity';
 import { User } from 'src/api/users/entities/user.entity';
-import { ProjectRole } from '@prisma/client';
 
 @ObjectType()
 export class Project {
@@ -27,6 +27,24 @@ export class Project {
 
   @Field(() => Int, { nullable: true })
   monetaryGoal: number;
+
+  @Field(() => String, { nullable: true })
+  coverPhoto: string;
+
+  @Field(() => String, { nullable: true })
+  video: string;
+
+  @Field(() => String, { nullable: true })
+  location: string;
+
+  @Field(() => [String], { nullable: true })
+  photoGallery: string[];
+
+  @Field(() => Boolean)
+  acceptsVolunteers: boolean;
+
+  @Field(() => Organization, { nullable: true })
+  organization: Organization;
 }
 
 @ObjectType()
@@ -37,8 +55,11 @@ export class ProjectUser {
   @Field(() => Int)
   userId: number;
 
-  @Field(() => ProjectRole, { nullable: true })
-  role: ProjectRole;
+  @Field(() => Int)
+  hours: number;
+
+  @Field(() => User, { nullable: true })
+  user: User;
 }
 
 @ObjectType()
@@ -46,18 +67,26 @@ export class PopulatedProjectUser {
   @Field(() => Project)
   project: Project;
 
-  @Field(() => [User])
-  users: [User];
-}
+  @Field(() => User)
+  user: User;
 
-registerEnumType(ProjectRole, {
-  name: 'ProjectRole',
-});
+  @Field(() => Int, { nullable: true })
+  hours: number;
+}
 
 @ObjectType()
 export class ProjectsPagination {
   @Field(() => [Project])
   projects: [Project];
+
+  @Field(() => Int)
+  total: [User];
+}
+
+@ObjectType()
+export class ProjectUserPagination {
+  @Field(() => [ProjectUser], { nullable: true })
+  volunteers: [ProjectUser];
 
   @Field(() => Int)
   total: [User];
