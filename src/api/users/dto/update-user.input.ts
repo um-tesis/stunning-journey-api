@@ -1,6 +1,7 @@
 import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
 
 import { CreateUserInput } from '../../auth/dto/create-user.input';
+import { Role } from '@prisma/client';
 
 @InputType()
 export class UpdateUserInput extends PartialType(CreateUserInput) {
@@ -12,4 +13,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
 
   @Field(() => String, { nullable: true })
   phone?: string;
+
+  @Field(() => Role, { nullable: true })
+  role?: Role;
 }

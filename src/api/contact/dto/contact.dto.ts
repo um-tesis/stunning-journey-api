@@ -17,3 +17,15 @@ export class ContactDto {
   @Field()
   message: string;
 }
+
+@InputType()
+export class EmailVolunteers {
+  @Field()
+  projectId: number;
+
+  @Field()
+  subject: string;
+
+  @Field()
+  body: string;
+}

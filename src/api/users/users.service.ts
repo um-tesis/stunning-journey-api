@@ -4,6 +4,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { ChangePasswordInput } from './dto/change-password.input';
 import { PasswordService } from '../auth/password.service';
 import { PrismaService } from 'nestjs-prisma';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Injectable()
 export class UsersService {
@@ -61,5 +62,25 @@ export class UsersService {
         organizationId,
       },
     });
+  }
+  public async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+    const volunteers = await this.prisma.projectUser.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        projectId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const total = await this.prisma.projectUser.count({
+      where: {
+        projectId,
+      },
+    });
+
+    return { volunteers, total };
   }
 }

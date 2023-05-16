@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { EventsModule } from './api/events/events.module';
 import { AuthModule } from './api/auth/auth.module';
 import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
+import { ContactModule } from './api/contact/contact.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
     OrganizationsModule,
     ProjectsModule,
     EventsModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

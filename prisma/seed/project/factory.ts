@@ -11,4 +11,10 @@ export const projectFactory = Factory.define<CreateProjectInput, any, Project>((
   description: faker.lorem.paragraph(),
   endDate: faker.date.future(),
   startDate: faker.date.past(),
+  monetaryGoal: faker.datatype.number(),
+  coverPhoto: faker.image.imageUrl(),
+  video: faker.image.imageUrl(),
+  location: faker.address.city(),
+  photoGallery: [faker.image.imageUrl()],
+  acceptsVolunteers: faker.datatype.boolean(),
 }));

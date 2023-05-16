@@ -42,10 +42,21 @@ export class ProjectsService {
       where: {
         id,
       },
+      include: {
+        organization: true,
+      },
     });
   }
 
   public async update(id: number, updateProjectInput: UpdateProjectInput) {
+    const project = await this.prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!project) throw new NotFoundError('Project does not exist in the system');
+
     return this.prisma.project.update({
       where: {
         id,
@@ -62,12 +73,25 @@ export class ProjectsService {
     });
   }
 
-  public async findOrganizationProjects(organizationId: number) {
-    return this.prisma.project.findMany({
+  public async findOrganizationProjects(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const projects = await this.prisma.project.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
       where: {
         organizationId,
       },
     });
+
+    const total = await this.prisma.project.count({
+      where: {
+        organizationId,
+      },
+    });
+
+    return { projects, total };
   }
 
   public async findProjectUsers(projectId: number) {
@@ -99,6 +123,36 @@ export class ProjectsService {
       data: {
         projectId,
         userId,
+      },
+    });
+  }
+
+  public async loadProjectHours(projectId: number, userId: number, hours: number) {
+    const projectUserRecord = await this.prisma.projectUser.findUnique({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
+        },
+      },
+      select: {
+        projectId: true,
+        userId: true,
+      },
+    });
+    if (!projectUserRecord) throw new NotFoundError('User is not assigned to this project');
+
+    return this.prisma.projectUser.update({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
+        },
+      },
+      data: {
+        hours: {
+          increment: hours,
+        },
       },
     });
   }
