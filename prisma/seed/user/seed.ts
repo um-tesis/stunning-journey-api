@@ -1,5 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
-import { hashPassword } from '../../../src/helpers/crypto.helper';
+import { hash } from '../../../src/helpers/crypto.helper';
 import { userFactory } from './factory';
 import { faker } from '@faker-js/faker';
 
@@ -13,36 +13,36 @@ export async function userSeed() {
 }
 
 async function seedDefaultUsers() {
-  const sysAdminHashedPassword = hashPassword('password');
+  const sysAdminHashedPassword = hash('password');
   await prisma.user.upsert({
-    where: { email: 'sysAdminEx@prisma.io' },
+    where: { email: 'sysadminex@prisma.io' },
     update: {},
     create: {
       name: faker.name.firstName(),
-      email: 'sysAdminEx@prisma.io',
+      email: 'sysadminex@prisma.io',
       role: Role.SYSADMIN,
       password: sysAdminHashedPassword,
     },
   });
-  const orgAdminHashedPassword = hashPassword('password');
+  const orgAdminHashedPassword = hash('password');
   await prisma.user.upsert({
-    where: { email: 'orgAdminEx@prisma.io' },
+    where: { email: 'orgadminex@prisma.io' },
     update: {},
     create: {
       name: faker.name.firstName(),
-      email: 'orgAdminEx@prisma.io',
+      email: 'orgadminex@prisma.io',
       password: orgAdminHashedPassword,
       role: Role.ORGADMIN,
       organizationId: 1,
     },
   });
-  const userHashedPassword = hashPassword('password');
+  const userHashedPassword = hash('password');
   await prisma.user.upsert({
-    where: { email: 'regularUserEx@prisma.io' },
+    where: { email: 'regularuserex@prisma.io' },
     update: {},
     create: {
       name: faker.name.firstName(),
-      email: 'regularUserEx@prisma.io',
+      email: 'regularuserex@prisma.io',
       password: userHashedPassword,
       role: Role.USER,
       organizationId: 1,

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ProjectsService {
