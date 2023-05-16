@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import config from 'src/api/config';
+import config from '../api/config';
 
 const { SALT_ROUNDS } = config;
 export const compare = (password: string, hash: string): boolean => bcrypt.compareSync(password, hash);

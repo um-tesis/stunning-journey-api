@@ -224,10 +224,15 @@ input UpdateUserInput {
 }
 
 type User {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   email: String!
-  id: Int!
+  id: ID!
   name: String!
   organizationId: Int
   phone: String
   role: Role!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
