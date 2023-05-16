@@ -1,11 +1,9 @@
 import { Field, HideField, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @ObjectType()
-export class User {
-  @Field(() => Int)
-  id: number;
-
+export class User extends BaseEntity {
   @Field()
   name: string;
 
