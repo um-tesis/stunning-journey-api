@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ContactDto, EmailVolunteers } from './dto/contact.dto';
-import config from 'src/config/config';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { transporter } from 'src/helpers/nodemailer.helper';
 import * as fs from 'fs';
 import * as ejs from 'ejs';
 import path from 'path';
+import config from 'src/api/config';
+import { PrismaService } from 'nestjs-prisma';
 
 const { LIBERA_EMAIL_ACCOUNT } = config;
 

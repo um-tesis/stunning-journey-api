@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class OrganizationsService {

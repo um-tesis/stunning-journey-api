@@ -1,31 +1,35 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateOrganizationInput {
   @Field()
+  @IsNotEmpty()
   name: string;
 
   @Field()
+  @IsNotEmpty()
   field: string;
 
   @Field()
+  @IsNotEmpty()
   description: string;
 
-  @Field()
-  web: string;
+  @Field(() => String, { nullable: true })
+  web?: string;
 
-  @Field({ nullable: true })
-  address: string;
+  @Field(() => String, { nullable: true })
+  address?: string;
 
-  @Field()
-  email: string;
+  @Field(() => String, { nullable: true })
+  email?: string;
 
-  @Field({ nullable: true })
-  facebookAccount: string;
+  @Field(() => String, { nullable: true })
+  facebookAccount?: string;
 
-  @Field({ nullable: true })
-  twitterAccount: string;
+  @Field(() => String, { nullable: true })
+  twitterAccount?: string;
 
-  @Field({ nullable: true })
-  instagramAccount: string;
+  @Field(() => String, { nullable: true })
+  instagramAccount?: string;
 }

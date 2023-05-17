@@ -2,6 +2,20 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Auth {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+  user: User!
+}
+
+input ChangePasswordInput {
+  newPassword: String!
+  oldPassword: String!
+}
+
 input ContactDto {
   company: String!
   email: String!
@@ -24,13 +38,13 @@ input CreateEventInput {
 input CreateOrganizationInput {
   address: String
   description: String!
-  email: String!
+  email: String
   facebookAccount: String
   field: String!
   instagramAccount: String
   name: String!
   twitterAccount: String
-  web: String!
+  web: String
 }
 
 input CreateProjectInput {
@@ -64,7 +78,7 @@ scalar DateTime
 
 input EmailVolunteers {
   body: String!
-  projectId: Float!
+  projectId: Int!
   subject: String!
 }
 
@@ -80,25 +94,28 @@ type Event {
   volunteersGoal: Int
 }
 
-input LogInModelIn {
+"""
+A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+"""
+scalar JWT
+
+input LoginInput {
   email: String!
   password: String!
 }
 
-type LogInModelOut {
-  token: String!
-  user: User!
-}
-
 type Mutation {
   assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
+  changePassword(data: ChangePasswordInput!): User!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
-  createUser(createUserInput: CreateUserInput!): User!
+  createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
+  login(data: LoginInput!): Auth!
   postContactForm(contactInput: ContactDto!): Boolean!
+  refreshToken(token: JWT!): Token!
   removeEvent(eventId: Int!): Event!
   removeOrganization(organizationId: Int!): Organization!
   removeProject(id: Int!): Project!
@@ -166,7 +183,7 @@ type Query {
   events: [Event!]!
   eventsByOrganization(organizationId: Int!): [Event!]!
   eventsByProject(projectId: Int!): [Event!]!
-  login(logInModelIn: LogInModelIn!): LogInModelOut!
+  me: User!
   organization(organizationId: Int!): Organization!
   organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
@@ -183,6 +200,14 @@ enum Role {
   ORGADMIN
   SYSADMIN
   USER
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
 }
 
 input UpdateEventInput {
@@ -237,10 +262,15 @@ input UpdateUserInput {
 }
 
 type User {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   email: String!
-  id: Int!
+  id: ID!
   name: String!
   organizationId: Int
   phone: String
   role: Role!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
