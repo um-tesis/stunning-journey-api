@@ -52,7 +52,12 @@ model Project {
   startDate         DateTime?
   endDate           DateTime?
   organizationId    Int?
-  monetaryGoal      Int?
+  mpEnabled         Boolean?      @default(false)
+  mpPublicKey       String?
+  mpAccessToken     String?
+  preferenceId10    String?
+  preferenceId50    String?
+  preferenceId100   String?
   organization      Organization? @relation(fields: [organizationId], references: [id])
   users             ProjectUser[]
   events            Event[]
