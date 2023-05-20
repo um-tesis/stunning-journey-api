@@ -53,6 +53,7 @@ model Project {
   endDate           DateTime?
   organizationId    Int?
   mpEnabled         Boolean?      @default(false)
+  mpInstantCheckout Boolean?      @default(false)
   mpPublicKey       String?
   mpAccessToken     String?
   preferenceId10    String?

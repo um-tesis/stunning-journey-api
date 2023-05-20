@@ -1,17 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
+import { MercadopagoConfigInput } from './dto/mercadopago-config.input';
+
+type CreateProjectInputFlat = Omit<CreateProjectInput, 'mercadopagoConfig'> & Partial<MercadopagoConfigInput>;
 
 @Injectable()
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   public async create(createProjectInput: CreateProjectInput) {
+    const mercadoPagoConfig = createProjectInput?.mercadopagoConfig && { ...createProjectInput.mercadopagoConfig };
+    delete createProjectInput.mercadopagoConfig;
+
+    const data: CreateProjectInputFlat = {
+      ...createProjectInput,
+    };
+
+    if (mercadoPagoConfig) {
+      data.mpInstantCheckout = mercadoPagoConfig.mpInstantCheckout;
+      data.mpPublicKey = mercadoPagoConfig.mpPublicKey;
+
+      // Must be encrypted.
+      if (mercadoPagoConfig.mpAccessToken.startsWith('APP_USR-')) {
+        throw new BadRequestException('Mercadopago Access Token must be encrypted.');
+      }
+
+      data.mpAccessToken = mercadoPagoConfig.mpAccessToken;
+    }
     return this.prisma.project.create({
-      data: createProjectInput,
+      data,
     });
   }
 

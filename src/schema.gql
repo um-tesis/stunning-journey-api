@@ -54,7 +54,7 @@ input CreateProjectInput {
   endDate: DateTime
   field: String!
   location: String
-  monetaryGoal: Int
+  mercadopagoConfig: MercadopagoConfigInput
   name: String!
   organizationId: Int!
   photoGallery: [String!]
@@ -102,6 +102,21 @@ scalar JWT
 input LoginInput {
   email: String!
   password: String!
+}
+
+input MercadopagoConfigInput {
+  """
+  This is a private key, don't share with anyone else than us. We will encrypt it to store it.
+  """
+  mpAccessToken: String!
+
+  """
+  If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.
+  """
+  mpInstantCheckout: Boolean!
+
+  """This is a public key to configure in the Website, it's harmless."""
+  mpPublicKey: String!
 }
 
 type Mutation {
@@ -152,7 +167,13 @@ type Project {
   field: String!
   id: Int!
   location: String
-  monetaryGoal: Int
+  mpAccessToken: String
+  mpEnabled: Boolean!
+  mpInstantCheckout: Boolean
+  mpPreferenceId10: String
+  mpPreferenceId50: String
+  mpPreferenceId100: String
+  mpPublicKey: String
   name: String!
   organization: Organization
   organizationId: Int!
@@ -243,7 +264,7 @@ input UpdateProjectInput {
   field: String
   id: Int!
   location: String
-  monetaryGoal: Int
+  mercadopagoConfig: MercadopagoConfigInput
   name: String
   organizationId: Int
   photoGallery: [String!]

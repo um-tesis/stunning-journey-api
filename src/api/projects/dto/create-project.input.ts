@@ -1,4 +1,5 @@
 import { InputType, GraphQLISODateTime, Field, Int } from '@nestjs/graphql';
+import { MercadopagoConfigInput } from './mercadopago-config.input';
 
 @InputType()
 export class CreateProjectInput {
@@ -20,8 +21,8 @@ export class CreateProjectInput {
   @Field(() => Int)
   organizationId: number;
 
-  @Field(() => Int, { nullable: true })
-  monetaryGoal: number;
+  @Field(() => MercadopagoConfigInput, { nullable: true })
+  mercadopagoConfig: MercadopagoConfigInput;
 
   @Field(() => String, { nullable: true })
   coverPhoto: string;

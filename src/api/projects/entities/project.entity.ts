@@ -25,8 +25,26 @@ export class Project {
   @Field(() => Int)
   organizationId: number;
 
-  @Field(() => Int, { nullable: true })
-  monetaryGoal: number;
+  @Field(() => Boolean)
+  mpEnabled: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  mpInstantCheckout: boolean;
+
+  @Field(() => String, { nullable: true })
+  mpPublicKey: string;
+
+  @Field(() => String, { nullable: true })
+  mpAccessToken: string;
+
+  @Field(() => String, { nullable: true })
+  mpPreferenceId10: string;
+
+  @Field(() => String, { nullable: true })
+  mpPreferenceId50: string;
+
+  @Field(() => String, { nullable: true })
+  mpPreferenceId100: string;
 
   @Field(() => String, { nullable: true })
   coverPhoto: string;

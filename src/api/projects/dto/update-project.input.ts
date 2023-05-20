@@ -1,5 +1,6 @@
 import { CreateProjectInput } from './create-project.input';
 import { InputType, Field, GraphQLISODateTime, PartialType, Int } from '@nestjs/graphql';
+import { MercadopagoConfigInput } from './mercadopago-config.input';
 
 @InputType()
 export class UpdateProjectInput extends PartialType(CreateProjectInput) {
@@ -24,8 +25,8 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field(() => Int, { nullable: true })
   organizationId: number;
 
-  @Field(() => Int, { nullable: true })
-  monetaryGoal: number;
+  @Field(() => MercadopagoConfigInput, { nullable: true })
+  mercadopagoConfig: MercadopagoConfigInput;
 
   @Field(() => String, { nullable: true })
   coverPhoto: string;
