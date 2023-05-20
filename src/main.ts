@@ -1,9 +1,10 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import config from './api/config';
 import { ValidationPipe } from '@nestjs/common';
-import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
+import { PrismaService } from 'nestjs-prisma';
+import { PrismaClientExceptionFilter } from './utils/prisma/client-exception.filter';
 
 const { PORT } = config;
 
@@ -18,8 +19,7 @@ async function bootstrap() {
   await prismaService.enableShutdownHooks(app);
 
   // Prisma Client Exception Filter for unhandled exceptions
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(new PrismaClientExceptionFilter());
 
   // Cors
   app.enableCors();

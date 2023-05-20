@@ -26,10 +26,14 @@ import { ContactModule } from './api/contact/contact.module';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       context: ({ req }) => ({ req }),
+      cache: 'bounded',
     }),
     PrismaModule.forRoot({
       isGlobal: true,
       prismaServiceOptions: {
+        prismaOptions: {
+          errorFormat: 'minimal',
+        },
         middlewares: [
           loggingMiddleware({
             logger: new Logger('PrismaMiddleware'),
