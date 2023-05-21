@@ -11,6 +11,33 @@ type Auth {
   user: User!
 }
 
+type BaseDonation {
+  amount: Int!
+  createdAt: DateTime!
+  donorId: Int!
+  id: Int!
+  mpPreferenceId: String!
+  projectId: Int!
+}
+
+type BaseSubscription {
+  amount: Int!
+  billingDayOfMonth: Int!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  donorId: Int!
+  frequency: Int!
+  frequencyInterval: FrequencyInterval!
+  id: ID!
+  mpSubscriptionId: String!
+  projectId: Int!
+  status: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
 input ChangePasswordInput {
   newPassword: String!
   oldPassword: String!
@@ -22,6 +49,14 @@ input ContactDto {
   message: String!
   name: String!
   phone: String!
+}
+
+input CreateDonorInput {
+  cardStart: String
+  email: String
+  identification: String
+  identificationType: String
+  paymentMethod: String
 }
 
 input CreateEventInput {
@@ -74,6 +109,16 @@ input CreateProjectInput {
   video: String
 }
 
+input CreateSubscriptionInput {
+  amount: Int!
+  billingDayOfMonth: Int!
+  frequency: Int!
+  frequencyInterval: FrequencyInterval!
+  mpSubscriptionId: String!
+  projectId: Int!
+  status: String!
+}
+
 input CreateUserInput {
   email: String!
   name: String!
@@ -87,6 +132,32 @@ input CreateUserInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Donation {
+  amount: Int!
+  createdAt: DateTime!
+  donor: Donor!
+  donorId: Int!
+  id: Int!
+  mpPreferenceId: String!
+  project: Project!
+  projectId: Int!
+}
+
+type Donor {
+  cardStart: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  email: String
+  id: ID!
+  identification: String
+  identificationType: String
+  paymentMethod: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
 
 input EmailVolunteers {
   body: String!
@@ -106,6 +177,11 @@ type Event {
   volunteersGoal: Int
 }
 
+enum FrequencyInterval {
+  MONTHLY
+  YEARLY
+}
+
 """
 A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
@@ -119,6 +195,8 @@ input LoginInput {
 type Mutation {
   assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
   changePassword(data: ChangePasswordInput!): User!
+  createDonation(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
+  createDonor(createDonorInput: CreateDonorInput!): Donor!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
@@ -128,13 +206,17 @@ type Mutation {
   login(data: LoginInput!): Auth!
   postContactForm(contactInput: ContactDto!): Boolean!
   refreshToken(token: JWT!): Token!
+  removeDonor(id: Int!): Donor!
   removeEvent(eventId: Int!): Event!
   removeOrganization(organizationId: Int!): Organization!
   removeProject(id: Int!): Project!
+  removeSubscription(id: Int!): Subscription!
   removeUser(id: Int!): User!
+  updateDonor(updateDonorInput: UpdateDonorInput!): Donor!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
+  updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -204,6 +286,9 @@ type ProjectsPagination {
 }
 
 type Query {
+  donation(id: Int!): Donation!
+  donations(projectId: Int!): [Donation!]!
+  donor(id: Int!): Donor
   event(eventId: Int!): Event!
   events: [Event!]!
   eventsByOrganization(organizationId: Int!): [Event!]!
@@ -215,6 +300,8 @@ type Query {
   project(id: Int!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
   projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
+  subscription(id: Int!): Subscription!
+  subscriptions: [Subscription!]!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!
@@ -227,12 +314,41 @@ enum Role {
   USER
 }
 
+type Subscription {
+  amount: Int!
+  billingDayOfMonth: Int!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  donor: Donor!
+  donorId: Int!
+  frequency: Int!
+  frequencyInterval: FrequencyInterval!
+  id: ID!
+  mpSubscriptionId: String!
+  project: Project!
+  projectId: Int!
+  status: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
 type Token {
   """JWT access token"""
   accessToken: JWT!
 
   """JWT refresh token"""
   refreshToken: JWT!
+}
+
+input UpdateDonorInput {
+  cardStart: String
+  email: String
+  id: Int!
+  identification: String
+  identificationType: String
+  paymentMethod: String
 }
 
 input UpdateEventInput {
@@ -286,6 +402,17 @@ input UpdateProjectInput {
   photoGallery: [String!]
   startDate: DateTime
   video: String
+}
+
+input UpdateSubscriptionInput {
+  amount: Int
+  billingDayOfMonth: Int
+  frequency: Int
+  frequencyInterval: FrequencyInterval
+  id: Int!
+  mpSubscriptionId: String
+  projectId: Int
+  status: String
 }
 
 input UpdateUserInput {
