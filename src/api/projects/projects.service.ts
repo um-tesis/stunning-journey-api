@@ -1,38 +1,37 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
-import { MercadopagoConfigInput } from './dto/mercadopago-config.input';
+import slugify from 'slugify';
+import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
+import { decrypt } from '../../helpers/crypto.helper';
+import { Role, User } from '@prisma/client';
 
-type CreateProjectInputFlat = Omit<CreateProjectInput, 'mercadopagoConfig'> & Partial<MercadopagoConfigInput>;
+type HiddenFields = {
+  mpEnabled?: boolean;
+  slug?: string;
+};
+
+type CreateProjectInputWithHiddenFields = CreateProjectInput & HiddenFields;
+type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFields;
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    prisma.$use(async (params, next) => {
+      if (params.model === 'Project' && ['create', 'update'].includes(params.action)) {
+        const data = params.args.data as CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields;
 
-  public async create(createProjectInput: CreateProjectInput) {
-    const mercadoPagoConfig = createProjectInput?.mercadopagoConfig && { ...createProjectInput.mercadopagoConfig };
-    delete createProjectInput.mercadopagoConfig;
+        if (data.name) {
+          data.slug = slugify(data.name, { lower: true });
+        }
 
-    const data: CreateProjectInputFlat = {
-      ...createProjectInput,
-    };
-
-    if (mercadoPagoConfig) {
-      data.mpInstantCheckout = mercadoPagoConfig.mpInstantCheckout;
-      data.mpPublicKey = mercadoPagoConfig.mpPublicKey;
-
-      // Must be encrypted.
-      if (mercadoPagoConfig.mpAccessToken.startsWith('APP_USR-')) {
-        throw new BadRequestException('Mercadopago Access Token must be encrypted.');
+        data.mpEnabled = await setMercadoPagoConfig(data);
       }
 
-      data.mpAccessToken = mercadoPagoConfig.mpAccessToken;
-    }
-    return this.prisma.project.create({
-      data,
+      return next(params);
     });
   }
 
@@ -58,40 +57,18 @@ export class ProjectsService {
     return { projects, total };
   }
 
-  public async findOne(id: number) {
-    return this.prisma.project.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        organization: true,
-      },
-    });
-  }
+  public async findOne(id: number, user: User) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
 
-  public async update(id: number, updateProjectInput: UpdateProjectInput) {
-    const project = await this.prisma.project.findUnique({
-      where: {
-        id,
-      },
-    });
+    if (!project) throw new NotFoundError('Project not found');
+    if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
+      delete project.mpAccessToken;
+      delete project.mpPublicKey;
+      delete project.mpInstantCheckout;
+    }
+    if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
-    if (!project) throw new NotFoundError('Project does not exist in the system');
-
-    return this.prisma.project.update({
-      where: {
-        id,
-      },
-      data: updateProjectInput,
-    });
-  }
-
-  public async remove(id: number) {
-    return this.prisma.project.delete({
-      where: {
-        id,
-      },
-    });
+    return project;
   }
 
   public async findOrganizationProjects(
@@ -139,6 +116,35 @@ export class ProjectsService {
     return { users, project };
   }
 
+  public async create(createProjectInput: CreateProjectInputWithHiddenFields) {
+    return this.prisma.project.create({ data: createProjectInput });
+  }
+
+  public async update(id: number, updateProjectInput: UpdateProjectInputWithHiddenFields) {
+    const project = await this.prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!project) throw new NotFoundError('Project does not exist in the system');
+
+    return this.prisma.project.update({
+      where: {
+        id,
+      },
+      data: updateProjectInput,
+    });
+  }
+
+  public async remove(id: number) {
+    return this.prisma.project.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
   public async assignUserToProject(projectId: number, userId: number) {
     return this.prisma.projectUser.create({
       data: {
@@ -176,5 +182,9 @@ export class ProjectsService {
         },
       },
     });
+  }
+
+  public async getOrganization(id: number) {
+    return this.prisma.organization.findUnique({ where: { id } });
   }
 }

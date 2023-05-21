@@ -9,7 +9,4 @@ ALTER TABLE "Project" DROP COLUMN "monetaryGoal",
 ADD COLUMN     "mpAccessToken" TEXT,
 ADD COLUMN     "mpEnabled" BOOLEAN DEFAULT false,
 ADD COLUMN     "mpInstantCheckout" BOOLEAN DEFAULT false,
-ADD COLUMN     "mpPublicKey" TEXT,
-ADD COLUMN     "preferenceId10" TEXT,
-ADD COLUMN     "preferenceId100" TEXT,
-ADD COLUMN     "preferenceId50" TEXT;
+ADD COLUMN     "mpPublicKey" TEXT;

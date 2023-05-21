@@ -47,6 +47,7 @@ model Organization {
 model Project {
   id                Int           @id @default(autoincrement())
   name              String        @unique
+  slug              String?
   field             String
   description       String
   startDate         DateTime?
@@ -56,9 +57,6 @@ model Project {
   mpInstantCheckout Boolean?      @default(false)
   mpPublicKey       String?
   mpAccessToken     String?
-  preferenceId10    String?
-  preferenceId50    String?
-  preferenceId100   String?
   organization      Organization? @relation(fields: [organizationId], references: [id])
   users             ProjectUser[]
   events            Event[]
