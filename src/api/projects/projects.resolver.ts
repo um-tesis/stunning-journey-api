@@ -1,9 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
-import { Project, ProjectUser, PopulatedProjectUser, ProjectsPagination } from './entities/project.entity';
+import { Project, ProjectsPagination } from './entities/project.entity';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
+import { PopulatedProjectUser, ProjectUser } from './entities/project-user.entity';
 
 @Resolver(() => Project)
 export class ProjectsResolver {

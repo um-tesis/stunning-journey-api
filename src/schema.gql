@@ -154,18 +154,23 @@ type Organization {
 }
 
 type PopulatedProjectUser {
+  createdAt: DateTime!
   hours: Int
   project: Project!
+  updatedAt: DateTime!
   user: User!
 }
 
 type Project {
   acceptsVolunteers: Boolean!
   coverPhoto: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   description: String!
   endDate: DateTime
   field: String!
-  id: Int!
+  id: ID!
   location: String
   mpAccessToken: String
   mpEnabled: Boolean!
@@ -179,12 +184,17 @@ type Project {
   organizationId: Int!
   photoGallery: [String!]
   startDate: DateTime
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
   video: String
 }
 
 type ProjectUser {
+  createdAt: DateTime!
   hours: Int!
   projectId: Int!
+  updatedAt: DateTime!
   user: User
   userId: Int!
 }

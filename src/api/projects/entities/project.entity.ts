@@ -1,12 +1,10 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { Organization } from 'src/api/organizations/entities/organization.entity';
 import { User } from 'src/api/users/entities/user.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @ObjectType()
-export class Project {
-  @Field(() => Int)
-  id: number;
-
+export class Project extends BaseEntity {
   @Field()
   name: string;
 
@@ -66,45 +64,9 @@ export class Project {
 }
 
 @ObjectType()
-export class ProjectUser {
-  @Field(() => Int)
-  projectId: number;
-
-  @Field(() => Int)
-  userId: number;
-
-  @Field(() => Int)
-  hours: number;
-
-  @Field(() => User, { nullable: true })
-  user: User;
-}
-
-@ObjectType()
-export class PopulatedProjectUser {
-  @Field(() => Project)
-  project: Project;
-
-  @Field(() => User)
-  user: User;
-
-  @Field(() => Int, { nullable: true })
-  hours: number;
-}
-
-@ObjectType()
 export class ProjectsPagination {
   @Field(() => [Project])
   projects: [Project];
-
-  @Field(() => Int)
-  total: [User];
-}
-
-@ObjectType()
-export class ProjectUserPagination {
-  @Field(() => [ProjectUser], { nullable: true })
-  volunteers: [ProjectUser];
 
   @Field(() => Int)
   total: [User];

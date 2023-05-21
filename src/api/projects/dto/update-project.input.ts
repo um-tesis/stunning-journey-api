@@ -22,9 +22,6 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field(() => GraphQLISODateTime, { nullable: true })
   endDate: Date;
 
-  @Field(() => Int, { nullable: true })
-  organizationId: number;
-
   @Field(() => MercadopagoConfigInput, { nullable: true })
   mercadopagoConfig: MercadopagoConfigInput;
 
