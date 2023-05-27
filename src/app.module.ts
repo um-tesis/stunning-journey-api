@@ -13,6 +13,7 @@ import { EventsModule } from './api/events/events.module';
 import { AuthModule } from './api/auth/auth.module';
 import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
 import { ContactModule } from './api/contact/contact.module';
+import { HealthModule } from './api/health/health.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ContactModule } from './api/contact/contact.module';
     ProjectsModule,
     EventsModule,
     ContactModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

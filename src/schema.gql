@@ -120,6 +120,7 @@ type Mutation {
   removeOrganization(organizationId: Int!): Organization!
   removeProject(id: Int!): Project!
   removeUser(id: Int!): User!
+  subscribeToNewsletter(email: String!): Boolean!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!

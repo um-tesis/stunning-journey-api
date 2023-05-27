@@ -23,6 +23,17 @@ const config = {
 
   NODEMAILER_PASSWORD: process.env.NODEMAILER_PASSWORD,
   LIBERA_EMAIL_ACCOUNT: process.env.LIBERA_EMAIL_ACCOUNT,
+
+  MOOSEND_API_KEY: process.env.MOOSEND_API_KEY,
+  MOOSEND_EMAIL_LIST_ID: process.env.MOOSEND_EMAIL_LIST_ID,
+
+  BADGR_USERNAME: process.env.BADGR_USERNAME,
+  BADGR_PASSWORD: process.env.BADGR_PASSWORD,
+  BADGR_ISSUER_ID: process.env.BADGR_ISSUER_ID,
+  BADGR_BASIC_BADGE_ID: process.env.BADGR_BASIC_BADGE_ID,
+  BADGR_BRONZE_BADGE_ID: process.env.BADGR_BRONZE_BADGE_ID,
+  BADGR_SILVER_BADGE_ID: process.env.BADGR_SILVER_BADGE_ID,
+  BADGR_GOLD_BADGE_ID: process.env.BADGR_GOLD_BADGE_ID,
 };
 
 if (require.main === module && process.env.NODE_ENV === 'development') {

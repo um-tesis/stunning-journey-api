@@ -1,10 +1,16 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
+import axios from 'axios';
+import querystring from 'querystring';
+import config from '../../api/config';
+import { getCorrespondingBadge } from 'src/helpers/badgr.helper';
 
+const { BADGR_USERNAME, BADGR_PASSWORD, BADGR_ISSUER_ID } = config;
 @Injectable()
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
@@ -142,7 +148,18 @@ export class ProjectsService {
     });
     if (!projectUserRecord) throw new NotFoundError('User is not assigned to this project');
 
-    return this.prisma.projectUser.update({
+    const previousTotalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newProjectUserRecord = await this.prisma.projectUser.update({
       where: {
         projectId_userId: {
           projectId,
@@ -154,6 +171,80 @@ export class ProjectsService {
           increment: hours,
         },
       },
+      include: {
+        user: true,
+      },
     });
+
+    const totalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newBadge = getCorrespondingBadge(totalHours, previousTotalHours);
+
+    if (newBadge) await this.awardNewBadge(newProjectUserRecord.user.email, newBadge);
+
+    return this.prisma.projectUser.findUnique({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
+        },
+      },
+    });
+  }
+
+  public async awardNewBadge(email: string, newBadge: string) {
+    const accessToken = await this.getBadgrAuthToken();
+    await axios.post(
+      `https://api.badgr.io/v2/badgeclasses/${newBadge}/assertions`,
+      {
+        issuer: BADGR_ISSUER_ID,
+        recipient: {
+          identity: email,
+          type: 'email',
+          hashed: false,
+          salt: null,
+          plainTextIdentity: email,
+        },
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+  }
+
+  public async getUserBadges(email: string) {
+    const accessToken = await this.getBadgrAuthToken();
+    const res: any = await axios.get(`https://api.badgr.io/v2/issuers/${BADGR_ISSUER_ID}/assertions`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const awards = res.data.result;
+    const userAwards = awards && awards.length > 0 ? awards.filter((award) => award.recipient.identity === email) : [];
+
+    return userAwards;
+  }
+
+  private async getBadgrAuthToken() {
+    const endpoint = 'https://api.badgr.io/o/token';
+
+    const data = querystring.stringify({
+      username: BADGR_USERNAME,
+      password: BADGR_PASSWORD,
+    });
+
+    const response = await axios.post(endpoint, data, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+
+    return response.data.access_token;
   }
 }
