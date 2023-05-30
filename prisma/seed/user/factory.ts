@@ -1,7 +1,7 @@
 import { Factory } from 'fishery';
 import { faker } from '@faker-js/faker';
 
-import { hash } from 'src/helpers/crypto.helper';
+import { hash } from '../../../src/helpers/crypto.helper';
 import { CreateUserInput } from '../../../src/api/auth/dto/create-user.input';
 import { User, Role } from '@prisma/client';
 
