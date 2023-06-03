@@ -28,6 +28,11 @@ import { SubscriptionsModule } from './api/subscriptions/subscriptions.module';
       sortSchema: true,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      introspection: true,
+      cors: {
+        origin: '*',
+        credentials: true,
+      },
       context: ({ req }) => ({ req }),
       cache: 'bounded',
     }),
