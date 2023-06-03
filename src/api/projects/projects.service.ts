@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
+import { getCorrespondingBadge } from 'src/helpers/badgr.helper';
 import slugify from 'slugify';
 import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
 import { decrypt } from '../../helpers/crypto.helper';
 import { Role, User } from '@prisma/client';
+import { BadgrService } from './badgr.service';
 
 type HiddenFields = {
   mpEnabled?: boolean;
@@ -16,10 +19,9 @@ type HiddenFields = {
 
 type CreateProjectInputWithHiddenFields = CreateProjectInput & HiddenFields;
 type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFields;
-
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {
+  constructor(private prisma: PrismaService, private badgrService: BadgrService) {
     prisma.$use(async (params, next) => {
       if (params.model === 'Project' && ['create', 'update'].includes(params.action)) {
         const data = params.args.data as CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields;
@@ -169,7 +171,18 @@ export class ProjectsService {
     });
     if (!projectUserRecord) throw new NotFoundError('User is not assigned to this project');
 
-    return this.prisma.projectUser.update({
+    const previousTotalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newProjectUserRecord = await this.prisma.projectUser.update({
       where: {
         projectId_userId: {
           projectId,
@@ -179,6 +192,33 @@ export class ProjectsService {
       data: {
         hours: {
           increment: hours,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const totalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newBadge = getCorrespondingBadge(totalHours, previousTotalHours);
+
+    if (newBadge) await this.badgrService.awardNewBadge(newProjectUserRecord.user.email, newBadge);
+
+    return this.prisma.projectUser.findUnique({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
         },
       },
     });

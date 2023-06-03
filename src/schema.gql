@@ -3,10 +3,14 @@
 # ------------------------------------------------------
 
 type Auth {
-  """JWT access token"""
+  """
+  JWT access token
+  """
   accessToken: JWT!
 
-  """JWT refresh token"""
+  """
+  JWT refresh token
+  """
   refreshToken: JWT!
   user: User!
 }
@@ -24,7 +28,9 @@ type BaseSubscription {
   amount: Int!
   billingDayOfMonth: Int!
 
-  """Identifies the date and time when the object was created."""
+  """
+  Identifies the date and time when the object was created.
+  """
   createdAt: DateTime!
   donorId: Int!
   frequency: Int!
@@ -34,7 +40,9 @@ type BaseSubscription {
   projectId: Int!
   status: String!
 
-  """Identifies the date and time when the object was last updated."""
+  """
+  Identifies the date and time when the object was last updated.
+  """
   updatedAt: DateTime!
 }
 
@@ -106,7 +114,9 @@ input CreateProjectInput {
   """
   mpInstantCheckout: Boolean
 
-  """This is a public key to configure in the Website, it's harmless."""
+  """
+  This is a public key to configure in the Website, it's harmless.
+  """
   mpPublicKey: String
   name: String!
   organizationId: Int!
@@ -153,7 +163,9 @@ type Donation {
 type Donor {
   cardStart: String
 
-  """Identifies the date and time when the object was created."""
+  """
+  Identifies the date and time when the object was created.
+  """
   createdAt: DateTime!
   email: String
   id: ID!
@@ -161,7 +173,9 @@ type Donor {
   identificationType: String
   paymentMethod: String
 
-  """Identifies the date and time when the object was last updated."""
+  """
+  Identifies the date and time when the object was last updated.
+  """
   updatedAt: DateTime!
 }
 
@@ -206,7 +220,10 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
-  createSubscription(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
+  createSubscription(
+    createDonorInput: CreateDonorInput!
+    createSubscriptionInput: CreateSubscriptionInput!
+  ): BaseSubscription!
   createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
@@ -219,6 +236,7 @@ type Mutation {
   removeProject(id: Int!): Project!
   removeSubscription(id: Int!): Subscription!
   removeUser(id: Int!): User!
+  subscribeToNewsletter(email: String!): Boolean!
   updateDonor(updateDonorInput: UpdateDonorInput!): Donor!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
@@ -251,7 +269,9 @@ type Project {
   acceptsVolunteers: Boolean!
   coverPhoto: String
 
-  """Identifies the date and time when the object was created."""
+  """
+  Identifies the date and time when the object was created.
+  """
   createdAt: DateTime!
   description: String!
   endDate: DateTime
@@ -268,7 +288,9 @@ type Project {
   photoGallery: [String!]
   startDate: DateTime
 
-  """Identifies the date and time when the object was last updated."""
+  """
+  Identifies the date and time when the object was last updated.
+  """
   updatedAt: DateTime!
   video: String
 }
@@ -302,7 +324,12 @@ type Query {
   eventsByProject(projectId: Int!): [Event!]!
   me: User!
   organization(organizationId: Int!): Organization!
-  organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
+  organizationProjects(
+    filter: String = ""
+    itemsPerPage: Int! = 5
+    organizationId: Int!
+    page: Int! = 1
+  ): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(id: Int!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
@@ -312,7 +339,12 @@ type Query {
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!
-  volunteersByProjectId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): ProjectUserPagination!
+  volunteersByProjectId(
+    filter: String = ""
+    itemsPerPage: Int! = 5
+    page: Int! = 1
+    projectId: Int!
+  ): ProjectUserPagination!
 }
 
 enum Role {
@@ -325,7 +357,9 @@ type Subscription {
   amount: Int!
   billingDayOfMonth: Int!
 
-  """Identifies the date and time when the object was created."""
+  """
+  Identifies the date and time when the object was created.
+  """
   createdAt: DateTime!
   donor: Donor!
   donorId: Int!
@@ -337,15 +371,21 @@ type Subscription {
   projectId: Int!
   status: String!
 
-  """Identifies the date and time when the object was last updated."""
+  """
+  Identifies the date and time when the object was last updated.
+  """
   updatedAt: DateTime!
 }
 
 type Token {
-  """JWT access token"""
+  """
+  JWT access token
+  """
   accessToken: JWT!
 
-  """JWT refresh token"""
+  """
+  JWT refresh token
+  """
   refreshToken: JWT!
 }
 
@@ -402,7 +442,9 @@ input UpdateProjectInput {
   """
   mpInstantCheckout: Boolean!
 
-  """This is a public key to configure in the Website, it's harmless."""
+  """
+  This is a public key to configure in the Website, it's harmless.
+  """
   mpPublicKey: String!
   name: String
   organizationId: Int
@@ -433,7 +475,9 @@ input UpdateUserInput {
 }
 
 type User {
-  """Identifies the date and time when the object was created."""
+  """
+  Identifies the date and time when the object was created.
+  """
   createdAt: DateTime!
   email: String!
   id: ID!
@@ -442,6 +486,8 @@ type User {
   phone: String
   role: Role!
 
-  """Identifies the date and time when the object was last updated."""
+  """
+  Identifies the date and time when the object was last updated.
+  """
   updatedAt: DateTime!
 }
