@@ -9,7 +9,7 @@ import { UserEntity } from '../common/decorators';
 import RoleGuard from '../common/guards/role.guard';
 import { GqlAuthGuard } from '../common/guards/auth.guard';
 import { ChangePasswordInput } from './dto/change-password.input';
-import { ProjectUserPagination } from '../projects/entities/project.entity';
+import { ProjectUserPagination } from '../projects/entities/project-user.entity';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => User)
