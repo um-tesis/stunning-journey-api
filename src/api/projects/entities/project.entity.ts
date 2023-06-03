@@ -20,6 +20,12 @@ export class Project extends BaseEntity {
   @Field(() => Int)
   organizationId: number;
 
+  @Field(() => Int, { nullable: true })
+  moneyEarned?: number;
+
+  @Field(() => Int, { nullable: true })
+  activeSubscriptionsMoney?: number;
+
   @Field(() => Boolean)
   mpEnabled: boolean;
 

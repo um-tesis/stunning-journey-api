@@ -65,6 +65,8 @@ export class ProjectsService {
       delete project.mpAccessToken;
       delete project.mpPublicKey;
       delete project.mpInstantCheckout;
+      delete project.moneyEarned;
+      delete project.activeSubscriptionsMoney;
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 

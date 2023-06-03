@@ -10,6 +10,7 @@ type CreateDonationInputWithDonorId = CreateDonationInput & {
 @Injectable()
 export class DonationsService {
   constructor(private prisma: PrismaService) {}
+
   findAllByProjectId(projectId: number) {
     return this.prisma.donation.findMany({ where: { projectId } });
   }
@@ -22,13 +23,25 @@ export class DonationsService {
     return this.prisma.project.findUnique({ where: { id: projectId } });
   }
 
-  create(createDonationInput: CreateDonationInput, donorId: number) {
+  async create(createDonationInput: CreateDonationInput, donorId: number) {
     const createDonationInputWithDonorId: CreateDonationInputWithDonorId = {
       ...createDonationInput,
       donorId,
     };
 
-    return this.prisma.donation.create({ data: createDonationInputWithDonorId });
+    const donation = await this.prisma.donation.create({ data: createDonationInputWithDonorId });
+
+    const result = await this.prisma.donation.aggregate({
+      where: { projectId: createDonationInput.projectId },
+      _sum: { amount: true },
+    });
+
+    await this.prisma.project.update({
+      where: { id: createDonationInput.projectId },
+      data: { moneyEarned: result._sum.amount },
+    });
+
+    return donation;
   }
 
   update(updateDonationInput: UpdateDonationInput) {
