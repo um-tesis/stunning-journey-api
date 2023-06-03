@@ -34,6 +34,7 @@ const config = {
   BADGR_BRONZE_BADGE_ID: process.env.BADGR_BRONZE_BADGE_ID,
   BADGR_SILVER_BADGE_ID: process.env.BADGR_SILVER_BADGE_ID,
   BADGR_GOLD_BADGE_ID: process.env.BADGR_GOLD_BADGE_ID,
+  BADGR_API_URL: process.env.BADGR_API_URL,
 };
 
 if (require.main === module && process.env.NODE_ENV === 'development') {

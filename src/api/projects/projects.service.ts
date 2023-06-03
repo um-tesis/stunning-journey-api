@@ -10,7 +10,7 @@ import querystring from 'querystring';
 import config from '../../api/config';
 import { getCorrespondingBadge } from 'src/helpers/badgr.helper';
 
-const { BADGR_USERNAME, BADGR_PASSWORD, BADGR_ISSUER_ID } = config;
+const { BADGR_USERNAME, BADGR_PASSWORD, BADGR_ISSUER_ID, BADGR_API_URL } = config;
 @Injectable()
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
@@ -204,7 +204,7 @@ export class ProjectsService {
   public async awardNewBadge(email: string, newBadge: string) {
     const accessToken = await this.getBadgrAuthToken();
     await axios.post(
-      `https://api.badgr.io/v2/badgeclasses/${newBadge}/assertions`,
+      `${BADGR_API_URL}/badgeclasses/${newBadge}/assertions`,
       {
         issuer: BADGR_ISSUER_ID,
         recipient: {
@@ -223,7 +223,7 @@ export class ProjectsService {
 
   public async getUserBadges(email: string) {
     const accessToken = await this.getBadgrAuthToken();
-    const res: any = await axios.get(`https://api.badgr.io/v2/issuers/${BADGR_ISSUER_ID}/assertions`, {
+    const res: any = await axios.get(`${BADGR_API_URL}/issuers/${BADGR_ISSUER_ID}/assertions`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
