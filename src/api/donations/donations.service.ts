@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDonationInput } from './dto/create-donation.input';
 import { PrismaService } from 'nestjs-prisma';
+import { UpdateDonationInput } from './dto/update-donation.input';
 
 type CreateDonationInputWithDonorId = CreateDonationInput & {
   donorId: number;
@@ -28,5 +29,12 @@ export class DonationsService {
     };
 
     return this.prisma.donation.create({ data: createDonationInputWithDonorId });
+  }
+
+  update(updateDonationInput: UpdateDonationInput) {
+    return this.prisma.donation.update({
+      where: { id: updateDonationInput.id },
+      data: { status: updateDonationInput.status },
+    });
   }
 }
