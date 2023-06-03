@@ -5,14 +5,12 @@ import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
-import axios from 'axios';
-import querystring from 'querystring';
-import config from '../../api/config';
 import { getCorrespondingBadge } from 'src/helpers/badgr.helper';
 import slugify from 'slugify';
 import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
 import { decrypt } from '../../helpers/crypto.helper';
 import { Role, User } from '@prisma/client';
+import { BadgrService } from './badgr.service';
 
 type HiddenFields = {
   mpEnabled?: boolean;
@@ -21,11 +19,9 @@ type HiddenFields = {
 
 type CreateProjectInputWithHiddenFields = CreateProjectInput & HiddenFields;
 type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFields;
-
-const { BADGR_USERNAME, BADGR_PASSWORD, BADGR_ISSUER_ID, BADGR_API_URL } = config;
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {
+  constructor(private prisma: PrismaService, private badgrService: BadgrService) {
     prisma.$use(async (params, next) => {
       if (params.model === 'Project' && ['create', 'update'].includes(params.action)) {
         const data = params.args.data as CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields;
@@ -216,7 +212,7 @@ export class ProjectsService {
 
     const newBadge = getCorrespondingBadge(totalHours, previousTotalHours);
 
-    if (newBadge) await this.awardNewBadge(newProjectUserRecord.user.email, newBadge);
+    if (newBadge) await this.badgrService.awardNewBadge(newProjectUserRecord.user.email, newBadge);
 
     return this.prisma.projectUser.findUnique({
       where: {
@@ -226,53 +222,6 @@ export class ProjectsService {
         },
       },
     });
-  }
-
-  public async awardNewBadge(email: string, newBadge: string) {
-    const accessToken = await this.getBadgrAuthToken();
-    await axios.post(
-      `${BADGR_API_URL}/badgeclasses/${newBadge}/assertions`,
-      {
-        issuer: BADGR_ISSUER_ID,
-        recipient: {
-          identity: email,
-          type: 'email',
-          hashed: false,
-          salt: null,
-          plainTextIdentity: email,
-        },
-      },
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      },
-    );
-  }
-
-  public async getUserBadges(email: string) {
-    const accessToken = await this.getBadgrAuthToken();
-    const res: any = await axios.get(`${BADGR_API_URL}/issuers/${BADGR_ISSUER_ID}/assertions`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    const awards = res.data.result;
-    const userAwards = awards && awards.length > 0 ? awards.filter((award) => award.recipient.identity === email) : [];
-
-    return userAwards;
-  }
-
-  private async getBadgrAuthToken() {
-    const endpoint = 'https://api.badgr.io/o/token';
-
-    const data = querystring.stringify({
-      username: BADGR_USERNAME,
-      password: BADGR_PASSWORD,
-    });
-
-    const response = await axios.post(endpoint, data, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-
-    return response.data.access_token;
   }
 
   public async getOrganization(id: number) {
