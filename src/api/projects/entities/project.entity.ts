@@ -17,9 +17,6 @@ export class Project extends BaseEntity {
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  endDate: Date;
-
   @Field(() => Int)
   organizationId: number;
 

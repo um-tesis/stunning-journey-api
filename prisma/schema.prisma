@@ -50,8 +50,8 @@ model Project {
   slug              String?
   field             String
   description       String
+  moneyEarned       Int            @default(0)
   startDate         DateTime?
-  endDate           DateTime?
   organizationId    Int?
   mpEnabled         Boolean?       @default(false)
   mpInstantCheckout Boolean?       @default(false)

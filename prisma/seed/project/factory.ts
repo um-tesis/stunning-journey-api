@@ -10,7 +10,6 @@ export const projectFactory = Factory.define<CreateProjectInput, any, Project>((
   organizationId: associations.organizationId || faker.datatype.number(),
   field: faker.company.companySuffix(),
   description: faker.lorem.paragraph(),
-  endDate: faker.date.future(),
   startDate: faker.date.past(),
   coverPhoto: faker.image.imageUrl(),
   mpInstantCheckout: faker.datatype.boolean(),
