@@ -51,18 +51,13 @@ input ContactDto {
   phone: String!
 }
 
-input CreateDonationInput {
-  amount: Int!
-  mpPreferenceId: String!
-  projectId: Int!
-}
-
 input CreateDonorInput {
   cardStart: String
   email: String
   identification: String
   identificationType: String
   paymentMethod: String
+  userId: Int
 }
 
 input CreateEventInput {
@@ -118,6 +113,7 @@ input CreateProjectInput {
 input CreateSubscriptionInput {
   amount: Int!
   billingDayOfMonth: Int!
+  donorId: Int!
   frequency: Int!
   frequencyInterval: FrequencyInterval!
   mpSubscriptionId: String!
@@ -150,6 +146,11 @@ type Donation {
   projectId: Int!
 }
 
+type DonationPagination {
+  donations: [Donation!]!
+  total: Int!
+}
+
 type Donor {
   cardStart: String
 
@@ -163,6 +164,11 @@ type Donor {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+}
+
+type DonorPagination {
+  donors: [Donor!]!
+  total: Int!
 }
 
 input EmailVolunteers {
@@ -201,12 +207,11 @@ input LoginInput {
 type Mutation {
   assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
   changePassword(data: ChangePasswordInput!): User!
-  createDonation(createDonationInput: CreateDonationInput!, createDonorInput: CreateDonorInput!): BaseDonation!
+  createDonation(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createDonor(createDonorInput: CreateDonorInput!): Donor!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
-  createSubscription(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
@@ -225,6 +230,11 @@ type Mutation {
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type OrgAdminPagination {
+  admins: [User!]!
+  total: Int!
 }
 
 type Organization {
@@ -266,6 +276,7 @@ type Project {
   organization: Organization
   organizationId: Int!
   photoGallery: [String!]
+  slug: String
   startDate: DateTime
 
   """Identifies the date and time when the object was last updated."""
@@ -293,9 +304,13 @@ type ProjectsPagination {
 }
 
 type Query {
+  adminsByOrganizationId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): OrgAdminPagination!
   donation(id: Int!): Donation!
-  donations(projectId: Int!): [Donation!]!
+  donationsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): DonationPagination!
+  donationsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonationPagination!
   donor(id: Int!): Donor
+  donorsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): DonorPagination!
+  donorsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonorPagination!
   event(eventId: Int!): Event!
   events: [Event!]!
   eventsByOrganization(organizationId: Int!): [Event!]!
@@ -305,10 +320,13 @@ type Query {
   organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(id: Int!): Project
+  projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
   projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
   subscription(id: Int!): Subscription!
   subscriptions: [Subscription!]!
+  subscriptionsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): SubscriptionPagination!
+  subscriptionsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): SubscriptionPagination!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!
@@ -341,6 +359,11 @@ type Subscription {
   updatedAt: DateTime!
 }
 
+type SubscriptionPagination {
+  subscriptions: [Subscription!]!
+  total: Int!
+}
+
 type Token {
   """JWT access token"""
   accessToken: JWT!
@@ -356,6 +379,7 @@ input UpdateDonorInput {
   identification: String
   identificationType: String
   paymentMethod: String
+  userId: Int
 }
 
 input UpdateEventInput {
@@ -414,6 +438,7 @@ input UpdateProjectInput {
 input UpdateSubscriptionInput {
   amount: Int
   billingDayOfMonth: Int
+  donorId: Int
   frequency: Int
   frequencyInterval: FrequencyInterval
   id: Int!

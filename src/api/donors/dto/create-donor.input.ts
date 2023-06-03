@@ -2,6 +2,9 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateDonorInput {
+  @Field(() => Number, { nullable: true })
+  userId?: number;
+
   @Field(() => String, { nullable: true })
   email?: string;
 

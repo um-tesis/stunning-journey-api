@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { UpdateUserInput } from './dto/update-user.input';
-import { User } from './entities/user.entity';
+import { OrgAdminPagination, User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { Role } from '@prisma/client';
 import { UserEntity } from '../common/decorators';
@@ -42,6 +42,13 @@ export class UsersResolver {
   @Query(() => [User], { name: 'usersByOrganizationId' })
   findAllByOrganizationId(@Args('organizationId', { type: () => Int }) organizationId: number) {
     return this.usersService.findAllByOrganizationId(organizationId);
+  }
+
+  @UseGuards(GqlAuthGuard, RoleGuard(Role.ORGADMIN))
+  @Query(() => OrgAdminPagination, { name: 'adminsByOrganizationId' })
+  async findAllAdminsByOrganizationId(@UserEntity() user: User, @Args() args: PaginationArgs) {
+    const res = await this.usersService.findAllOrganizationAdmins(user.organizationId, args);
+    return { admins: res.admins, total: res.total };
   }
 
   @Query(() => ProjectUserPagination, { name: 'volunteersByProjectId' })

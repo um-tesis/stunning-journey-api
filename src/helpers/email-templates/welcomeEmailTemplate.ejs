@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bienvenido a Libera</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+      }
+      .welcome-message {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .information {
+        margin-bottom: 20px;
+      }
+      .cta-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="welcome-message">¡Bienvenido a Libera, <%= name %>!</h2>
+      <p class="information">
+        Tu contraseña por defecto es "password". Te recomendamos que cambies esta contraseña en la sección de Account en
+        tu cuenta de Libera tan pronto como sea posible.
+      </p>
+      <a href="https://www.libera.org/account" class="cta-button">Ir a mi cuenta</a>
+    </div>
+  </body>
+</html>

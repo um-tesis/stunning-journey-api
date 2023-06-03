@@ -26,3 +26,12 @@ export class User extends BaseEntity {
 registerEnumType(Role, {
   name: 'Role',
 });
+
+@ObjectType()
+export class OrgAdminPagination {
+  @Field(() => [User])
+  admins: [User];
+
+  @Field(() => Int)
+  total: [User];
+}

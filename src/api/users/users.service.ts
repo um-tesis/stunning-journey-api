@@ -63,6 +63,36 @@ export class UsersService {
       },
     });
   }
+
+  public async findAllOrganizationAdmins(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const admins = await this.prisma.user.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        organizationId,
+        role: 'ORGADMIN',
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    const total = await this.prisma.user.count({
+      where: {
+        organizationId,
+        role: 'ORGADMIN',
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    return { admins, total };
+  }
+
   public async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
     const volunteers = await this.prisma.projectUser.findMany({
       skip: (args.page - 1) * args.itemsPerPage,

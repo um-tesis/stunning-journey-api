@@ -10,11 +10,15 @@ import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from './password.service';
 import { Token } from './entities/token.entity';
 import { CreateUserInput } from './dto/create-user.input';
+import * as fs from 'fs';
+import * as ejs from 'ejs';
+import path from 'path';
 
 import config from '../config';
 import { PrismaService } from 'nestjs-prisma';
+import { transporter } from 'src/helpers/nodemailer.helper';
 
-const { JWT_PRIVATE_KEY, JWT_EXPIRE_TIME } = config;
+const { JWT_PRIVATE_KEY, JWT_EXPIRE_TIME, LIBERA_EMAIL_ACCOUNT } = config;
 
 @Injectable()
 export class AuthService {
@@ -25,9 +29,27 @@ export class AuthService {
   ) {}
 
   async createUser(payload: CreateUserInput): Promise<User> {
+    const template = fs.readFileSync(
+      path.join(__dirname, '../../../../src/helpers/email-templates/welcomeEmailTemplate.ejs'),
+      'utf-8',
+    );
+
+    const renderedTemplate = ejs.render(template, {
+      name: payload.name,
+    });
+
+    const message = {
+      from: LIBERA_EMAIL_ACCOUNT,
+      to: payload.email,
+      subject: 'Welcome to Libera!',
+      html: renderedTemplate,
+    };
+
     const hashedPassword = this.passwordService.hashPassword(payload.password);
 
     try {
+      await transporter.sendMail(message);
+
       return await this.prisma.user.create({
         data: {
           ...payload,
