@@ -47,7 +47,7 @@ model Organization {
 model Project {
   id                       Int            @id @default(autoincrement())
   name                     String         @unique
-  slug                     String?
+  slug                     String?        @unique
   field                    String
   description              String
   moneyEarned              Int            @default(0)

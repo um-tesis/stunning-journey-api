@@ -59,7 +59,7 @@ export class ProjectsService {
   }
 
   public async findOneBySlug(slug: string, user: User) {
-    const project = await this.prisma.project.findFirst({ where: { slug } });
+    const project = await this.prisma.project.findUnique({ where: { slug } });
     if (!project) throw new NotFoundError('Project not found');
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
       delete project.mpAccessToken;
@@ -72,8 +72,8 @@ export class ProjectsService {
     return project;
   }
 
-  public async findOneInternal(id: number) {
-    const project = await this.prisma.project.findUnique({ where: { id } });
+  public async findOneInternalBySlug(slug: string) {
+    const project = await this.prisma.project.findUnique({ where: { slug } });
     project.mpAccessToken = await decrypt(project.mpAccessToken);
 
     return project;

@@ -13,7 +13,7 @@ export class MercadoPagoService {
     });
   }
 
-  async createPreference(projectId: number, accessToken: string, title: string, price: number) {
+  async createPreference(projectSlug: string, accessToken: string, title: string, price: number) {
     this.configureMercadoPago(accessToken);
 
     return await mercadopago.preferences.create({
@@ -26,12 +26,12 @@ export class MercadoPagoService {
       ],
       back_urls: {
         success: `${getClientUrl()}/thank-you`,
-        failure: `${getClientUrl()}/projects/${projectId}`,
-        pending: `${getClientUrl()}/projects/${projectId}`,
+        failure: `${getClientUrl()}/projects/${projectSlug}`,
+        pending: `${getClientUrl()}/projects/${projectSlug}`,
       },
       auto_return: 'all',
       notification_url: `${getSiteUrl()}/api/donations/webhook`,
-      external_reference: `${projectId}`,
+      external_reference: `${projectSlug}`,
     });
   }
 
