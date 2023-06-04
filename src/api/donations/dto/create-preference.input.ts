@@ -5,6 +5,6 @@ export class CreatePreferenceInput {
   @Field(() => Int)
   amount: number;
 
-  @Field(() => Int)
-  projectId: number;
+  @Field(() => String)
+  projectSlug: string;
 }

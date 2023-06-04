@@ -69,13 +69,13 @@ export class SubscriptionsResolver {
 
   @Mutation(() => Preapproval)
   async createPreapproval(@Args('createPreapprovalInput') createPreapprovalInput: CreatePreapprovalInput) {
-    const { amount, projectId, payerEmail } = createPreapprovalInput;
-    const { mpAccessToken, name } = await this.projectsService.findOneInternal(projectId);
+    const { amount, projectSlug, payerEmail } = createPreapprovalInput;
+    const { mpAccessToken, name } = await this.projectsService.findOneInternalBySlug(projectSlug);
     const subscriptionName = `Suscripción a: ${name}`;
 
     try {
       const response = await this.mpService.createPreapproval(
-        projectId,
+        projectSlug,
         mpAccessToken,
         subscriptionName,
         amount,

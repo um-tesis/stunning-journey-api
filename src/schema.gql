@@ -92,12 +92,12 @@ input CreateOrganizationInput {
 input CreatePreapprovalInput {
   amount: Int!
   payerEmail: String!
-  projectId: Int!
+  projectSlug: String!
 }
 
 input CreatePreferenceInput {
   amount: Int!
-  projectId: Int!
+  projectSlug: String!
 }
 
 input CreateProjectInput {
@@ -242,8 +242,8 @@ type Mutation {
   removeProject(id: Int!): Project!
   removeSubscription(id: Int!): Subscription!
   removeUser(id: Int!): User!
-  updateDonation(id: Int!, status: String!): Donation!
   subscribeToNewsletter(email: String!): Boolean!
+  updateDonation(id: Int!, status: String!): Donation!
   updateDonor(updateDonorInput: UpdateDonorInput!): Donor!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!

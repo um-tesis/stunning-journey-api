@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as mercadopago from 'mercadopago';
-import config from '../../config';
-import { getClientUrl, getSiteUrl } from '../utils';
-
-const { NGROK_URL } = config;
+import { getClientUrlOrNgrok, getSiteUrl } from '../utils';
 
 @Injectable()
 export class MercadoPagoService {
@@ -13,7 +10,7 @@ export class MercadoPagoService {
     });
   }
 
-  async createPreference(projectId: number, accessToken: string, title: string, price: number) {
+  async createPreference(projectSlug: string, accessToken: string, title: string, price: number) {
     this.configureMercadoPago(accessToken);
 
     return await mercadopago.preferences.create({
@@ -25,17 +22,17 @@ export class MercadoPagoService {
         },
       ],
       back_urls: {
-        success: `${getClientUrl()}/thank-you`,
-        failure: `${getClientUrl()}/projects/${projectId}`,
-        pending: `${getClientUrl()}/projects/${projectId}`,
+        success: `${getClientUrlOrNgrok(true)}/thank-you`,
+        failure: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
+        pending: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
       },
       auto_return: 'all',
       notification_url: `${getSiteUrl()}/api/donations/webhook`,
-      external_reference: `${projectId}`,
+      external_reference: projectSlug,
     });
   }
 
-  async createPreapproval(projectId: number, accessToken: string, title: string, price: number, payerEmail: string) {
+  async createPreapproval(projectSlug: string, accessToken: string, title: string, price: number, payerEmail: string) {
     this.configureMercadoPago(accessToken);
 
     return await mercadopago.preapproval.create({
@@ -45,8 +42,8 @@ export class MercadoPagoService {
         transaction_amount: price,
         currency_id: 'UYU',
       },
-      back_url: `${NGROK_URL}/thank-you`,
-      external_reference: `${projectId}`,
+      back_url: `${getClientUrlOrNgrok(true)}/thank-you`,
+      external_reference: projectSlug,
       payer_email: payerEmail,
       reason: `Suscripción mensual a: ${title}`,
       status: 'pending',

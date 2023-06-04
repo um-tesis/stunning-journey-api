@@ -58,12 +58,12 @@ export class DonationsResolver {
 
   @Mutation(() => Preference)
   async createPreference(@Args('createPreferenceInput') createPreferenceInput: CreatePreferenceInput) {
-    const { amount, projectId } = createPreferenceInput;
-    const { mpAccessToken, name } = await this.projectsService.findOneInternal(projectId);
+    const { amount, projectSlug } = createPreferenceInput;
+    const { mpAccessToken, name } = await this.projectsService.findOneInternalBySlug(projectSlug);
     const donationName = `Donación a: ${name}`;
 
     try {
-      const { body } = await this.mpService.createPreference(projectId, mpAccessToken, donationName, amount);
+      const { body } = await this.mpService.createPreference(projectSlug, mpAccessToken, donationName, amount);
       return {
         id: body.id,
         initPoint: body.init_point,
