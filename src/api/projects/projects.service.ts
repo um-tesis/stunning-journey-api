@@ -64,7 +64,7 @@ export class ProjectsService {
 
     if (!project) throw new NotFoundError('Project not found');
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
-      delete project.mpPublicKey;
+      delete project.mpAccessToken;
       delete project.mpInstantCheckout;
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
@@ -76,7 +76,7 @@ export class ProjectsService {
     const project = await this.prisma.project.findFirst({ where: { slug } });
     if (!project) throw new NotFoundError('Project not found');
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
-      delete project.mpPublicKey;
+      delete project.mpAccessToken;
       delete project.mpInstantCheckout;
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
