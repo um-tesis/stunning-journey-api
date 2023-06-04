@@ -42,7 +42,7 @@ export class MercadoPagoService {
         transaction_amount: price,
         currency_id: 'UYU',
       },
-      back_url: `${getSiteUrl()}/thank-you`,
+      back_url: `${getClientUrlOrNgrok(true)}/thank-you`,
       external_reference: projectSlug,
       payer_email: payerEmail,
       reason: `Suscripción mensual a: ${title}`,
