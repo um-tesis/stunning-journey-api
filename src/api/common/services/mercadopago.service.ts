@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as mercadopago from 'mercadopago';
 import config from '../../config';
+import { getClientUrl, getSiteUrl } from '../utils';
 
-const { CLIENT_URL, CLIENT_URL_PROD, NODE_ENV, SITE_URL_PROD, SITE_URL, SERVER_PORT, NGROK_URL } = config;
+const { NGROK_URL } = config;
 
 @Injectable()
 export class MercadoPagoService {
@@ -52,19 +53,3 @@ export class MercadoPagoService {
     });
   }
 }
-
-const getClientUrl = () => {
-  if (NODE_ENV === 'production') {
-    return CLIENT_URL_PROD;
-  }
-
-  return CLIENT_URL;
-};
-
-const getSiteUrl = () => {
-  if (NODE_ENV === 'production') {
-    return SITE_URL_PROD;
-  }
-
-  return SITE_URL.replace('${SERVER_PORT}', SERVER_PORT);
-};
