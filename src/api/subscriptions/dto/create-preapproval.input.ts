@@ -5,8 +5,8 @@ export class CreatePreapprovalInput {
   @Field(() => Int)
   amount: number;
 
-  @Field(() => Int)
-  projectId: number;
+  @Field(() => String)
+  projectSlug: string;
 
   @Field(() => String)
   payerEmail: string;

@@ -32,7 +32,7 @@ export class MercadoPagoService {
     });
   }
 
-  async createPreapproval(projectId: number, accessToken: string, title: string, price: number, payerEmail: string) {
+  async createPreapproval(projectSlug: string, accessToken: string, title: string, price: number, payerEmail: string) {
     this.configureMercadoPago(accessToken);
 
     return await mercadopago.preapproval.create({
@@ -43,7 +43,7 @@ export class MercadoPagoService {
         currency_id: 'UYU',
       },
       back_url: `${getSiteUrlOrNgrok(true)}/thank-you`,
-      external_reference: `${projectId}`,
+      external_reference: `${projectSlug}`,
       payer_email: payerEmail,
       reason: `Suscripción mensual a: ${title}`,
       status: 'pending',
