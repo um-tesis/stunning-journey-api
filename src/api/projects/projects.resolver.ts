@@ -8,7 +8,10 @@ import { PopulatedProjectUser, ProjectUser } from './entities/project-user.entit
 import { Organization } from '../organizations/entities/organization.entity';
 import { UserEntity } from '../common/decorators';
 import { User } from '../users/entities/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { OptionalAuthGuard } from '../common/guards/optionalAuth.guard';
 
+@UseGuards(OptionalAuthGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
   constructor(private readonly projectsService: ProjectsService) {}
