@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int, GraphQLISODateTime } from '@nestjs/graphql';
 import { Donor } from '../../donors/entities/donor.entity';
 import { Project } from '../../projects/entities/project.entity';
+import { User } from 'src/api/users/entities/user.entity';
 
 @ObjectType()
 export class BaseDonation {
@@ -30,4 +31,13 @@ export class Donation extends BaseDonation {
 
   @Field(() => Project)
   project: Project;
+}
+
+@ObjectType()
+export class DonationPagination {
+  @Field(() => [Donation])
+  donations: [Donation];
+
+  @Field(() => Int)
+  total: [User];
 }

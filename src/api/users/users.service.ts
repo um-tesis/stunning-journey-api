@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 import { UpdateUserInput } from './dto/update-user.input';
 import { ChangePasswordInput } from './dto/change-password.input';
@@ -15,20 +15,38 @@ export class UsersService {
   }
 
   public async findOne(id: number) {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   public async update(id: number, updateUserInput: UpdateUserInput) {
-    return this.prisma.user.update({
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
       where: {
         id,
       },
       data: updateUserInput,
     });
+
+    return updatedUser;
   }
 
   public async remove(id: number) {
@@ -63,6 +81,36 @@ export class UsersService {
       },
     });
   }
+
+  public async findAllOrganizationAdmins(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const admins = await this.prisma.user.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        organizationId,
+        role: 'ORGADMIN',
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    const total = await this.prisma.user.count({
+      where: {
+        organizationId,
+        role: 'ORGADMIN',
+        name: {
+          contains: args.filter,
+        },
+      },
+    });
+
+    return { admins, total };
+  }
+
   public async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
     const volunteers = await this.prisma.projectUser.findMany({
       skip: (args.page - 1) * args.itemsPerPage,

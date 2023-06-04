@@ -43,3 +43,12 @@ export class Subscription extends BaseSubscription {
 registerEnumType(FrequencyInterval, {
   name: 'FrequencyInterval',
 });
+
+@ObjectType()
+export class SubscriptionPagination {
+  @Field(() => [Subscription])
+  subscriptions: [Subscription];
+
+  @Field(() => Int)
+  total: number;
+}

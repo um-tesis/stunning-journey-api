@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateSubscriptionInput } from './dto/create-subscription.input';
 import { UpdateSubscriptionInput } from './dto/update-subscription.input';
 import { PrismaService } from 'nestjs-prisma';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 type CreateSubscriptionInputWithDonorId = CreateSubscriptionInput & {
   donorId: number;
@@ -13,6 +14,76 @@ export class SubscriptionsService {
 
   findAll() {
     return this.prisma.subscription.findMany();
+  }
+
+  async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+    const projectSubscriptions = await this.prisma.subscription.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        projectId,
+      },
+      include: {
+        donor: {
+          select: {
+            email: true,
+          },
+        },
+        project: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    const total = await this.prisma.subscription.count({
+      where: {
+        projectId,
+      },
+    });
+
+    return { subscriptions: projectSubscriptions, total };
+  }
+
+  async findAllByOrganizationId(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const organizationProjects = await this.prisma.project.findMany({ where: { organizationId } });
+    const projectIds = organizationProjects.map((project) => project.id);
+
+    const organizationSubscriptions = await this.prisma.subscription.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        projectId: {
+          in: projectIds,
+        },
+      },
+      include: {
+        donor: {
+          select: {
+            email: true,
+          },
+        },
+        project: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    const total = await this.prisma.subscription.count({
+      where: {
+        projectId: {
+          in: projectIds,
+        },
+      },
+    });
+
+    return { subscriptions: organizationSubscriptions, total };
   }
 
   findOne(id: number) {

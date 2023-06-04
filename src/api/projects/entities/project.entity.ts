@@ -55,6 +55,9 @@ export class Project extends BaseEntity {
 
   @Field(() => Organization, { nullable: true })
   organization: Organization;
+
+  @Field(() => String)
+  slug: string;
 }
 
 @ObjectType()
