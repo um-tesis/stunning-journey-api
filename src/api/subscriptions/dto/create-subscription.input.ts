@@ -4,9 +4,6 @@ import { FrequencyInterval } from '@prisma/client';
 @InputType()
 export class CreateSubscriptionInput {
   @Field(() => Int)
-  donorId: number;
-
-  @Field(() => Int)
   amount: number;
 
   @Field(() => Int)

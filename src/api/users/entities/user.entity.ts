@@ -33,5 +33,5 @@ export class OrgAdminPagination {
   admins: [User];
 
   @Field(() => Int)
-  total: [User];
+  total: number;
 }

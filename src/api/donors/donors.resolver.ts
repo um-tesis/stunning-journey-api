@@ -23,15 +23,6 @@ export class DonorsResolver {
     return this.donorsService.findOne(id);
   }
 
-  @Query(() => DonorPagination, { name: 'donorsByOrganization' })
-  async findAllByOrganizationId(
-    @Args('organizationId', { type: () => Int }) organizationId: number,
-    @Args() args: PaginationArgs,
-  ) {
-    const res = await this.donorsService.findAllByOrganizationId(organizationId, args);
-    return { donors: res.donors, total: res.total };
-  }
-
   @Query(() => DonorPagination, { name: 'donorsByProject' })
   async findAllByProjectId(@Args('projectId', { type: () => Int }) projectId: number, @Args() args: PaginationArgs) {
     const res = await this.donorsService.findAllByProjectId(projectId, args);
