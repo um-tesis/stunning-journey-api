@@ -51,6 +51,11 @@ export class DonationsResolver {
     return this.donationsService.create(createDonationInput, donor.id);
   }
 
+  @Mutation(() => Donation)
+  updateDonation(@Args('id', { type: () => Int }) id: number, @Args('status') status: string) {
+    return this.donationsService.update({ id, status });
+  }
+
   @Mutation(() => Preference)
   async createPreference(@Args('createPreferenceInput') createPreferenceInput: CreatePreferenceInput) {
     const { amount, projectId } = createPreferenceInput;

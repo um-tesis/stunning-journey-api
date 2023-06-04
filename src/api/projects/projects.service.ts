@@ -64,6 +64,8 @@ export class ProjectsService {
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
       delete project.mpAccessToken;
       delete project.mpInstantCheckout;
+      delete project.moneyEarned;
+      delete project.activeSubscriptionsMoney;
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 

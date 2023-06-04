@@ -18,9 +18,6 @@ export class CreateProjectInput {
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  endDate?: Date;
-
   @Field(() => Int)
   @IsNotEmpty()
   organizationId: number;

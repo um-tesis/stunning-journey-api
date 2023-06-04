@@ -18,9 +18,6 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  endDate: Date;
-
   @Field(() => Boolean, {
     description:
       'If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.',
