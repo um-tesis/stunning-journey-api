@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as mercadopago from 'mercadopago';
-import config from '../../config';
-import { getClientUrl, getSiteUrl } from '../utils';
-
-const { NGROK_URL } = config;
+import { getClientUrl, getSiteUrlOrNgrok } from '../utils';
 
 @Injectable()
 export class MercadoPagoService {
@@ -30,7 +27,7 @@ export class MercadoPagoService {
         pending: `${getClientUrl()}/projects/${projectSlug}`,
       },
       auto_return: 'all',
-      notification_url: `${getSiteUrl()}/api/donations/webhook`,
+      notification_url: `${getSiteUrlOrNgrok()}/api/donations/webhook`,
       external_reference: `${projectSlug}`,
     });
   }
@@ -45,7 +42,7 @@ export class MercadoPagoService {
         transaction_amount: price,
         currency_id: 'UYU',
       },
-      back_url: `${NGROK_URL}/thank-you`,
+      back_url: `${getSiteUrlOrNgrok(true)}/thank-you`,
       external_reference: `${projectId}`,
       payer_email: payerEmail,
       reason: `Suscripción mensual a: ${title}`,
