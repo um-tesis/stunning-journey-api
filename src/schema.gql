@@ -89,6 +89,17 @@ input CreateOrganizationInput {
   web: String
 }
 
+input CreatePreapprovalInput {
+  amount: Int!
+  payerEmail: String!
+  projectId: Int!
+}
+
+input CreatePreferenceInput {
+  amount: Int!
+  projectId: Int!
+}
+
 input CreateProjectInput {
   acceptsVolunteers: Boolean!
   coverPhoto: String
@@ -215,6 +226,8 @@ type Mutation {
   createDonor(createDonorInput: CreateDonorInput!): Donor!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
+  createPreapproval(createPreapprovalInput: CreatePreapprovalInput!): Preapproval!
+  createPreference(createPreferenceInput: CreatePreferenceInput!): Preference!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createSubscription(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createUser(data: CreateUserInput!): User!
@@ -262,6 +275,19 @@ type PopulatedProjectUser {
   project: Project!
   updatedAt: DateTime!
   user: User!
+}
+
+type Preapproval {
+  id: String!
+  initPoint: String!
+  reason: String!
+  status: String!
+}
+
+type Preference {
+  externalReference: String!
+  id: String!
+  initPoint: String!
 }
 
 type Project {
@@ -425,15 +451,15 @@ input UpdateProjectInput {
   """
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
-  mpAccessToken: String!
+  mpAccessToken: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.
   """
-  mpInstantCheckout: Boolean!
+  mpInstantCheckout: Boolean
 
   """This is a public key to configure in the Website, it's harmless."""
-  mpPublicKey: String!
+  mpPublicKey: String
   name: String
   organizationId: Int
   photoGallery: [String!]

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Injectable } from '@nestjs/common';
 import { NotFoundError } from 'src/utils/errors';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
@@ -17,25 +16,12 @@ type HiddenFields = {
   slug?: string;
 };
 
-type CreateProjectInputWithHiddenFields = CreateProjectInput & HiddenFields;
-type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFields;
+export type CreateProjectInputWithHiddenFields = CreateProjectInput & HiddenFields;
+export type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFields;
+
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService, private badgrService: BadgrService) {
-    prisma.$use(async (params, next) => {
-      if (params.model === 'Project' && ['create', 'update'].includes(params.action)) {
-        const data = params.args.data as CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields;
-
-        if (data.name) {
-          data.slug = slugify(data.name, { lower: true });
-        }
-
-        data.mpEnabled = await setMercadoPagoConfig(data);
-      }
-
-      return next(params);
-    });
-  }
+  constructor(private prisma: PrismaService, private badgrService: BadgrService) {}
 
   public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
     const projects = await this.prisma.project.findMany({
@@ -59,7 +45,7 @@ export class ProjectsService {
     return { projects, total };
   }
 
-  public async findOne(id: number, user: User) {
+  public async findOne(id: number, user?: User) {
     const project = await this.prisma.project.findUnique({ where: { id } });
 
     if (!project) throw new NotFoundError('Project not found');
@@ -82,6 +68,13 @@ export class ProjectsService {
       delete project.activeSubscriptionsMoney;
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
+
+    return project;
+  }
+
+  public async findOneInternal(id: number) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
+    project.mpAccessToken = await decrypt(project.mpAccessToken);
 
     return project;
   }
@@ -132,22 +125,17 @@ export class ProjectsService {
   }
 
   public async create(createProjectInput: CreateProjectInputWithHiddenFields) {
+    await beforeCreateOrUpdate(createProjectInput);
     return this.prisma.project.create({ data: createProjectInput });
   }
 
   public async update(id: number, updateProjectInput: UpdateProjectInputWithHiddenFields) {
-    const project = await this.prisma.project.findUnique({
-      where: {
-        id,
-      },
-    });
-
+    const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new NotFoundError('Project does not exist in the system');
 
+    await beforeCreateOrUpdate(updateProjectInput);
     return this.prisma.project.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: updateProjectInput,
     });
   }
@@ -241,3 +229,8 @@ export class ProjectsService {
     return this.prisma.organization.findUnique({ where: { id } });
   }
 }
+
+const beforeCreateOrUpdate = async (data: CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields) => {
+  if (data.name) data.slug = slugify(data.name, { lower: true });
+  await setMercadoPagoConfig(data);
+};
