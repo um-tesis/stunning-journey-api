@@ -12,5 +12,8 @@ export class Preapproval {
   reason: string;
 
   @Field(() => String)
+  externalReference: string;
+
+  @Field(() => String)
   initPoint: string;
 }

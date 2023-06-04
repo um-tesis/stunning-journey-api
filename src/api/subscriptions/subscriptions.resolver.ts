@@ -88,6 +88,7 @@ export class SubscriptionsResolver {
         id: body.id,
         status: body.status,
         reason: body.reason,
+        externalReference: body.external_reference,
         initPoint: body.init_point,
       };
     } catch (e: any) {

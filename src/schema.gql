@@ -269,6 +269,35 @@ type Organization {
   web: String
 }
 
+type Payment {
+  amount: Int!
+  amountReceived: Float!
+  card: PaymentCard!
+  externalReference: String!
+  id: String!
+  payer: PaymentPayer!
+  paymentMethodId: String!
+  paymentTypeId: String!
+  status: String!
+}
+
+type PaymentCard {
+  cardHolderName: String
+  expirationMonth: Int
+  expirationYear: Int
+  firstSixDigits: String
+  lastFourDigits: String
+}
+
+type PaymentPayer {
+  email: String!
+  firstName: String
+  identificationNumber: String!
+  identificationType: String!
+  lastName: String
+  phone: String
+}
+
 type PopulatedProjectUser {
   createdAt: DateTime!
   hours: Int
@@ -278,6 +307,7 @@ type PopulatedProjectUser {
 }
 
 type Preapproval {
+  externalReference: String!
   id: String!
   initPoint: String!
   reason: String!
@@ -352,6 +382,7 @@ type Query {
   organization(organizationId: Int!): Organization!
   organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
+  paymentInfo(paymentId: Int!, projectSlug: String!): Payment!
   project(id: Int!): Project
   projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!

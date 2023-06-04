@@ -11,6 +11,7 @@ import { ProjectsService } from '../projects/projects.service';
 import { GenericError } from '../../utils/errors';
 import { Preference } from './entities/preference.entity';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
+import { Payment } from './entities/payment.entity';
 
 @Resolver(() => Donation)
 export class DonationsResolver {
@@ -39,6 +40,38 @@ export class DonationsResolver {
   @Query(() => Donation, { name: 'donation' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.donationsService.findOne(id);
+  }
+
+  @Query(() => Payment, { name: 'paymentInfo' })
+  async getPaymentInfo(@Args('paymentId') paymentId: number, @Args('projectSlug') projectSlug: string) {
+    const { mpAccessToken } = await this.projectsService.findOneInternalBySlug(projectSlug);
+    const { body } = await this.mpService.getPaymentInfo(paymentId, mpAccessToken);
+
+    return {
+      id: body.id,
+      status: body.status,
+      amount: body.transaction_amount,
+      amountReceived: body.transaction_details.net_received_amount,
+      externalReference: body.external_reference,
+      payer: {
+        firstName: body.payer.first_name,
+        lastName: body.payer.last_name,
+        email: body.payer.email,
+        identificationType: body.payer.identification.type,
+        identificationNumber: body.payer.identification.number,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        phone: `(${body.payer.phone.area_code}) ${body.payer.phone.number}`,
+      },
+      card: {
+        cardHolderName: body.card.cardholder.name,
+        firstSixDigits: body.card.first_six_digits,
+        lastFourDigits: body.card.last_four_digits,
+        expirationMonth: body.card.expiration_month,
+        expirationYear: body.card.expiration_year,
+      },
+      paymentMethodId: body.payment_method_id,
+      paymentTypeId: body.payment_type_id,
+    };
   }
 
   @Mutation(() => BaseDonation)
