@@ -6,10 +6,11 @@ import { LoginInput } from './dto/login.input';
 import { CreateUserInput } from './dto/create-user.input';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { User } from 'src/api/users/entities/user.entity';
+import { ProjectsService } from '../projects/projects.service';
 
 @Resolver(() => Auth)
 export class AuthResolver {
-  constructor(private readonly auth: AuthService) {}
+  constructor(private readonly auth: AuthService, private readonly projects: ProjectsService) {}
 
   @Mutation(() => User)
   async createUser(@Args('data') data: CreateUserInput) {

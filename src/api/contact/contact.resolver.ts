@@ -15,4 +15,9 @@ export class ContactResolver {
   async emailVolunteers(@Args('emailVolunteersInput') emailVolunteersInput: EmailVolunteers) {
     return await this.contactService.emailVolunteers(emailVolunteersInput);
   }
+
+  @Mutation(() => Boolean, { name: 'subscribeToNewsletter' })
+  async subscribeToNewsletter(@Args('email') email: string) {
+    return await this.contactService.subscribeToNewsletter(email);
+  }
 }

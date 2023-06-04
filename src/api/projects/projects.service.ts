@@ -4,10 +4,12 @@ import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { CreateProjectInput } from './dto/create-project.input';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { PrismaService } from 'nestjs-prisma';
+import { getCorrespondingBadge } from 'src/helpers/badgr.helper';
 import slugify from 'slugify';
 import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
 import { decrypt } from '../../helpers/crypto.helper';
 import { Role, User } from '@prisma/client';
+import { BadgrService } from './badgr.service';
 
 type HiddenFields = {
   mpEnabled?: boolean;
@@ -19,7 +21,7 @@ export type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFiel
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private badgrService: BadgrService) {}
 
   public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
     const projects = await this.prisma.project.findMany({
@@ -46,6 +48,18 @@ export class ProjectsService {
   public async findOne(id: number, user?: User) {
     const project = await this.prisma.project.findUnique({ where: { id } });
 
+    if (!project) throw new NotFoundError('Project not found');
+    if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
+      delete project.mpAccessToken;
+      delete project.mpInstantCheckout;
+    }
+    if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
+
+    return project;
+  }
+
+  public async findOneBySlug(slug: string, user: User) {
+    const project = await this.prisma.project.findFirst({ where: { slug } });
     if (!project) throw new NotFoundError('Project not found');
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
       delete project.mpAccessToken;
@@ -156,7 +170,18 @@ export class ProjectsService {
     });
     if (!projectUserRecord) throw new NotFoundError('User is not assigned to this project');
 
-    return this.prisma.projectUser.update({
+    const previousTotalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newProjectUserRecord = await this.prisma.projectUser.update({
       where: {
         projectId_userId: {
           projectId,
@@ -166,6 +191,33 @@ export class ProjectsService {
       data: {
         hours: {
           increment: hours,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const totalHours = (
+      await this.prisma.projectUser.aggregate({
+        _sum: {
+          hours: true,
+        },
+        where: {
+          userId,
+        },
+      })
+    )._sum.hours;
+
+    const newBadge = getCorrespondingBadge(totalHours, previousTotalHours);
+
+    if (newBadge) await this.badgrService.awardNewBadge(newProjectUserRecord.user.email, newBadge);
+
+    return this.prisma.projectUser.findUnique({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
         },
       },
     });

@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ContactDto, EmailVolunteers } from './dto/contact.dto';
 import { transporter } from 'src/helpers/nodemailer.helper';
-import * as fs from 'fs';
-import * as ejs from 'ejs';
+import fs from 'fs';
+import ejs from 'ejs';
 import path from 'path';
+import https from 'https';
 import config from 'src/api/config';
 import { PrismaService } from 'nestjs-prisma';
 
-const { LIBERA_EMAIL_ACCOUNT } = config;
+const { LIBERA_EMAIL_ACCOUNT, MOOSEND_API_KEY, MOOSEND_EMAIL_LIST_ID } = config;
 
 @Injectable()
 export class ContactService {
@@ -31,7 +32,7 @@ export class ContactService {
     const message = {
       from: LIBERA_EMAIL_ACCOUNT,
       to: LIBERA_EMAIL_ACCOUNT,
-      subject: 'Libera Test',
+      subject: 'Libera Get in Touch',
       html: renderedTemplate,
     };
 
@@ -83,5 +84,36 @@ export class ContactService {
       }
     }
     return true;
+  }
+
+  async subscribeToNewsletter(email: string) {
+    const options = {
+      hostname: 'api.moosend.com',
+      path: `/v3/subscribers/${MOOSEND_EMAIL_LIST_ID}/subscribe.json?apikey=${MOOSEND_API_KEY}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const data = JSON.stringify({ Email: email });
+
+    return new Promise((resolve, reject) => {
+      const req = https.request(options, (res) => {
+        if (res.statusCode === 200) {
+          resolve(true);
+        } else {
+          reject(new HttpException('Failed to subscribe to the newsletter', HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+      });
+
+      req.on('error', (error) => {
+        console.error(error);
+        reject(new HttpException('Failed to subscribe to the newsletter', HttpStatus.INTERNAL_SERVER_ERROR));
+      });
+
+      req.write(data);
+      req.end();
+    });
   }
 }

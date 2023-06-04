@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateDonorInput } from './dto/create-donor.input';
 import { UpdateDonorInput } from './dto/update-donor.input';
 import { PrismaService } from 'nestjs-prisma';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Injectable()
 export class DonorsService {
@@ -24,6 +25,59 @@ export class DonorsService {
 
   findOne(id: number) {
     return this.prisma.donor.findUnique({ where: { id } });
+  }
+
+  async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+    const projectUsers = await this.prisma.projectUser.findMany({ where: { projectId } });
+    const userIds = projectUsers.map((projectUser) => projectUser.userId);
+
+    const projectDonors = await this.prisma.donor.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+
+    const total = await this.prisma.donor.count({
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+
+    return { donors: projectDonors, total };
+  }
+
+  async findAllByOrganizationId(
+    organizationId: number,
+    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
+  ) {
+    const organizationUsers = await this.prisma.user.findMany({ where: { organizationId } });
+    const userIds = organizationUsers.map((user) => user.id);
+
+    const organizationDonors = await this.prisma.donor.findMany({
+      skip: (args.page - 1) * args.itemsPerPage,
+      take: args.itemsPerPage,
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+
+    const total = await this.prisma.donor.count({
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+
+    return { donors: organizationDonors, total };
   }
 
   update(id: number, updateDonorInput: UpdateDonorInput) {

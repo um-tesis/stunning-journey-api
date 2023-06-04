@@ -1,11 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { SubscriptionsService } from './subscriptions.service';
-import { BaseSubscription, Subscription } from './entities/subscription.entity';
+import { BaseSubscription, Subscription, SubscriptionPagination } from './entities/subscription.entity';
 import { CreateSubscriptionInput } from './dto/create-subscription.input';
 import { UpdateSubscriptionInput } from './dto/update-subscription.input';
 import { CreateDonorInput } from '../donors/dto/create-donor.input';
 import { DonorsService } from '../donors/donors.service';
 import { Donor } from '../donors/entities/donor.entity';
+import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { GenericError } from '../../utils/errors';
 import { ProjectsService } from '../projects/projects.service';
 import { MercadoPagoService } from '../common/services/mercadopago.service';
@@ -34,6 +35,21 @@ export class SubscriptionsResolver {
   @Query(() => [Subscription], { name: 'subscriptions' })
   findAll() {
     return this.subscriptionsService.findAll();
+  }
+
+  @Query(() => SubscriptionPagination, { name: 'subscriptionsByProject' })
+  async findAllByProjectId(@Args('projectId', { type: () => Int }) projectId: number, @Args() args: PaginationArgs) {
+    const res = await this.subscriptionsService.findAllByProjectId(projectId, args);
+    return { subscriptions: res.subscriptions, total: res.total };
+  }
+
+  @Query(() => SubscriptionPagination, { name: 'subscriptionsByOrganization' })
+  async findAllByOrganizationId(
+    @Args('organizationId', { type: () => Int }) organizationId: number,
+    @Args() args: PaginationArgs,
+  ) {
+    const res = await this.subscriptionsService.findAllByOrganizationId(organizationId, args);
+    return { subscriptions: res.subscriptions, total: res.total };
   }
 
   @Query(() => Subscription, { name: 'subscription' })

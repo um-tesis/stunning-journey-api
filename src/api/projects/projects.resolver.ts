@@ -8,7 +8,10 @@ import { PopulatedProjectUser, ProjectUser } from './entities/project-user.entit
 import { Organization } from '../organizations/entities/organization.entity';
 import { UserEntity } from '../common/decorators';
 import { User } from '../users/entities/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { OptionalAuthGuard } from '../common/guards/optionalAuth.guard';
 
+@UseGuards(OptionalAuthGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
   constructor(private readonly projectsService: ProjectsService) {}
@@ -26,6 +29,11 @@ export class ProjectsResolver {
   @Query(() => Project, { name: 'project', nullable: true })
   findOne(@UserEntity() user: User, @Args('id', { type: () => Int }) id: number) {
     return this.projectsService.findOne(id, user);
+  }
+
+  @Query(() => Project, { name: 'projectBySlug', nullable: true })
+  findOneBySlug(@UserEntity() user: User, @Args('slug', { type: () => String }) slug: string) {
+    return this.projectsService.findOneBySlug(slug, user);
   }
 
   @Query(() => ProjectsPagination, { name: 'organizationProjects' })
