@@ -92,12 +92,12 @@ input CreateOrganizationInput {
 input CreatePreapprovalInput {
   amount: Int!
   payerEmail: String!
-  projectId: Int!
+  projectSlug: String!
 }
 
 input CreatePreferenceInput {
   amount: Int!
-  projectId: Int!
+  projectSlug: String!
 }
 
 input CreateProjectInput {

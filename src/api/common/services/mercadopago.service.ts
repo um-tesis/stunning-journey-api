@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as mercadopago from 'mercadopago';
-import { getClientUrl, getSiteUrlOrNgrok } from '../utils';
+import { getClientUrlOrNgrok, getSiteUrl } from '../utils';
 
 @Injectable()
 export class MercadoPagoService {
@@ -22,13 +22,13 @@ export class MercadoPagoService {
         },
       ],
       back_urls: {
-        success: `${getClientUrl()}/thank-you`,
-        failure: `${getClientUrl()}/projects/${projectSlug}`,
-        pending: `${getClientUrl()}/projects/${projectSlug}`,
+        success: `${getClientUrlOrNgrok(true)}/thank-you`,
+        failure: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
+        pending: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
       },
       auto_return: 'all',
-      notification_url: `${getSiteUrlOrNgrok()}/api/donations/webhook`,
-      external_reference: `${projectSlug}`,
+      notification_url: `${getSiteUrl()}/api/donations/webhook`,
+      external_reference: projectSlug,
     });
   }
 
@@ -42,8 +42,8 @@ export class MercadoPagoService {
         transaction_amount: price,
         currency_id: 'UYU',
       },
-      back_url: `${getSiteUrlOrNgrok(true)}/thank-you`,
-      external_reference: `${projectSlug}`,
+      back_url: `${getSiteUrl()}/thank-you`,
+      external_reference: projectSlug,
       payer_email: payerEmail,
       reason: `Suscripción mensual a: ${title}`,
       status: 'pending',
