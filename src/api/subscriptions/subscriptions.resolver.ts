@@ -16,7 +16,7 @@ export class SubscriptionsResolver {
   ) {}
 
   @Mutation(() => BaseSubscription)
-  async createDonation(
+  async createSubscription(
     @Args('createSubscriptionInput') createSubscriptionInput: CreateSubscriptionInput,
     @Args('createDonorInput') createDonorInput: CreateDonorInput,
   ) {

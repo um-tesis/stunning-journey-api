@@ -41,6 +41,11 @@ export class DonationsResolver {
     return this.donationsService.create(createDonationInput, donor.id);
   }
 
+  @Mutation(() => Donation)
+  updateDonation(@Args('id', { type: () => Int }) id: number, @Args('status') status: string) {
+    return this.donationsService.update({ id, status });
+  }
+
   @ResolveField()
   donor(@Parent() { donorId }: Donation) {
     return this.donorsService.findOne(donorId);

@@ -9,5 +9,5 @@ export class CreateDonationInput {
   projectId: number;
 
   @Field(() => String)
-  mpPreferenceId: string;
+  status: string;
 }
