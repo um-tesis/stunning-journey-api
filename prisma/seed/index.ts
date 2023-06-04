@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { organizationSeed } from './organization/seed';
 import { userSeed } from './user/seed';
 import { eventSeed } from './event/seed';
+import { donorSeed } from './donor/seed';
 import { projectSeed } from './project/seed';
 import { projectUsersSeed } from './projectUser/seed';
 
@@ -37,6 +38,7 @@ async function seedDevData() {
     await projectSeed();
     await eventSeed();
     await projectUsersSeed();
+    await donorSeed();
   }
 }
 

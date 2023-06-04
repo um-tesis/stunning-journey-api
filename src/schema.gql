@@ -3,14 +3,10 @@
 # ------------------------------------------------------
 
 type Auth {
-  """
-  JWT access token
-  """
+  """JWT access token"""
   accessToken: JWT!
 
-  """
-  JWT refresh token
-  """
+  """JWT refresh token"""
   refreshToken: JWT!
   user: User!
 }
@@ -28,9 +24,7 @@ type BaseSubscription {
   amount: Int!
   billingDayOfMonth: Int!
 
-  """
-  Identifies the date and time when the object was created.
-  """
+  """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   donorId: Int!
   frequency: Int!
@@ -40,9 +34,7 @@ type BaseSubscription {
   projectId: Int!
   status: String!
 
-  """
-  Identifies the date and time when the object was last updated.
-  """
+  """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
@@ -59,18 +51,13 @@ input ContactDto {
   phone: String!
 }
 
-input CreateDonationInput {
-  amount: Int!
-  mpPreferenceId: String!
-  projectId: Int!
-}
-
 input CreateDonorInput {
   cardStart: String
   email: String
   identification: String
   identificationType: String
   paymentMethod: String
+  userId: Int
 }
 
 input CreateEventInput {
@@ -114,9 +101,7 @@ input CreateProjectInput {
   """
   mpInstantCheckout: Boolean
 
-  """
-  This is a public key to configure in the Website, it's harmless.
-  """
+  """This is a public key to configure in the Website, it's harmless."""
   mpPublicKey: String
   name: String!
   organizationId: Int!
@@ -160,12 +145,15 @@ type Donation {
   projectId: Int!
 }
 
+type DonationPagination {
+  donations: [Donation!]!
+  total: Int!
+}
+
 type Donor {
   cardStart: String
 
-  """
-  Identifies the date and time when the object was created.
-  """
+  """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String
   id: ID!
@@ -173,10 +161,13 @@ type Donor {
   identificationType: String
   paymentMethod: String
 
-  """
-  Identifies the date and time when the object was last updated.
-  """
+  """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+}
+
+type DonorPagination {
+  donors: [Donor!]!
+  total: Int!
 }
 
 input EmailVolunteers {
@@ -215,15 +206,11 @@ input LoginInput {
 type Mutation {
   assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
   changePassword(data: ChangePasswordInput!): User!
-  createDonation(createDonationInput: CreateDonationInput!, createDonorInput: CreateDonorInput!): BaseDonation!
+  createDonation(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createDonor(createDonorInput: CreateDonorInput!): Donor!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
   createProject(createProjectInput: CreateProjectInput!): Project!
-  createSubscription(
-    createDonorInput: CreateDonorInput!
-    createSubscriptionInput: CreateSubscriptionInput!
-  ): BaseSubscription!
   createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
@@ -243,6 +230,11 @@ type Mutation {
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
   updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type OrgAdminPagination {
+  admins: [User!]!
+  total: Int!
 }
 
 type Organization {
@@ -269,9 +261,7 @@ type Project {
   acceptsVolunteers: Boolean!
   coverPhoto: String
 
-  """
-  Identifies the date and time when the object was created.
-  """
+  """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String!
   endDate: DateTime
@@ -286,11 +276,10 @@ type Project {
   organization: Organization
   organizationId: Int!
   photoGallery: [String!]
+  slug: String!
   startDate: DateTime
 
-  """
-  Identifies the date and time when the object was last updated.
-  """
+  """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
   video: String
 }
@@ -315,36 +304,32 @@ type ProjectsPagination {
 }
 
 type Query {
+  adminsByOrganizationId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): OrgAdminPagination!
   donation(id: Int!): Donation!
-  donations(projectId: Int!): [Donation!]!
+  donationsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): DonationPagination!
+  donationsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonationPagination!
   donor(id: Int!): Donor
+  donorsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonorPagination!
   event(eventId: Int!): Event!
   events: [Event!]!
   eventsByOrganization(organizationId: Int!): [Event!]!
   eventsByProject(projectId: Int!): [Event!]!
   me: User!
   organization(organizationId: Int!): Organization!
-  organizationProjects(
-    filter: String = ""
-    itemsPerPage: Int! = 5
-    organizationId: Int!
-    page: Int! = 1
-  ): ProjectsPagination!
+  organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
   project(id: Int!): Project
+  projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
   projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
   subscription(id: Int!): Subscription!
   subscriptions: [Subscription!]!
+  subscriptionsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): SubscriptionPagination!
+  subscriptionsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): SubscriptionPagination!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!
-  volunteersByProjectId(
-    filter: String = ""
-    itemsPerPage: Int! = 5
-    page: Int! = 1
-    projectId: Int!
-  ): ProjectUserPagination!
+  volunteersByProjectId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): ProjectUserPagination!
 }
 
 enum Role {
@@ -357,9 +342,7 @@ type Subscription {
   amount: Int!
   billingDayOfMonth: Int!
 
-  """
-  Identifies the date and time when the object was created.
-  """
+  """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   donor: Donor!
   donorId: Int!
@@ -371,21 +354,20 @@ type Subscription {
   projectId: Int!
   status: String!
 
-  """
-  Identifies the date and time when the object was last updated.
-  """
+  """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
+type SubscriptionPagination {
+  subscriptions: [Subscription!]!
+  total: Int!
+}
+
 type Token {
-  """
-  JWT access token
-  """
+  """JWT access token"""
   accessToken: JWT!
 
-  """
-  JWT refresh token
-  """
+  """JWT refresh token"""
   refreshToken: JWT!
 }
 
@@ -396,6 +378,7 @@ input UpdateDonorInput {
   identification: String
   identificationType: String
   paymentMethod: String
+  userId: Int
 }
 
 input UpdateEventInput {
@@ -442,9 +425,7 @@ input UpdateProjectInput {
   """
   mpInstantCheckout: Boolean!
 
-  """
-  This is a public key to configure in the Website, it's harmless.
-  """
+  """This is a public key to configure in the Website, it's harmless."""
   mpPublicKey: String!
   name: String
   organizationId: Int
@@ -475,9 +456,7 @@ input UpdateUserInput {
 }
 
 type User {
-  """
-  Identifies the date and time when the object was created.
-  """
+  """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String!
   id: ID!
@@ -486,8 +465,6 @@ type User {
   phone: String
   role: Role!
 
-  """
-  Identifies the date and time when the object was last updated.
-  """
+  """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }

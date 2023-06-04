@@ -32,7 +32,7 @@ export class ContactService {
     const message = {
       from: LIBERA_EMAIL_ACCOUNT,
       to: LIBERA_EMAIL_ACCOUNT,
-      subject: 'Libera Test',
+      subject: 'Libera Get in Touch',
       html: renderedTemplate,
     };
 

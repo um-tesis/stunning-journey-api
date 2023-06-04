@@ -31,6 +31,11 @@ export class ProjectsResolver {
     return this.projectsService.findOne(id, user);
   }
 
+  @Query(() => Project, { name: 'projectBySlug', nullable: true })
+  findOneBySlug(@UserEntity() user: User, @Args('slug', { type: () => String }) slug: string) {
+    return this.projectsService.findOneBySlug(slug, user);
+  }
+
   @Query(() => ProjectsPagination, { name: 'organizationProjects' })
   async findOrganizationProjects(
     @Args('organizationId', { type: () => Int }) id: number,

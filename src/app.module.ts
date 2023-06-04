@@ -46,7 +46,6 @@ import { SubscriptionsModule } from './api/subscriptions/subscriptions.module';
         ],
       },
     }),
-
     AuthModule,
     UsersModule,
     OrganizationsModule,
