@@ -17,6 +17,7 @@ import { HealthModule } from './api/health/health.module';
 import { DonorsModule } from './api/donors/donors.module';
 import { DonationsModule } from './api/donations/donations.module';
 import { SubscriptionsModule } from './api/subscriptions/subscriptions.module';
+import { BillingsModule } from './api/billings/billings.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { SubscriptionsModule } from './api/subscriptions/subscriptions.module';
     DonorsModule,
     DonationsModule,
     SubscriptionsModule,
+    BillingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

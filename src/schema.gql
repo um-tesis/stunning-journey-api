@@ -38,6 +38,28 @@ type BaseSubscription {
   updatedAt: DateTime!
 }
 
+type Billing {
+  amount: Int!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  endsAt: DateTime!
+  id: ID!
+  paidAt: DateTime
+  paidBy: Int
+  paidByUser: User
+  projectId: Int!
+  status: BillingStatus!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+enum BillingStatus {
+  PAID
+  PENDING
+}
+
 input ChangePasswordInput {
   newPassword: String!
   oldPassword: String!
@@ -339,6 +361,8 @@ type ProjectsPagination {
 
 type Query {
   adminsByOrganizationId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): OrgAdminPagination!
+  billing(id: Int!): Billing!
+  billingsByProjectId(projectId: Int!): [Billing!]!
   donation(id: Int!): Donation!
   donationsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): DonationPagination!
   donationsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonationPagination!
