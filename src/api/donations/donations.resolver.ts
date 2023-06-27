@@ -5,11 +5,21 @@ import { CreateDonationInput } from './dto/create-donation.input';
 import { CreateDonorInput } from '../donors/dto/create-donor.input';
 import { DonorsService } from '../donors/donors.service';
 import { Donor } from '../donors/entities/donor.entity';
+import { MercadoPagoService } from '../common/services/mercadopago.service';
+import { CreatePreferenceInput } from './dto/create-preference.input';
+import { ProjectsService } from '../projects/projects.service';
+import { GenericError } from '../../utils/errors';
+import { Preference } from './entities/preference.entity';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 
 @Resolver(() => Donation)
 export class DonationsResolver {
-  constructor(private readonly donationsService: DonationsService, private readonly donorsService: DonorsService) {}
+  constructor(
+    private readonly donationsService: DonationsService,
+    private readonly donorsService: DonorsService,
+    private readonly projectsService: ProjectsService,
+    private readonly mpService: MercadoPagoService,
+  ) {}
 
   @Query(() => DonationPagination, { name: 'donationsByProject' })
   async findAllByProjectId(@Args('projectId', { type: () => Int }) projectId: number, @Args() args: PaginationArgs) {
@@ -39,6 +49,29 @@ export class DonationsResolver {
     const donor: Donor = await this.donorsService.create(createDonorInput);
 
     return this.donationsService.create(createDonationInput, donor.id);
+  }
+
+  @Mutation(() => Donation)
+  updateDonation(@Args('id', { type: () => Int }) id: number, @Args('status') status: string) {
+    return this.donationsService.update({ id, status });
+  }
+
+  @Mutation(() => Preference)
+  async createPreference(@Args('createPreferenceInput') createPreferenceInput: CreatePreferenceInput) {
+    const { amount, projectSlug } = createPreferenceInput;
+    const { mpAccessToken, name } = await this.projectsService.findOneInternalBySlug(projectSlug);
+    const donationName = `Donación a: ${name}`;
+
+    try {
+      const { body } = await this.mpService.createPreference(projectSlug, mpAccessToken, donationName, amount);
+      return {
+        id: body.id,
+        initPoint: body.init_point,
+        externalReference: body.external_reference,
+      };
+    } catch (e: any) {
+      throw new GenericError(e?.message as string);
+    }
   }
 
   @ResolveField()

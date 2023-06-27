@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateDonationInput } from './dto/create-donation.input';
 import { PrismaService } from 'nestjs-prisma';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
+import { UpdateDonationInput } from './dto/update-donation.input';
 
 type CreateDonationInputWithDonorId = CreateDonationInput & {
   donorId: number;
@@ -86,12 +87,31 @@ export class DonationsService {
     return this.prisma.project.findUnique({ where: { id: projectId } });
   }
 
-  create(createDonationInput: CreateDonationInput, donorId: number) {
+  async create(createDonationInput: CreateDonationInput, donorId: number) {
     const createDonationInputWithDonorId: CreateDonationInputWithDonorId = {
       ...createDonationInput,
       donorId,
     };
 
-    return this.prisma.donation.create({ data: createDonationInputWithDonorId });
+    const donation = await this.prisma.donation.create({ data: createDonationInputWithDonorId });
+
+    const result = await this.prisma.donation.aggregate({
+      where: { projectId: createDonationInput.projectId },
+      _sum: { amount: true },
+    });
+
+    await this.prisma.project.update({
+      where: { id: createDonationInput.projectId },
+      data: { moneyEarned: result._sum.amount },
+    });
+
+    return donation;
+  }
+
+  update(updateDonationInput: UpdateDonationInput) {
+    return this.prisma.donation.update({
+      where: { id: updateDonationInput.id },
+      data: { status: updateDonationInput.status },
+    });
   }
 }

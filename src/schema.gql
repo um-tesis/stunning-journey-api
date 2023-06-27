@@ -16,8 +16,8 @@ type BaseDonation {
   createdAt: DateTime!
   donorId: Int!
   id: Int!
-  mpPreferenceId: String!
   projectId: Int!
+  status: String!
 }
 
 type BaseSubscription {
@@ -49,6 +49,12 @@ input ContactDto {
   message: String!
   name: String!
   phone: String!
+}
+
+input CreateDonationInput {
+  amount: Int!
+  projectId: Int!
+  status: String!
 }
 
 input CreateDonorInput {
@@ -83,11 +89,21 @@ input CreateOrganizationInput {
   web: String
 }
 
+input CreatePreapprovalInput {
+  amount: Int!
+  payerEmail: String!
+  projectSlug: String!
+}
+
+input CreatePreferenceInput {
+  amount: Int!
+  projectSlug: String!
+}
+
 input CreateProjectInput {
   acceptsVolunteers: Boolean!
   coverPhoto: String
   description: String!
-  endDate: DateTime
   field: String!
   location: String
 
@@ -140,9 +156,9 @@ type Donation {
   donor: Donor!
   donorId: Int!
   id: Int!
-  mpPreferenceId: String!
   project: Project!
   projectId: Int!
+  status: String!
 }
 
 type DonationPagination {
@@ -206,11 +222,14 @@ input LoginInput {
 type Mutation {
   assignUserToProject(projectId: Int!, userId: Int!): ProjectUser!
   changePassword(data: ChangePasswordInput!): User!
-  createDonation(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
+  createDonation(createDonationInput: CreateDonationInput!, createDonorInput: CreateDonorInput!): BaseDonation!
   createDonor(createDonorInput: CreateDonorInput!): Donor!
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrganization(createOrganizationInput: CreateOrganizationInput!): Organization!
+  createPreapproval(createPreapprovalInput: CreatePreapprovalInput!): Preapproval!
+  createPreference(createPreferenceInput: CreatePreferenceInput!): Preference!
   createProject(createProjectInput: CreateProjectInput!): Project!
+  createSubscription(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
@@ -224,6 +243,7 @@ type Mutation {
   removeSubscription(id: Int!): Subscription!
   removeUser(id: Int!): User!
   subscribeToNewsletter(email: String!): Boolean!
+  updateDonation(id: Int!, status: String!): Donation!
   updateDonor(updateDonorInput: UpdateDonorInput!): Donor!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
@@ -257,17 +277,31 @@ type PopulatedProjectUser {
   user: User!
 }
 
+type Preapproval {
+  id: String!
+  initPoint: String!
+  reason: String!
+  status: String!
+}
+
+type Preference {
+  externalReference: String!
+  id: String!
+  initPoint: String!
+}
+
 type Project {
   acceptsVolunteers: Boolean!
+  activeSubscriptionsMoney: Int
   coverPhoto: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String!
-  endDate: DateTime
   field: String!
   id: ID!
   location: String
+  moneyEarned: Int
   mpAccessToken: String
   mpEnabled: Boolean!
   mpInstantCheckout: Boolean
@@ -410,7 +444,6 @@ input UpdateProjectInput {
   acceptsVolunteers: Boolean
   coverPhoto: String
   description: String
-  endDate: DateTime
   field: String
   id: Int!
   location: String
@@ -418,15 +451,15 @@ input UpdateProjectInput {
   """
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
-  mpAccessToken: String!
+  mpAccessToken: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.
   """
-  mpInstantCheckout: Boolean!
+  mpInstantCheckout: Boolean
 
   """This is a public key to configure in the Website, it's harmless."""
-  mpPublicKey: String!
+  mpPublicKey: String
   name: String
   organizationId: Int
   photoGallery: [String!]

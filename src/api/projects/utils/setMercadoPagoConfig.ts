@@ -1,8 +1,7 @@
-import { CreateProjectInput } from '../dto/create-project.input';
-import { UpdateProjectInput } from '../dto/update-project.input';
 import { BadRequestException } from '@nestjs/common';
 import { encrypt } from '../../../helpers/crypto.helper';
 import config from 'src/api/config';
+import { CreateProjectInputWithHiddenFields, UpdateProjectInputWithHiddenFields } from '../projects.service';
 
 const { NODE_ENV } = config;
 
@@ -11,7 +10,9 @@ type MercadopagoConfig = {
   publicKey: string;
   accessToken: string;
 };
-export const setMercadoPagoConfig = async (projectInput: CreateProjectInput | UpdateProjectInput) => {
+export const setMercadoPagoConfig = async (
+  projectInput: CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields,
+) => {
   const mercadoPagoConfig: MercadopagoConfig = {
     ...(projectInput.mpAccessToken && { accessToken: projectInput.mpAccessToken }),
     ...(projectInput.mpPublicKey && { publicKey: projectInput.mpPublicKey }),
@@ -19,7 +20,11 @@ export const setMercadoPagoConfig = async (projectInput: CreateProjectInput | Up
   };
 
   if (Object.keys(mercadoPagoConfig).length) {
-    if (!mercadoPagoConfig.instantCheckout || !mercadoPagoConfig.publicKey || !mercadoPagoConfig.accessToken) {
+    if (
+      !mercadoPagoConfig.instantCheckout === undefined ||
+      !mercadoPagoConfig.publicKey ||
+      !mercadoPagoConfig.accessToken
+    ) {
       throw new BadRequestException('Mercadopago configuration is incomplete.');
     }
 
@@ -29,10 +34,8 @@ export const setMercadoPagoConfig = async (projectInput: CreateProjectInput | Up
 
     projectInput.mpAccessToken = await encrypt(mercadoPagoConfig.accessToken);
 
-    return true;
+    projectInput.mpEnabled = true;
   }
-
-  return false;
 };
 
 const validKey = (key: string) => key.startsWith(NODE_ENV === 'production' ? 'APP_USR-' : 'TEST-');

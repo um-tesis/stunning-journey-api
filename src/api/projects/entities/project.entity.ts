@@ -17,11 +17,14 @@ export class Project extends BaseEntity {
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate: Date;
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  endDate: Date;
-
   @Field(() => Int)
   organizationId: number;
+
+  @Field(() => Int, { nullable: true })
+  moneyEarned?: number;
+
+  @Field(() => Int, { nullable: true })
+  activeSubscriptionsMoney?: number;
 
   @Field(() => Boolean)
   mpEnabled: boolean;

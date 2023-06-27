@@ -17,11 +17,11 @@ export class BaseDonation {
   @Field(() => Int)
   amount: number;
 
-  @Field(() => String)
-  mpPreferenceId: string;
-
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
+
+  @Field(() => String)
+  status: string;
 }
 
 @ObjectType()
