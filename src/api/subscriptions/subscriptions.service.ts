@@ -16,10 +16,12 @@ export class SubscriptionsService {
     return this.prisma.subscription.findMany();
   }
 
-  async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  async findAllByProjectId(projectId: number, args?: PaginationArgs) {
+    const isPaginated = args.page && args.itemsPerPage;
+
     const projectSubscriptions = await this.prisma.subscription.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         projectId,
       },
@@ -46,16 +48,15 @@ export class SubscriptionsService {
     return { subscriptions: projectSubscriptions, total };
   }
 
-  async findAllByOrganizationId(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  async findAllByOrganizationId(organizationId: number, args?: PaginationArgs) {
     const organizationProjects = await this.prisma.project.findMany({ where: { organizationId } });
     const projectIds = organizationProjects.map((project) => project.id);
 
+    const isPaginated = args.page && args.itemsPerPage;
+
     const organizationSubscriptions = await this.prisma.subscription.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         projectId: {
           in: projectIds,

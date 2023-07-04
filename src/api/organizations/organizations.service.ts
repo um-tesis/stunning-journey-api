@@ -22,10 +22,12 @@ export class OrganizationsService {
     });
   }
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5 }, filter?: string) {
+  public async findAll(args?: PaginationArgs, filter?: string) {
+    const isPaginated = args.page && args.itemsPerPage;
+
     return this.prisma.organization.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         name: {
           contains: filter,

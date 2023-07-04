@@ -23,10 +23,12 @@ export type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFiel
 export class ProjectsService {
   constructor(private prisma: PrismaService, private badgrService: BadgrService) {}
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  public async findAll(args?: PaginationArgs) {
+    const isPaginated = args.page && args.itemsPerPage;
+
     const projects = await this.prisma.project.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         name: {
           contains: args.filter,
@@ -69,6 +71,8 @@ export class ProjectsService {
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
+    // calculate necessary metrics
+
     return project;
   }
 
@@ -79,13 +83,12 @@ export class ProjectsService {
     return project;
   }
 
-  public async findOrganizationProjects(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  public async findOrganizationProjects(organizationId: number, args?: PaginationArgs) {
+    const isPaginated = args.page && args.itemsPerPage;
+
     const projects = await this.prisma.project.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         organizationId,
       },

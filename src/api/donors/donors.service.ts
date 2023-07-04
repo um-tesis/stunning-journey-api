@@ -27,13 +27,15 @@ export class DonorsService {
     return this.prisma.donor.findUnique({ where: { id } });
   }
 
-  async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  async findAllByProjectId(projectId: number, args?: PaginationArgs) {
     const projectUsers = await this.prisma.projectUser.findMany({ where: { projectId } });
     const userIds = projectUsers.map((projectUser) => projectUser.userId);
 
+    const isPaginated = args.page && args.itemsPerPage;
+
     const projectDonors = await this.prisma.donor.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         userId: {
           in: userIds,
@@ -52,16 +54,15 @@ export class DonorsService {
     return { donors: projectDonors, total };
   }
 
-  async findAllByOrganizationId(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  async findAllByOrganizationId(organizationId: number, args?: PaginationArgs) {
     const organizationUsers = await this.prisma.user.findMany({ where: { organizationId } });
     const userIds = organizationUsers.map((user) => user.id);
 
+    const isPaginated = args.page && args.itemsPerPage;
+
     const organizationDonors = await this.prisma.donor.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         userId: {
           in: userIds,

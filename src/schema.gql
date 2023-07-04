@@ -338,32 +338,32 @@ type ProjectsPagination {
 }
 
 type Query {
-  adminsByOrganizationId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): OrgAdminPagination!
+  adminsByOrganizationId(filter: String = "", itemsPerPage: Int, page: Int): OrgAdminPagination!
   donation(id: Int!): Donation!
-  donationsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): DonationPagination!
-  donationsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonationPagination!
+  donationsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): DonationPagination!
+  donationsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): DonationPagination!
   donor(id: Int!): Donor
-  donorsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): DonorPagination!
+  donorsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): DonorPagination!
   event(eventId: Int!): Event!
   events: [Event!]!
   eventsByOrganization(organizationId: Int!): [Event!]!
   eventsByProject(projectId: Int!): [Event!]!
   me: User!
   organization(organizationId: Int!): Organization!
-  organizationProjects(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): ProjectsPagination!
-  organizations(filter: String, itemsPerPage: Int! = 5, page: Int! = 1): [Organization!]!
+  organizationProjects(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): ProjectsPagination!
+  organizations(filter: String, itemsPerPage: Int, page: Int): [Organization!]!
   project(id: Int!): Project
   projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
-  projects(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1): ProjectsPagination!
+  projects(filter: String = "", itemsPerPage: Int, page: Int): ProjectsPagination!
   subscription(id: Int!): Subscription!
   subscriptions: [Subscription!]!
-  subscriptionsByOrganization(filter: String = "", itemsPerPage: Int! = 5, organizationId: Int!, page: Int! = 1): SubscriptionPagination!
-  subscriptionsByProject(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): SubscriptionPagination!
+  subscriptionsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): SubscriptionPagination!
+  subscriptionsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): SubscriptionPagination!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!
-  volunteersByProjectId(filter: String = "", itemsPerPage: Int! = 5, page: Int! = 1, projectId: Int!): ProjectUserPagination!
+  volunteersByProjectId(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): ProjectUserPagination!
 }
 
 enum Role {
