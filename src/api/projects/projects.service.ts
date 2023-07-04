@@ -71,7 +71,7 @@ export class ProjectsService {
     }
     if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
-    // calculate necessary metrics
+    // TODO: calculate necessary metrics
 
     return project;
   }
