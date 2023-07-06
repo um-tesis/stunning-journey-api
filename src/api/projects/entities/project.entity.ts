@@ -58,6 +58,21 @@ export class Project extends BaseEntity {
 
   @Field(() => String)
   slug: string;
+
+  @Field(() => Int, { nullable: true })
+  monthlyEarnedMoney?: number;
+
+  @Field(() => Int, { nullable: true })
+  activeSubscriptionsNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  donatorsNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  volunteersNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  hoursVolunteered?: number;
 }
 
 @ObjectType()

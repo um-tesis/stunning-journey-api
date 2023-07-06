@@ -23,7 +23,7 @@ export class OrganizationsService {
   }
 
   public async findAll(args?: PaginationArgs, filter?: string) {
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     return this.prisma.organization.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,

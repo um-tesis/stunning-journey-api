@@ -10,6 +10,9 @@ import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
 import { decrypt } from '../../helpers/crypto.helper';
 import { Role, User } from '@prisma/client';
 import { BadgrService } from './badgr.service';
+import { UsersService } from '../users/users.service';
+import { DonationsService } from '../donations/donations.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 type HiddenFields = {
   mpEnabled?: boolean;
@@ -21,10 +24,16 @@ export type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFiel
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService, private badgrService: BadgrService) {}
+  constructor(
+    private prisma: PrismaService,
+    private badgrService: BadgrService,
+    private usersService: UsersService,
+    private donationsService: DonationsService,
+    private subscriptionsService: SubscriptionsService,
+  ) {}
 
   public async findAll(args?: PaginationArgs) {
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const projects = await this.prisma.project.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
@@ -69,11 +78,35 @@ export class ProjectsService {
       delete project.moneyEarned;
       delete project.activeSubscriptionsMoney;
     }
-    if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
+    // if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
-    // TODO: calculate necessary metrics
+    const donations = await this.donationsService.getDonationsAmountInThisMonth(project.id);
+    const subscriptions = await this.subscriptionsService.getActiveSubscriptionsInThisMonth(project.id);
+    const projectVolunteers = await this.usersService.findAllByProjectId(project.id);
 
-    return project;
+    // moneyEarned this month: to be calculated, to calculate this we need to calculate the donations made this month and the subscriptions (active) made this month
+    const monthlyEarnedMoney = donations.amount + subscriptions.amount;
+
+    // activeSubscriptionsNumber
+    const activeSubscriptionsNumber = subscriptions.total;
+
+    // donatorsNumber
+    const donatorsNumber = donations.total;
+
+    // volunteersNumber
+    const volunteersNumber = projectVolunteers.total;
+
+    // hoursVolunteered
+    const hoursVolunteered = projectVolunteers.volunteers.reduce((acc, volunteer) => acc + volunteer.hours, 0);
+
+    return {
+      ...project,
+      monthlyEarnedMoney,
+      activeSubscriptionsNumber,
+      donatorsNumber,
+      volunteersNumber,
+      hoursVolunteered,
+    };
   }
 
   public async findOneInternalBySlug(slug: string) {
@@ -84,7 +117,7 @@ export class ProjectsService {
   }
 
   public async findOrganizationProjects(organizationId: number, args?: PaginationArgs) {
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const projects = await this.prisma.project.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,

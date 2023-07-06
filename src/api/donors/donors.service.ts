@@ -31,7 +31,7 @@ export class DonorsService {
     const projectUsers = await this.prisma.projectUser.findMany({ where: { projectId } });
     const userIds = projectUsers.map((projectUser) => projectUser.userId);
 
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const projectDonors = await this.prisma.donor.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
@@ -58,7 +58,7 @@ export class DonorsService {
     const organizationUsers = await this.prisma.user.findMany({ where: { organizationId } });
     const userIds = organizationUsers.map((user) => user.id);
 
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const organizationDonors = await this.prisma.donor.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,

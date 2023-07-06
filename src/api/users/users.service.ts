@@ -83,7 +83,7 @@ export class UsersService {
   }
 
   public async findAllOrganizationAdmins(organizationId: number, args?: PaginationArgs) {
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const admins = await this.prisma.user.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
@@ -111,7 +111,7 @@ export class UsersService {
   }
 
   public async findAllByProjectId(projectId: number, args?: PaginationArgs) {
-    const isPaginated = args.page && args.itemsPerPage;
+    const isPaginated = args && args.page && args.itemsPerPage;
 
     const volunteers = await this.prisma.projectUser.findMany({
       skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,

@@ -293,15 +293,19 @@ type Preference {
 type Project {
   acceptsVolunteers: Boolean!
   activeSubscriptionsMoney: Int
+  activeSubscriptionsNumber: Int
   coverPhoto: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String!
+  donatorsNumber: Int
   field: String!
+  hoursVolunteered: Int
   id: ID!
   location: String
   moneyEarned: Int
+  monthlyEarnedMoney: Int
   mpAccessToken: String
   mpEnabled: Boolean!
   mpInstantCheckout: Boolean
@@ -316,6 +320,7 @@ type Project {
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
   video: String
+  volunteersNumber: Int
 }
 
 type ProjectUser {
