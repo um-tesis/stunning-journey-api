@@ -9,6 +9,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import config from '../config';
 import { ProjectsService } from '../projects/projects.service';
 import { BadgrService } from '../projects/badgr.service';
+import { UsersService } from '../users/users.service';
+import { DonationsService } from '../donations/donations.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 const { JWT_PRIVATE_KEY, JWT_EXPIRE_TIME } = config;
 
@@ -26,7 +29,18 @@ const { JWT_PRIVATE_KEY, JWT_EXPIRE_TIME } = config;
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy, GqlAuthGuard, PasswordService, ProjectsService, BadgrService],
+  providers: [
+    AuthService,
+    AuthResolver,
+    JwtStrategy,
+    GqlAuthGuard,
+    PasswordService,
+    ProjectsService,
+    BadgrService,
+    UsersService,
+    DonationsService,
+    SubscriptionsService,
+  ],
   exports: [GqlAuthGuard],
 })
 export class AuthModule {}

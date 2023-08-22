@@ -3,6 +3,7 @@ import { CreateSubscriptionInput } from './dto/create-subscription.input';
 import { UpdateSubscriptionInput } from './dto/update-subscription.input';
 import { PrismaService } from 'nestjs-prisma';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
+import { DateTime } from 'luxon';
 
 type CreateSubscriptionInputWithDonorId = CreateSubscriptionInput & {
   donorId: number;
@@ -16,10 +17,12 @@ export class SubscriptionsService {
     return this.prisma.subscription.findMany();
   }
 
-  async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  async findAllByProjectId(projectId: number, args?: PaginationArgs) {
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const projectSubscriptions = await this.prisma.subscription.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         projectId,
       },
@@ -46,16 +49,15 @@ export class SubscriptionsService {
     return { subscriptions: projectSubscriptions, total };
   }
 
-  async findAllByOrganizationId(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  async findAllByOrganizationId(organizationId: number, args?: PaginationArgs) {
     const organizationProjects = await this.prisma.project.findMany({ where: { organizationId } });
     const projectIds = organizationProjects.map((project) => project.id);
 
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const organizationSubscriptions = await this.prisma.subscription.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         projectId: {
           in: projectIds,
@@ -109,5 +111,23 @@ export class SubscriptionsService {
 
   remove(id: number) {
     return this.prisma.subscription.delete({ where: { id } });
+  }
+
+  async getActiveSubscriptionsInThisMonth(projectId: number) {
+    const today = DateTime.local();
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: {
+        projectId,
+        createdAt: {
+          gte: today.startOf('month').toISO(),
+          lte: today.endOf('month').toISO(),
+        },
+        status: 'ACTIVE',
+      },
+    });
+
+    const amount = subscriptions.reduce((total, subscription) => total + subscription.amount, 0);
+
+    return { amount, total: subscriptions.length };
   }
 }

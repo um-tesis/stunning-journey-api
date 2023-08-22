@@ -2,11 +2,11 @@ import { Field, Int, ArgsType } from '@nestjs/graphql';
 
 @ArgsType()
 export class PaginationArgs {
-  @Field(() => Int)
-  page = 1;
+  @Field(() => Int, { nullable: true })
+  page;
 
-  @Field(() => Int)
-  itemsPerPage = 5;
+  @Field(() => Int, { nullable: true })
+  itemsPerPage;
 
   @Field(() => String, { nullable: true })
   filter? = '';

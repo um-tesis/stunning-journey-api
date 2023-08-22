@@ -12,7 +12,7 @@ export async function projectSeed() {
 async function seedRandomProjects() {
   const organizations = await prisma.organization.findMany();
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 200; i++) {
     const randomProject = projectFactory.build({
       organizationId: organizations[Math.floor(Math.random() * organizations.length)].id,
     });
