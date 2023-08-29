@@ -41,6 +41,7 @@ export class ProjectsService {
       where: {
         name: {
           contains: args.filter,
+          mode: 'insensitive',
         },
       },
       orderBy: {

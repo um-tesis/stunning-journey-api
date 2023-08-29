@@ -93,6 +93,7 @@ export class UsersService {
         role: 'ORGADMIN',
         name: {
           contains: args.filter,
+          mode: 'insensitive',
         },
       },
     });
