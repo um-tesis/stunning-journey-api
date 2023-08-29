@@ -93,6 +93,7 @@ export class UsersService {
         role: 'ORGADMIN',
         name: {
           contains: args.filter,
+          mode: 'insensitive',
         },
       },
     });
@@ -121,6 +122,9 @@ export class UsersService {
       },
       include: {
         user: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 

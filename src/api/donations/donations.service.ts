@@ -33,6 +33,9 @@ export class DonationsService {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const total = await this.prisma.donation.count({
@@ -69,6 +72,9 @@ export class DonationsService {
             name: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
