@@ -43,6 +43,9 @@ export class ProjectsService {
           contains: args.filter,
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const total = await this.prisma.project.count({
