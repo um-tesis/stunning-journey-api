@@ -38,6 +38,9 @@ export class SubscriptionsService {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const total = await this.prisma.subscription.count({
@@ -74,6 +77,9 @@ export class SubscriptionsService {
             name: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 

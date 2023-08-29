@@ -123,6 +123,9 @@ export class UsersService {
       include: {
         user: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const total = await this.prisma.projectUser.count({

@@ -129,6 +129,9 @@ export class ProjectsService {
       where: {
         organizationId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const total = await this.prisma.project.count({
@@ -149,6 +152,9 @@ export class ProjectsService {
         select: {
           projectId: false,
           user: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       })
     ).map((projectUser) => projectUser.user);

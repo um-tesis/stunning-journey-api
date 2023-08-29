@@ -34,6 +34,9 @@ export class OrganizationsService {
           mode: 'insensitive',
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
