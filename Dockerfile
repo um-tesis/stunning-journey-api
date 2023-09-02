@@ -24,6 +24,7 @@ RUN npm install -g prisma
 RUN npm install -g @prisma/client
 RUN npm install -g @nestjs/cli
 RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
+RUN npm install -g webpack
 
 # Bundle app source
 COPY . .
