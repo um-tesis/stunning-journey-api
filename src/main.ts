@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import config from './api/config';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { PrismaClientExceptionFilter } from './utils/prisma/client-exception.filter';
 
@@ -20,6 +20,11 @@ async function bootstrap() {
 
   // Prisma Client Exception Filter for unhandled exceptions
   app.useGlobalFilters(new PrismaClientExceptionFilter());
+
+  // Global Prefix
+  app.setGlobalPrefix('api/v1', {
+    exclude: [{ path: 'graphql', method: RequestMethod.ALL }],
+  });
 
   // Cors
   app.enableCors();

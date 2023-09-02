@@ -60,9 +60,12 @@ input CreateDonationInput {
 input CreateDonorInput {
   cardStart: String
   email: String
+  firstName: String
   identification: String
   identificationType: String
+  lastName: String
   paymentMethod: String
+  phone: String
   userId: Int
 }
 
@@ -111,6 +114,7 @@ input CreateProjectInput {
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
   mpAccessToken: String
+  mpApplicationId: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.
@@ -337,6 +341,7 @@ type Project {
   moneyEarned: Int
   monthlyEarnedMoney: Int
   mpAccessToken: String
+  mpApplicationId: String
   mpEnabled: Boolean!
   mpInstantCheckout: Boolean
   mpPublicKey: String
@@ -444,10 +449,13 @@ type Token {
 input UpdateDonorInput {
   cardStart: String
   email: String
+  firstName: String
   id: Int!
   identification: String
   identificationType: String
+  lastName: String
   paymentMethod: String
+  phone: String
   userId: Int
 }
 
@@ -488,6 +496,7 @@ input UpdateProjectInput {
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
   mpAccessToken: String
+  mpApplicationId: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.

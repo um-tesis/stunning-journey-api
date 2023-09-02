@@ -9,6 +9,15 @@ export class CreateDonorInput {
   email?: string;
 
   @Field(() => String, { nullable: true })
+  firstName?: string;
+
+  @Field(() => String, { nullable: true })
+  lastName?: string;
+
+  @Field(() => String, { nullable: true })
+  phone?: string;
+
+  @Field(() => String, { nullable: true })
   identification?: string;
 
   @Field(() => String, { nullable: true })

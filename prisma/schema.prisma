@@ -58,6 +58,7 @@ model Project {
   mpInstantCheckout        Boolean?       @default(false)
   mpPublicKey              String?
   mpAccessToken            String?
+  mpApplicationId          String?        @unique
   organization             Organization?  @relation(fields: [organizationId], references: [id])
   users                    ProjectUser[]
   events                   Event[]
@@ -106,6 +107,9 @@ model Donor {
   id                 Int            @id @default(autoincrement())
   userId             Int?
   email              String?
+  firstName          String?
+  lastName           String?
+  phone              String?
   identification     String?
   identificationType String?
   cardStart          String?

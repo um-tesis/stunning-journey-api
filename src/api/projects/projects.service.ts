@@ -116,6 +116,14 @@ export class ProjectsService {
     return project;
   }
 
+  public async findOneInternalByApplicationId(applicationId: string) {
+    const project = await this.prisma.project.findUnique({ where: { mpApplicationId: applicationId } });
+
+    project.mpAccessToken = await decrypt(project.mpAccessToken);
+
+    return project;
+  }
+
   public async findOrganizationProjects(organizationId: number, args?: PaginationArgs) {
     const isPaginated = args && args.page && args.itemsPerPage;
 

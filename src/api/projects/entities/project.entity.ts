@@ -39,6 +39,9 @@ export class Project extends BaseEntity {
   mpAccessToken: string;
 
   @Field(() => String, { nullable: true })
+  mpApplicationId: string;
+
+  @Field(() => String, { nullable: true })
   coverPhoto: string;
 
   @Field(() => String, { nullable: true })

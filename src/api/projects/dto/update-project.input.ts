@@ -38,6 +38,9 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
   mpAccessToken?: string;
 
   @Field(() => String, { nullable: true })
+  mpApplicationId?: string;
+
+  @Field(() => String, { nullable: true })
   coverPhoto: string;
 
   @Field(() => String, { nullable: true })
