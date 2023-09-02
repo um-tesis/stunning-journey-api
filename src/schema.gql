@@ -60,9 +60,12 @@ input CreateDonationInput {
 input CreateDonorInput {
   cardStart: String
   email: String
+  firstName: String
   identification: String
   identificationType: String
+  lastName: String
   paymentMethod: String
+  phone: String
   userId: Int
 }
 
@@ -111,6 +114,7 @@ input CreateProjectInput {
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
   mpAccessToken: String
+  mpApplicationId: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.
@@ -269,6 +273,35 @@ type Organization {
   web: String
 }
 
+type Payment {
+  amount: Int!
+  amountReceived: Float!
+  card: PaymentCard!
+  externalReference: String!
+  id: String!
+  payer: PaymentPayer!
+  paymentMethodId: String!
+  paymentTypeId: String!
+  status: String!
+}
+
+type PaymentCard {
+  cardHolderName: String
+  expirationMonth: Int
+  expirationYear: Int
+  firstSixDigits: String
+  lastFourDigits: String
+}
+
+type PaymentPayer {
+  email: String!
+  firstName: String
+  identificationNumber: String!
+  identificationType: String!
+  lastName: String
+  phone: String
+}
+
 type PopulatedProjectUser {
   createdAt: DateTime!
   hours: Int
@@ -278,6 +311,7 @@ type PopulatedProjectUser {
 }
 
 type Preapproval {
+  externalReference: String!
   id: String!
   initPoint: String!
   reason: String!
@@ -307,6 +341,7 @@ type Project {
   moneyEarned: Int
   monthlyEarnedMoney: Int
   mpAccessToken: String
+  mpApplicationId: String
   mpEnabled: Boolean!
   mpInstantCheckout: Boolean
   mpPublicKey: String
@@ -357,6 +392,7 @@ type Query {
   organization(organizationId: Int!): Organization!
   organizationProjects(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int, page: Int): [Organization!]!
+  paymentInfo(paymentId: Int!, projectSlug: String!): Payment!
   project(id: Int!): Project
   projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
@@ -413,10 +449,13 @@ type Token {
 input UpdateDonorInput {
   cardStart: String
   email: String
+  firstName: String
   id: Int!
   identification: String
   identificationType: String
+  lastName: String
   paymentMethod: String
+  phone: String
   userId: Int
 }
 
@@ -457,6 +496,7 @@ input UpdateProjectInput {
   This is a private key, don't share with anyone else than us. We will encrypt it to store it.
   """
   mpAccessToken: String
+  mpApplicationId: String
 
   """
   If true, donations will be credited to your account immediately, but there is a 5% commission, versus 4% to receive the donation in 21 days.

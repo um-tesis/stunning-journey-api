@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as mercadopago from 'mercadopago';
-import { getClientUrlOrNgrok, getSiteUrl } from '../utils';
+import { getClientUrlOrNgrok, getSiteUrlOrNgrok } from '../utils';
 
 @Injectable()
 export class MercadoPagoService {
@@ -18,16 +18,17 @@ export class MercadoPagoService {
         {
           title,
           unit_price: price,
+          currency_id: 'UYU',
           quantity: 1,
         },
       ],
       back_urls: {
-        success: `${getClientUrlOrNgrok(true)}/thank-you`,
-        failure: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
-        pending: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
+        success: `${getClientUrlOrNgrok(false)}/thank-you`,
+        failure: `${getClientUrlOrNgrok(false)}/projects/${projectSlug}`,
+        pending: `${getClientUrlOrNgrok(false)}/projects/${projectSlug}`,
       },
       auto_return: 'all',
-      notification_url: `${getSiteUrl()}/api/donations/webhook`,
+      notification_url: `${getSiteUrlOrNgrok(true)}/api/v1/webhooks/mercadopago?cliente=${projectSlug}`,
       external_reference: projectSlug,
     });
   }
@@ -48,5 +49,17 @@ export class MercadoPagoService {
       reason: `Suscripción mensual a: ${title}`,
       status: 'pending',
     });
+  }
+
+  async getPaymentInfo(paymentId: number, accessToken: string) {
+    this.configureMercadoPago(accessToken);
+
+    return await mercadopago.payment.get(paymentId);
+  }
+
+  async getPreapprovalInfo(preapprovalId: string, accessToken: string) {
+    this.configureMercadoPago(accessToken);
+
+    return await mercadopago.preapproval.get(preapprovalId);
   }
 }

@@ -12,6 +12,7 @@ type CreateDonationInputWithDonorId = CreateDonationInput & {
 @Injectable()
 export class DonationsService {
   constructor(private prisma: PrismaService) {}
+
   public async findAllByProjectId(projectId: number, args?: PaginationArgs) {
     const isPaginated = args && args.page && args.itemsPerPage;
 
@@ -104,7 +105,7 @@ export class DonationsService {
     const donation = await this.prisma.donation.create({ data: createDonationInputWithDonorId });
 
     const result = await this.prisma.donation.aggregate({
-      where: { projectId: createDonationInput.projectId },
+      where: { projectId: createDonationInput.projectId, status: 'approved' },
       _sum: { amount: true },
     });
 
