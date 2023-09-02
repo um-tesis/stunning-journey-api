@@ -40,7 +40,7 @@ export class WebhooksService {
     try {
       const { body } = await this.mpService.getPaymentInfo(paymentId, project.mpAccessToken);
 
-      /* eslint-disable prettier/prettier */
+      /* eslint-disable */
       switch (action) {
       case MercadoPagoActions.PAYMENT_CREATED: {
         const donor = await this.donorsService.create({
@@ -67,7 +67,7 @@ export class WebhooksService {
         console.log('Update payment');
         break;
       }
-      /* eslint-enable prettier/prettier */
+      /* eslint-enable */
 
       return body;
     } catch (error) {
