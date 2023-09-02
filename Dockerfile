@@ -29,6 +29,9 @@ RUN npm install -g webpack
 RUN npm install 
 
 
+RUN npm install 
+
+
 # Bundle app source
 COPY . .
 
