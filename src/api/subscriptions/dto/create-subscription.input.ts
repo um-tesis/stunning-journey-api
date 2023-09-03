@@ -12,14 +12,14 @@ export class CreateSubscriptionInput {
   @Field(() => String)
   mpSubscriptionId: string;
 
+  @Field(() => String, { nullable: true })
+  payerEmail?: string;
+
   @Field(() => Int)
   frequency: number;
 
   @Field(() => FrequencyInterval)
   frequencyInterval: FrequencyInterval;
-
-  @Field(() => Int)
-  billingDayOfMonth: number;
 
   @Field(() => String)
   status: string;

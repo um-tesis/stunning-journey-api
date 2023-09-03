@@ -8,12 +8,16 @@ dotenv.config({
 const config = {
   PORT: process.env.SERVER_PORT,
   NODE_ENV: process.env.NODE_ENV,
+
   SITE_URL: process.env.SITE_URL,
   SITE_URL_PROD: process.env.SITE_URL_PROD,
+  NGROK_SITE_URL: process.env.NGROK_SITE_URL,
+
   SERVER_PORT: process.env.SERVER_PORT,
+
   CLIENT_URL: process.env.CLIENT_URL,
   CLIENT_URL_PROD: process.env.CLIENT_URL_PROD,
-  NGROK_URL: process.env.NGROK_URL,
+  NGROK_CLIENT_URL: process.env.NGROK_CLIENT_URL,
 
   DB_URL: process.env.DATABASE_URL,
   DB_NAME: process.env.DATABASE_NAME,

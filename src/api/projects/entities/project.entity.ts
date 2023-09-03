@@ -39,6 +39,9 @@ export class Project extends BaseEntity {
   mpAccessToken: string;
 
   @Field(() => String, { nullable: true })
+  mpApplicationId: string;
+
+  @Field(() => String, { nullable: true })
   coverPhoto: string;
 
   @Field(() => String, { nullable: true })
@@ -53,11 +56,26 @@ export class Project extends BaseEntity {
   @Field(() => Boolean)
   acceptsVolunteers: boolean;
 
-  @Field(() => Organization, { nullable: true })
+  @Field(() => Organization)
   organization: Organization;
 
   @Field(() => String)
   slug: string;
+
+  @Field(() => Int, { nullable: true })
+  monthlyEarnedMoney?: number;
+
+  @Field(() => Int, { nullable: true })
+  activeSubscriptionsNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  donatorsNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  volunteersNumber?: number;
+
+  @Field(() => Int, { nullable: true })
+  hoursVolunteered?: number;
 }
 
 @ObjectType()

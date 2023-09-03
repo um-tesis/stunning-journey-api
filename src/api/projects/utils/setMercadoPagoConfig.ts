@@ -9,6 +9,7 @@ type MercadopagoConfig = {
   instantCheckout: boolean;
   publicKey: string;
   accessToken: string;
+  applicationId: string;
 };
 export const setMercadoPagoConfig = async (
   projectInput: CreateProjectInputWithHiddenFields | UpdateProjectInputWithHiddenFields,
@@ -17,13 +18,15 @@ export const setMercadoPagoConfig = async (
     ...(projectInput.mpAccessToken && { accessToken: projectInput.mpAccessToken }),
     ...(projectInput.mpPublicKey && { publicKey: projectInput.mpPublicKey }),
     ...(projectInput.mpInstantCheckout && { instantCheckout: projectInput.mpInstantCheckout }),
+    ...(projectInput.mpApplicationId && { applicationId: projectInput.mpApplicationId }),
   };
 
   if (Object.keys(mercadoPagoConfig).length) {
     if (
       !mercadoPagoConfig.instantCheckout === undefined ||
       !mercadoPagoConfig.publicKey ||
-      !mercadoPagoConfig.accessToken
+      !mercadoPagoConfig.accessToken ||
+      !mercadoPagoConfig.applicationId
     ) {
       throw new BadRequestException('Mercadopago configuration is incomplete.');
     }
@@ -33,9 +36,8 @@ export const setMercadoPagoConfig = async (
     }
 
     projectInput.mpAccessToken = await encrypt(mercadoPagoConfig.accessToken);
-
     projectInput.mpEnabled = true;
   }
 };
 
-const validKey = (key: string) => key.startsWith(NODE_ENV === 'production' ? 'APP_USR-' : 'TEST-');
+const validKey = (key: string) => key.startsWith(NODE_ENV === 'development' ? 'APP_USR-' : 'TEST-');

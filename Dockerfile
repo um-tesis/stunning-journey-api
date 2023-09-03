@@ -19,11 +19,18 @@ RUN apk add --no-cache \
   nodejs \
   yarn
 
-RUN npm install --legacy-peer-deps
-RUN npm install -g prisma
+RUN npm install -g webpack webpack-cli
+RUN npm install -g prisma 
 RUN npm install -g @prisma/client
 RUN npm install -g @nestjs/cli
 RUN npm install -g --save @nestjs/core @nestjs/common rxjs reflect-metadata
+RUN npm install -g webpack
+
+RUN npm install 
+
+
+RUN npm install 
+
 
 # Bundle app source
 COPY . .

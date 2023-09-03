@@ -59,6 +59,7 @@ model Project {
   mpInstantCheckout        Boolean?         @default(false)
   mpPublicKey              String?
   mpAccessToken            String?
+  mpApplicationId          String?          @unique
   organization             Organization?    @relation(fields: [organizationId], references: [id])
   users                    ProjectUser[]
   events                   Event[]
@@ -105,15 +106,17 @@ model Event {
 }
 
 model Donor {
-  id                 Int            @id @default(autoincrement())
+  id                 Int        @id @default(autoincrement())
   userId             Int?
   email              String?
+  firstName          String?
+  lastName           String?
+  phone              String?
   identification     String?
   identificationType String?
   cardStart          String?
   paymentMethod      String?
   donations          Donation[]
-  subscriptions      Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,6 +131,7 @@ model Donation {
   donorId   Int
   donor     Donor   @relation(fields: [donorId], references: [id])
   amount    Int
+  paymentId String  @unique
   status    String
 
   createdAt DateTime @default(now())
@@ -137,13 +141,11 @@ model Subscription {
   id                Int               @id @default(autoincrement())
   projectId         Int
   project           Project           @relation(fields: [projectId], references: [id])
-  donorId           Int
-  donor             Donor             @relation(fields: [donorId], references: [id])
   amount            Int
   frequency         Int
   frequencyInterval FrequencyInterval
-  billingDayOfMonth Int
-  mpSubscriptionId  String
+  payerEmail        String?
+  mpSubscriptionId  String            @unique
   status            String
 
   createdAt DateTime @default(now())

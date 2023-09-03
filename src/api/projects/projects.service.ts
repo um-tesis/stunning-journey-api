@@ -10,6 +10,9 @@ import { setMercadoPagoConfig } from './utils/setMercadoPagoConfig';
 import { decrypt } from '../../helpers/crypto.helper';
 import { Role, User } from '@prisma/client';
 import { BadgrService } from './badgr.service';
+import { UsersService } from '../users/users.service';
+import { DonationsService } from '../donations/donations.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 type HiddenFields = {
   mpEnabled?: boolean;
@@ -21,16 +24,28 @@ export type UpdateProjectInputWithHiddenFields = UpdateProjectInput & HiddenFiel
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService, private badgrService: BadgrService) {}
+  constructor(
+    private prisma: PrismaService,
+    private badgrService: BadgrService,
+    private usersService: UsersService,
+    private donationsService: DonationsService,
+    private subscriptionsService: SubscriptionsService,
+  ) {}
 
-  public async findAll(args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  public async findAll(args?: PaginationArgs) {
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const projects = await this.prisma.project.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         name: {
           contains: args.filter,
+          mode: 'insensitive',
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -64,12 +79,38 @@ export class ProjectsService {
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
       delete project.mpAccessToken;
       delete project.mpInstantCheckout;
-      delete project.moneyEarned;
+      // delete project.moneyEarned;
       delete project.activeSubscriptionsMoney;
     }
-    if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
+    // if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
-    return project;
+    const donations = await this.donationsService.getDonationsAmountInThisMonth(project.id);
+    const subscriptions = await this.subscriptionsService.getActiveSubscriptionsInThisMonth(project.id);
+    const projectVolunteers = await this.usersService.findAllByProjectId(project.id);
+
+    // moneyEarned this month: to be calculated, to calculate this we need to calculate the donations made this month and the subscriptions (active) made this month
+    const monthlyEarnedMoney = donations.amount + subscriptions.amount;
+
+    // activeSubscriptionsNumber
+    const activeSubscriptionsNumber = subscriptions.total;
+
+    // donatorsNumber
+    const donatorsNumber = donations.total;
+
+    // volunteersNumber
+    const volunteersNumber = projectVolunteers.total;
+
+    // hoursVolunteered
+    const hoursVolunteered = projectVolunteers.volunteers.reduce((acc, volunteer) => acc + volunteer.hours, 0);
+
+    return {
+      ...project,
+      monthlyEarnedMoney,
+      activeSubscriptionsNumber,
+      donatorsNumber,
+      volunteersNumber,
+      hoursVolunteered,
+    };
   }
 
   public async findOneInternalBySlug(slug: string) {
@@ -79,15 +120,25 @@ export class ProjectsService {
     return project;
   }
 
-  public async findOrganizationProjects(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  public async findOneInternalByApplicationId(applicationId: string) {
+    const project = await this.prisma.project.findUnique({ where: { mpApplicationId: applicationId } });
+
+    project.mpAccessToken = await decrypt(project.mpAccessToken);
+
+    return project;
+  }
+
+  public async findOrganizationProjects(organizationId: number, args?: PaginationArgs) {
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const projects = await this.prisma.project.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         organizationId,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -109,6 +160,9 @@ export class ProjectsService {
         select: {
           projectId: false,
           user: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       })
     ).map((projectUser) => projectUser.user);

@@ -82,18 +82,18 @@ export class UsersService {
     });
   }
 
-  public async findAllOrganizationAdmins(
-    organizationId: number,
-    args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' },
-  ) {
+  public async findAllOrganizationAdmins(organizationId: number, args?: PaginationArgs) {
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const admins = await this.prisma.user.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         organizationId,
         role: 'ORGADMIN',
         name: {
           contains: args.filter,
+          mode: 'insensitive',
         },
       },
     });
@@ -111,15 +111,20 @@ export class UsersService {
     return { admins, total };
   }
 
-  public async findAllByProjectId(projectId: number, args: PaginationArgs = { page: 1, itemsPerPage: 5, filter: '' }) {
+  public async findAllByProjectId(projectId: number, args?: PaginationArgs) {
+    const isPaginated = args && args.page && args.itemsPerPage;
+
     const volunteers = await this.prisma.projectUser.findMany({
-      skip: (args.page - 1) * args.itemsPerPage,
-      take: args.itemsPerPage,
+      skip: isPaginated ? (args.page - 1) * args.itemsPerPage : undefined,
+      take: isPaginated ? args.itemsPerPage : undefined,
       where: {
         projectId,
       },
       include: {
         user: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
