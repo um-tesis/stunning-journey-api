@@ -21,7 +21,6 @@ export class WebhooksController {
       case MercadoPagoActions.PAYMENT_CREATED:
       case MercadoPagoActions.PAYMENT_UPDATED:
         return this.webhooksService.handlePayment(parseInt(data.id), clientSlug, action as MercadoPagoActions);
-      case MercadoPagoActions.SUBSCRIPTION_CREATED:
       case MercadoPagoActions.SUBSCRIPTION_UPDATED:
         return this.webhooksService.handleSubscription(data.id, clientSlug, fullAction as MercadoPagoActions);
       default:
