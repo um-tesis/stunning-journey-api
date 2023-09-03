@@ -103,7 +103,6 @@ export class WebhooksService {
 
   private async createPayment(body: any, project: any, paymentId: number) {
     const donor = await this.donorsService.create({
-      userId: body.payer?.id,
       email: body.payer?.email,
       identification: body.payer?.identification?.number || body.card.cardHolder?.identification?.number,
       identificationType: body.payer?.identification?.type || body.card.cardHolder?.identification?.type,
