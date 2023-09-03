@@ -4,9 +4,11 @@ import { MercadoPagoService } from '../common/services/mercadopago.service';
 import { ProjectsService } from '../projects/projects.service';
 import { DonationsService } from '../donations/donations.service';
 import { DonorsService } from '../donors/donors.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { FrequencyInterval } from '@prisma/client';
 
-// const PLATFORM_FEE = 0.02;
-// const MAX_FEE = 20;
+// const PLATFORM_FEE = 0.05;
+// const MAX_FEE = 100;
 
 export enum MercadoPagoTopics {
   PAYMENT = 'payment',
@@ -16,6 +18,8 @@ export enum MercadoPagoTopics {
 export enum MercadoPagoActions {
   PAYMENT_CREATED = 'payment.created',
   PAYMENT_UPDATED = 'payment.updated',
+  SUBSCRIPTION_CREATED = 'subscription_preapproval.created',
+  SUBSCRIPTION_UPDATED = 'subscription_preapproval.updated',
 }
 
 @Injectable()
@@ -26,6 +30,7 @@ export class WebhooksService {
     private projectsService: ProjectsService,
     private donationsService: DonationsService,
     private donorsService: DonorsService,
+    private subscriptionsService: SubscriptionsService,
   ) {}
 
   // private calculateFee(amount: number) {
@@ -42,30 +47,14 @@ export class WebhooksService {
 
       /* eslint-disable */
       switch (action) {
-      case MercadoPagoActions.PAYMENT_CREATED: {
-        const donor = await this.donorsService.create({
-          userId: body.payer?.id,
-          email: body.payer?.email,
-          identification: body.payer?.identification?.number || body.card.cardHolder?.identification?.number,
-          identificationType: body.payer?.identification?.type || body.card.cardHolder?.identification?.type,
-          firstName: body.payer?.first_name || body.card?.cardHolder?.name,
-          lastName: body.payer?.last_name,
-          phone: body.payer?.phone?.number,
-          cardStart: body.card?.first_six_digits,
-          paymentMethod: body.payment_method?.type || body.payment_type_id,
-        });
-
-        await this.donationsService.create({
-          amount: body.transaction_details.net_received_amount * 100,
-          projectId: project.id,
-          status: body.status,
-        }, donor.id);
-
-        break;
-      }
-      case MercadoPagoActions.PAYMENT_UPDATED:
-        console.log('Update payment');
-        break;
+        case MercadoPagoActions.PAYMENT_CREATED: {
+          await this.createPayment(body, project, paymentId);
+          break;
+        }
+        case MercadoPagoActions.PAYMENT_UPDATED: {
+          await this.donationsService.updateByPaymentId({ status: body.status }, `${paymentId}`);
+          break;
+        }
       }
       /* eslint-enable */
 
@@ -73,5 +62,66 @@ export class WebhooksService {
     } catch (error) {
       return error;
     }
+  }
+
+  async handleSubscription(preapprovalId: string, projectSlug: string, action: MercadoPagoActions) {
+    const project = await this.projectsService.findOneInternalBySlug(projectSlug);
+
+    try {
+      const { body } = await this.mpService.getPreapprovalInfo(`${preapprovalId}`, project.mpAccessToken);
+
+      /* eslint-disable */
+      switch (action) {
+        case MercadoPagoActions.SUBSCRIPTION_CREATED: {
+          await this.createSubscription(body, project, preapprovalId);
+          break;
+        }
+        case MercadoPagoActions.SUBSCRIPTION_UPDATED: {
+          await this.subscriptionsService.updateByMpSubscriptionId({ status: body.status }, preapprovalId);
+          break;
+        }
+      }
+      /* eslint-enable */
+
+      return body;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  private async createSubscription(body: any, project: any, preapprovalId: string) {
+    await this.subscriptionsService.create({
+      amount: body.auto_recurring.transaction_amount * 100,
+      frequency: body.auto_recurring.frequency,
+      frequencyInterval: FrequencyInterval.MONTHLY,
+      payerEmail: body.payer_email,
+      projectId: project.id,
+      status: body.status,
+      mpSubscriptionId: preapprovalId,
+    });
+  }
+
+  private async createPayment(body: any, project: any, paymentId: number) {
+    const donor = await this.donorsService.create({
+      userId: body.payer?.id,
+      email: body.payer?.email,
+      identification: body.payer?.identification?.number || body.card.cardHolder?.identification?.number,
+      identificationType: body.payer?.identification?.type || body.card.cardHolder?.identification?.type,
+      firstName: body.payer?.first_name || body.card?.cardHolder?.name,
+      lastName: body.payer?.last_name,
+      phone: body.payer?.phone?.number,
+      cardStart: body.card?.first_six_digits,
+      paymentMethod: body.payment_method?.type || body.payment_type_id,
+    });
+
+    await this.donationsService.create(
+      {
+        amount: body.transaction_details.net_received_amount * 100,
+        projectId: project.id,
+        status: body.status,
+        paymentId: `${paymentId}`,
+      },
+      donor.id,
+    );
   }
 }
