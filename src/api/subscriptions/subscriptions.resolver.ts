@@ -13,6 +13,7 @@ import { GqlAuthGuard } from '../common/guards/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { Project } from '../projects/entities/project.entity';
 import { OptionalAuthGuard } from '../common/guards/optionalAuth.guard';
+import { FrequencyInterval } from '@prisma/client';
 
 @UseGuards(OptionalAuthGuard)
 @Resolver(() => Subscription)
@@ -75,14 +76,24 @@ export class SubscriptionsResolver {
     return this.subscriptionsService.remove(id);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => Preapproval)
   async createPreapproval(@Args('createPreapprovalInput') createPreapprovalInput: CreatePreapprovalInput) {
     const { amount, projectSlug, payerEmail } = createPreapprovalInput;
-    const { mpAccessToken, name } = await this.projectsService.findOneInternalBySlug(projectSlug);
+    const { id, mpAccessToken, name } = await this.projectsService.findOneInternalBySlug(projectSlug);
 
     try {
       const { body } = await this.mpService.createPreapproval(projectSlug, mpAccessToken, name, amount, payerEmail);
+
+      await this.subscriptionsService.create({
+        amount: amount * 100,
+        frequency: body.auto_recurring.frequency,
+        frequencyInterval: FrequencyInterval.MONTHLY,
+        payerEmail,
+        projectId: id,
+        status: body.status,
+        mpSubscriptionId: body.id,
+      });
+
       return {
         id: body.id,
         status: body.status,
