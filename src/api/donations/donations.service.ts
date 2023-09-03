@@ -143,8 +143,12 @@ export class DonationsService {
       },
     });
 
-    const amount = donations.reduce((total, donation) => total + donation.amount, 0);
+    const donors = new Set();
+    const amount = donations.reduce((total, donation) => {
+      donation.donorId && donors.add(donation.donorId);
+      return total + donation.amount;
+    }, 0);
 
-    return { amount, total: donations.length };
+    return { amount, total: donations.length, donorsTotal: donors.size };
   }
 }

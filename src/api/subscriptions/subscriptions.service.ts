@@ -3,7 +3,6 @@ import { CreateSubscriptionInput } from './dto/create-subscription.input';
 import { UpdateSubscriptionInput } from './dto/update-subscription.input';
 import { PrismaService } from 'nestjs-prisma';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
-import { DateTime } from 'luxon';
 
 @Injectable()
 export class SubscriptionsService {
@@ -112,16 +111,11 @@ export class SubscriptionsService {
     return this.prisma.project.findUnique({ where: { id: projectId } });
   }
 
-  async getActiveSubscriptionsInThisMonth(projectId: number) {
-    const today = DateTime.local();
+  async getActiveSubscriptions(projectId: number) {
     const subscriptions = await this.prisma.subscription.findMany({
       where: {
         projectId,
-        createdAt: {
-          gte: today.startOf('month').toISO(),
-          lte: today.endOf('month').toISO(),
-        },
-        status: 'ACTIVE',
+        status: 'authorized',
       },
     });
 

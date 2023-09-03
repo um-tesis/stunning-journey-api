@@ -66,6 +66,9 @@ export class Project extends BaseEntity {
   monthlyEarnedMoney?: number;
 
   @Field(() => Int, { nullable: true })
+  fixedEarningsWithSubscriptions?: number;
+
+  @Field(() => Int, { nullable: true })
   activeSubscriptionsNumber?: number;
 
   @Field(() => Int, { nullable: true })
