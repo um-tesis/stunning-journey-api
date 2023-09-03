@@ -17,7 +17,7 @@ const config = {
 
   CLIENT_URL: process.env.CLIENT_URL,
   CLIENT_URL_PROD: process.env.CLIENT_URL_PROD,
-  NGROK_CLIENT_URL: process.env.NGROK_SITE_URL,
+  NGROK_CLIENT_URL: process.env.NGROK_CLIENT_URL,
 
   DB_URL: process.env.DATABASE_URL,
   DB_NAME: process.env.DATABASE_NAME,

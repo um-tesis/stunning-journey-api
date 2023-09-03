@@ -10,4 +10,7 @@ export class CreateDonationInput {
 
   @Field(() => String)
   status: string;
+
+  @Field(() => String)
+  paymentId: string;
 }

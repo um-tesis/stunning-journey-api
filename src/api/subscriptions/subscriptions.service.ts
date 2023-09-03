@@ -5,10 +5,6 @@ import { PrismaService } from 'nestjs-prisma';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { DateTime } from 'luxon';
 
-type CreateSubscriptionInputWithDonorId = CreateSubscriptionInput & {
-  donorId: number;
-};
-
 @Injectable()
 export class SubscriptionsService {
   constructor(private prisma: PrismaService) {}
@@ -27,11 +23,6 @@ export class SubscriptionsService {
         projectId,
       },
       include: {
-        donor: {
-          select: {
-            email: true,
-          },
-        },
         project: {
           select: {
             name: true,
@@ -67,11 +58,6 @@ export class SubscriptionsService {
         },
       },
       include: {
-        donor: {
-          select: {
-            email: true,
-          },
-        },
         project: {
           select: {
             name: true,
@@ -98,25 +84,32 @@ export class SubscriptionsService {
     return this.prisma.subscription.findUnique({ where: { id } });
   }
 
-  getProject(projectId: number) {
-    return this.prisma.project.findUnique({ where: { id: projectId } });
+  public async findOneByMpId(mpSubscriptionId: string) {
+    const sub = await this.prisma.subscription.findUnique({ where: { mpSubscriptionId } });
+    return sub;
   }
 
-  create(createSubscriptionInput: CreateSubscriptionInput, donorId: number) {
-    const createSubscriptionInputWithDonorId: CreateSubscriptionInputWithDonorId = {
-      ...createSubscriptionInput,
-      donorId,
-    };
-
-    return this.prisma.subscription.create({ data: createSubscriptionInputWithDonorId });
+  create(createSubscriptionInput: CreateSubscriptionInput) {
+    return this.prisma.subscription.create({ data: createSubscriptionInput });
   }
 
   update(id: number, updateSubscriptionInput: UpdateSubscriptionInput) {
     return this.prisma.subscription.update({ where: { id }, data: updateSubscriptionInput });
   }
 
+  updateByMpSubscriptionId(updateSubscriptionInput: UpdateSubscriptionInput, mpSubscriptionId: string) {
+    return this.prisma.subscription.update({
+      where: { mpSubscriptionId },
+      data: { status: updateSubscriptionInput.status },
+    });
+  }
+
   remove(id: number) {
     return this.prisma.subscription.delete({ where: { id } });
+  }
+
+  async getProject(projectId: number) {
+    return this.prisma.project.findUnique({ where: { id: projectId } });
   }
 
   async getActiveSubscriptionsInThisMonth(projectId: number) {

@@ -22,15 +22,14 @@ type BaseDonation {
 
 type BaseSubscription {
   amount: Int!
-  billingDayOfMonth: Int!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  donorId: Int!
   frequency: Int!
   frequencyInterval: FrequencyInterval!
   id: ID!
   mpSubscriptionId: String!
+  payerEmail: String
   projectId: Int!
   status: String!
 
@@ -53,6 +52,7 @@ input ContactDto {
 
 input CreateDonationInput {
   amount: Int!
+  paymentId: String!
   projectId: Int!
   status: String!
 }
@@ -132,10 +132,10 @@ input CreateProjectInput {
 
 input CreateSubscriptionInput {
   amount: Int!
-  billingDayOfMonth: Int!
   frequency: Int!
   frequencyInterval: FrequencyInterval!
   mpSubscriptionId: String!
+  payerEmail: String
   projectId: Int!
   status: String!
 }
@@ -233,7 +233,7 @@ type Mutation {
   createPreapproval(createPreapprovalInput: CreatePreapprovalInput!): Preapproval!
   createPreference(createPreferenceInput: CreatePreferenceInput!): Preference!
   createProject(createProjectInput: CreateProjectInput!): Project!
-  createSubscription(createDonorInput: CreateDonorInput!, createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
+  createSubscription(createSubscriptionInput: CreateSubscriptionInput!): BaseSubscription!
   createUser(data: CreateUserInput!): User!
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
@@ -244,7 +244,7 @@ type Mutation {
   removeEvent(eventId: Int!): Event!
   removeOrganization(organizationId: Int!): Organization!
   removeProject(id: Int!): Project!
-  removeSubscription(id: Int!): Subscription!
+  removeSubscription(id: Int!): SubscriptionEntity!
   removeUser(id: Int!): User!
   subscribeToNewsletter(email: String!): Boolean!
   updateDonation(id: Int!, status: String!): Donation!
@@ -252,7 +252,7 @@ type Mutation {
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrganization(updateOrganizationInput: UpdateOrganizationInput!): Organization!
   updateProject(updateProjectInput: UpdateProjectInput!): Project!
-  updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
+  updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): SubscriptionEntity!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -346,7 +346,7 @@ type Project {
   mpInstantCheckout: Boolean
   mpPublicKey: String
   name: String!
-  organization: Organization
+  organization: Organization!
   organizationId: Int!
   photoGallery: [String!]
   slug: String!
@@ -397,8 +397,9 @@ type Query {
   projectBySlug(slug: String!): Project
   projectUsers(projectId: Int!): PopulatedProjectUser!
   projects(filter: String = "", itemsPerPage: Int, page: Int): ProjectsPagination!
-  subscription(id: Int!): Subscription!
-  subscriptions: [Subscription!]!
+  subscription(id: Int!): SubscriptionEntity!
+  subscriptionByMpId(mpSubscriptionId: String!): SubscriptionEntity
+  subscriptions: [SubscriptionEntity!]!
   subscriptionsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): SubscriptionPagination!
   subscriptionsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): SubscriptionPagination!
   user(id: Int!): User!
@@ -413,18 +414,16 @@ enum Role {
   USER
 }
 
-type Subscription {
+type SubscriptionEntity {
   amount: Int!
-  billingDayOfMonth: Int!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  donor: Donor!
-  donorId: Int!
   frequency: Int!
   frequencyInterval: FrequencyInterval!
   id: ID!
   mpSubscriptionId: String!
+  payerEmail: String
   project: Project!
   projectId: Int!
   status: String!
@@ -434,7 +433,7 @@ type Subscription {
 }
 
 type SubscriptionPagination {
-  subscriptions: [Subscription!]!
+  subscriptions: [SubscriptionEntity!]!
   total: Int!
 }
 
@@ -514,13 +513,13 @@ input UpdateProjectInput {
 
 input UpdateSubscriptionInput {
   amount: Int
-  billingDayOfMonth: Int
   frequency: Int
   frequencyInterval: FrequencyInterval
-  id: Int!
+  id: Int
   mpSubscriptionId: String
+  payerEmail: String
   projectId: Int
-  status: String
+  status: String!
 }
 
 input UpdateUserInput {

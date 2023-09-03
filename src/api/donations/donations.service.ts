@@ -124,6 +124,13 @@ export class DonationsService {
     });
   }
 
+  updateByPaymentId(updateDonationInput: UpdateDonationInput, paymentId: string) {
+    return this.prisma.donation.update({
+      where: { paymentId: `${paymentId}` },
+      data: { status: updateDonationInput.status },
+    });
+  }
+
   async getDonationsAmountInThisMonth(projectId: number) {
     const today = DateTime.local();
     const donations = await this.prisma.donation.findMany({

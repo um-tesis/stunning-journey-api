@@ -56,7 +56,7 @@ export class Project extends BaseEntity {
   @Field(() => Boolean)
   acceptsVolunteers: boolean;
 
-  @Field(() => Organization, { nullable: true })
+  @Field(() => Organization)
   organization: Organization;
 
   @Field(() => String)
