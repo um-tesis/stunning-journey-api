@@ -29,11 +29,24 @@ export class BillingsResolver {
   }
 
   @Mutation(() => Billing)
-  payBilling(@UserEntity() user: User, @Args('projectId', { type: () => Int }) projectId: number) {
-    return this.billingsService.update(projectId, {
+  async payBilling(@UserEntity() user: User, @Args('projectId', { type: () => Int }) projectId: number) {
+    const billingToPay = await this.billingsService.findOneUnpaidByProjectId(projectId);
+
+    if (!billingToPay) return null;
+
+    const paidBilling = await this.billingsService.update(billingToPay.id, {
       paidBy: user.id,
       paidAt: new Date(),
       status: BillingStatus.PAID,
     });
+
+    const now = new Date();
+    await this.billingsService.create({
+      projectId,
+      amount: 0,
+      endsAt: new Date(now.getFullYear(), now.getMonth() + 2, 0),
+    });
+
+    return paidBilling;
   }
 }

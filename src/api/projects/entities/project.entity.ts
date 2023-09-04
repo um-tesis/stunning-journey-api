@@ -59,6 +59,9 @@ export class Project extends BaseEntity {
   @Field(() => Organization)
   organization: Organization;
 
+  @Field(() => Int)
+  amountToPay: number;
+
   @Field(() => String)
   slug: string;
 

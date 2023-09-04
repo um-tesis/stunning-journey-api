@@ -9,6 +9,7 @@ import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { UsersService } from '../users/users.service';
 import { PasswordService } from '../auth/password.service';
 import { DonorsService } from '../donors/donors.service';
+import { BillingsService } from '../billings/billings.service';
 
 @Module({
   controllers: [WebhooksController],
@@ -22,6 +23,7 @@ import { DonorsService } from '../donors/donors.service';
     SubscriptionsService,
     UsersService,
     PasswordService,
+    BillingsService,
   ],
 })
 export class WebhooksModule {}

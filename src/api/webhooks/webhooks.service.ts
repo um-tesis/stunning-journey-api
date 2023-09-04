@@ -37,7 +37,7 @@ export class WebhooksService {
   ) {}
 
   private calculateNetTransactionAmount(amount: number) {
-    const fee = amount * PLATFORM_FEE;
+    const fee = Math.floor(amount * PLATFORM_FEE);
     return { amount: amount - (fee > MAX_FEE ? MAX_FEE : fee), fee };
   }
 
@@ -136,18 +136,12 @@ export class WebhooksService {
   }
 
   private async updateBilling(fee: number, project: any) {
-    const now = new Date();
-
-    const billing = await this.billingsService.findOneByProjectIdAndPeriod({
-      projectId: project.id,
-      endsAt: new Date(now.getFullYear(), now.getMonth() + 1, 0),
-    });
+    const billing = await this.billingsService.findOneUnpaidByProjectId(project.id as number);
 
     if (!billing) return;
 
     await this.billingsService.update(billing.id, {
       amount: billing.amount + fee,
-      projectId: project.id,
     });
   }
 }

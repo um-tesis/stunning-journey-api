@@ -260,6 +260,7 @@ type Mutation {
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
   login(data: LoginInput!): Auth!
+  payBilling(projectId: Int!): Billing!
   postContactForm(contactInput: ContactDto!): Boolean!
   refreshToken(token: JWT!): Token!
   removeDonor(id: Int!): Donor!
@@ -350,6 +351,7 @@ type Project {
   acceptsVolunteers: Boolean!
   activeSubscriptionsMoney: Int
   activeSubscriptionsNumber: Int
+  amountToPay: Int!
   coverPhoto: String
 
   """Identifies the date and time when the object was created."""
@@ -427,6 +429,7 @@ type Query {
   subscriptions: [SubscriptionEntity!]!
   subscriptionsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): SubscriptionPagination!
   subscriptionsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): SubscriptionPagination!
+  unpaidBillingByProjectId(projectId: Int!): Billing!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!

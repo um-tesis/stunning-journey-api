@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateBillingInput } from './dto/create-billing.input';
 import { UpdateBillingInput } from './dto/update-billing.input';
 import { PrismaService } from 'nestjs-prisma';
-import { FindOneBillingInput } from './dto/find-one-billing.input';
 import { BillingStatus } from '@prisma/client';
 
 type BillingInput<T> = T & { endsAt: Date };
@@ -24,15 +23,6 @@ export class BillingsService {
     return this.prisma.projectBilling.findMany({ where: { projectId } });
   }
 
-  findOneByProjectIdAndPeriod(findOneBillingInput: FindOneBillingInput) {
-    const { projectId, endsAt } = findOneBillingInput;
-
-    return this.prisma.projectBilling.findFirst({
-      where: { projectId, endsAt: { gt: endsAt } },
-      orderBy: { endsAt: 'desc' },
-    });
-  }
-
   findOneUnpaidByProjectId(projectId: number) {
     return this.prisma.projectBilling.findFirst({
       where: { projectId, status: BillingStatus.PENDING },
@@ -45,10 +35,9 @@ export class BillingsService {
   }
 
   update(id: number, updateBillingInput: UpdateBillingInput) {
-    beforeUpsert(updateBillingInput.projectId, updateBillingInput);
     return this.prisma.projectBilling.update({
       where: { id },
-      data: updateBillingInput as BillingInput<UpdateBillingInput>,
+      data: updateBillingInput,
     });
   }
 
