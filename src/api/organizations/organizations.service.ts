@@ -64,4 +64,113 @@ export class OrganizationsService {
       },
     });
   }
+
+  public async getOrganizationMetrics(id: number) {
+    const organization = await this.prisma.organization.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        projects: {
+          include: {
+            donations: true,
+          },
+        },
+        users: true,
+      },
+    });
+
+    const totalDonations = organization.projects.reduce((acc, project) => {
+      return acc + project.donations.reduce((acc, donation) => acc + donation.amount, 0);
+    }, 0);
+
+    const totalProjects = organization.projects.length;
+
+    const totalVolunteers = organization.users.filter((user) => user.role === 'USER').length;
+
+    const totalEarnings = organization.projects.reduce((acc, project) => {
+      return acc + project.donations.reduce((acc, donation) => acc + donation.amount, 0);
+    }, 0);
+
+    const orgUsers = organization.users;
+
+    const totalDonors = await this.prisma.donor.count({
+      where: {
+        userId: {
+          in: orgUsers.map((user) => user.id),
+        },
+      },
+    });
+
+    return {
+      totalEarnings,
+      totalDonations,
+      totalProjects,
+      totalVolunteers,
+      totalDonors,
+    };
+  }
+
+  public async getAllOrganizationsMetrics() {
+    const organizations = await this.prisma.organization.findMany({
+      include: {
+        projects: {
+          include: {
+            donations: true,
+          },
+        },
+        users: true,
+      },
+    });
+
+    const totalDonations = organizations.reduce((acc, organization) => {
+      return (
+        acc +
+        organization.projects.reduce((acc, project) => {
+          return acc + project.donations.reduce((acc, donation) => acc + donation.amount, 0);
+        }, 0)
+      );
+    }, 0);
+
+    const totalProjects = organizations.reduce((acc, organization) => {
+      return acc + organization.projects.length;
+    }, 0);
+
+    const totalVolunteers = organizations.reduce((acc, organization) => {
+      return (
+        acc +
+        organization.users.filter((user) => user.role === 'USER').length +
+        organization.users.filter((user) => user.role === 'ORGADMIN').length
+      );
+    }, 0);
+
+    const totalEarnings = organizations.reduce((acc, organization) => {
+      return (
+        acc +
+        organization.projects.reduce((acc, project) => {
+          return acc + project.donations.reduce((acc, donation) => acc + donation.amount, 0);
+        }, 0)
+      );
+    }, 0);
+
+    const orgUsers = organizations.reduce((acc, organization) => {
+      return acc.concat(organization.users);
+    }, []);
+
+    const totalDonors = await this.prisma.donor.count({
+      where: {
+        userId: {
+          in: orgUsers.map((user) => user.id),
+        },
+      },
+    });
+
+    return {
+      totalEarnings,
+      totalDonations,
+      totalProjects,
+      totalVolunteers,
+      totalDonors,
+    };
+  }
 }

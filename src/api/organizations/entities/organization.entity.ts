@@ -29,3 +29,21 @@ export class Organization {
   @Field({ nullable: true })
   instagramAccount: string;
 }
+
+@ObjectType()
+export class OrganizationMetrics {
+  @Field(() => Int)
+  totalEarnings: number;
+
+  @Field(() => Int)
+  totalDonations: number;
+
+  @Field(() => Int)
+  totalProjects: number;
+
+  @Field(() => Int)
+  totalVolunteers: number;
+
+  @Field(() => Int)
+  totalDonors: number;
+}

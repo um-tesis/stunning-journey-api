@@ -296,6 +296,14 @@ type Organization {
   web: String
 }
 
+type OrganizationMetrics {
+  totalDonations: Int!
+  totalDonors: Int!
+  totalEarnings: Int!
+  totalProjects: Int!
+  totalVolunteers: Int!
+}
+
 type Payment {
   amount: Int!
   amountReceived: Float!
@@ -404,6 +412,7 @@ type ProjectsPagination {
 
 type Query {
   adminsByOrganizationId(filter: String = "", itemsPerPage: Int, page: Int): OrgAdminPagination!
+  allOrganizationsMetrics: OrganizationMetrics!
   billing(id: Int!): Billing!
   billingsByProjectId(projectId: Int!): [Billing!]!
   donation(id: Int!): Donation!
@@ -417,6 +426,7 @@ type Query {
   eventsByProject(projectId: Int!): [Event!]!
   me: User!
   organization(organizationId: Int!): Organization!
+  organizationMetrics(organizationId: Int!): OrganizationMetrics!
   organizationProjects(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): ProjectsPagination!
   organizations(filter: String, itemsPerPage: Int, page: Int): [Organization!]!
   paymentInfo(paymentId: Int!, projectSlug: String!): Payment!

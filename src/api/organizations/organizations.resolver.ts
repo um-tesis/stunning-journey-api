@@ -3,7 +3,7 @@ import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CreateOrganizationInput } from './dto/create-organization.input';
 import { UpdateOrganizationInput } from './dto/update-organization.input';
-import { Organization } from './entities/organization.entity';
+import { Organization, OrganizationMetrics } from './entities/organization.entity';
 import { OrganizationsService } from './organizations.service';
 import { PaginationArgs } from 'src/utils/types/pagination-args';
 import { Role } from '@prisma/client';
@@ -45,5 +45,15 @@ export class OrganizationsResolver {
   @Mutation(() => Organization)
   removeOrganization(@Args('organizationId', { type: () => Int }) id: number) {
     return this.organizationsService.remove(id);
+  }
+
+  @Query(() => OrganizationMetrics, { name: 'organizationMetrics' })
+  getOrganizationMetrics(@Args('organizationId', { type: () => Int }) id: number) {
+    return this.organizationsService.getOrganizationMetrics(id);
+  }
+
+  @Query(() => OrganizationMetrics, { name: 'allOrganizationsMetrics' })
+  getAllOrganizationsMetrics() {
+    return this.organizationsService.getAllOrganizationsMetrics();
   }
 }
