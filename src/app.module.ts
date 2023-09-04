@@ -17,6 +17,7 @@ import { HealthModule } from './api/health/health.module';
 import { DonorsModule } from './api/donors/donors.module';
 import { DonationsModule } from './api/donations/donations.module';
 import { SubscriptionsModule } from './api/subscriptions/subscriptions.module';
+import { BillingsModule } from './api/billings/billings.module';
 import { WebhooksModule } from './api/webhooks/webhooks.module';
 
 @Module({
@@ -62,6 +63,7 @@ import { WebhooksModule } from './api/webhooks/webhooks.module';
     DonorsModule,
     DonationsModule,
     SubscriptionsModule,
+    BillingsModule,
     WebhooksModule,
   ],
   controllers: [AppController],

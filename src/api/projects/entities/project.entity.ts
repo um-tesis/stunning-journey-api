@@ -59,11 +59,17 @@ export class Project extends BaseEntity {
   @Field(() => Organization)
   organization: Organization;
 
+  @Field(() => Int)
+  amountToPay: number;
+
   @Field(() => String)
   slug: string;
 
   @Field(() => Int, { nullable: true })
   monthlyEarnedMoney?: number;
+
+  @Field(() => Int, { nullable: true })
+  fixedEarningsWithSubscriptions?: number;
 
   @Field(() => Int, { nullable: true })
   activeSubscriptionsNumber?: number;

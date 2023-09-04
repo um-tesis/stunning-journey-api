@@ -12,17 +12,18 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   name           String
-  email          String        @unique
+  email          String           @unique
   password       String
-  role           Role          @default(USER)
+  role           Role             @default(USER)
   phone          String?
   organizationId Int?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organization   Organization?    @relation(fields: [organizationId], references: [id])
   projects       ProjectUser[]
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  paidBillings   ProjectBilling[]
 }
 
 model Organization {
@@ -45,30 +46,31 @@ model Organization {
 }
 
 model Project {
-  id                       Int            @id @default(autoincrement())
-  name                     String         @unique
-  slug                     String?        @unique
+  id                       Int              @id @default(autoincrement())
+  name                     String           @unique
+  slug                     String?          @unique
   field                    String
   description              String
-  moneyEarned              Int            @default(0)
-  activeSubscriptionsMoney Int            @default(0)
+  moneyEarned              Int              @default(0)
+  activeSubscriptionsMoney Int              @default(0)
   startDate                DateTime?
   organizationId           Int?
-  mpEnabled                Boolean?       @default(false)
-  mpInstantCheckout        Boolean?       @default(false)
+  mpEnabled                Boolean?         @default(false)
+  mpInstantCheckout        Boolean?         @default(false)
   mpPublicKey              String?
   mpAccessToken            String?
-  mpApplicationId          String?        @unique
-  organization             Organization?  @relation(fields: [organizationId], references: [id])
+  mpApplicationId          String?          @unique
+  organization             Organization?    @relation(fields: [organizationId], references: [id])
   users                    ProjectUser[]
   events                   Event[]
   coverPhoto               String?
   photoGallery             String[]
   video                    String?
   location                 String?
-  acceptsVolunteers        Boolean?       @default(false)
+  acceptsVolunteers        Boolean?         @default(false)
   donations                Donation[]
   subscriptions            Subscription[]
+  billings                 ProjectBilling[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -148,6 +150,26 @@ model Subscription {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProjectBilling {
+  id         Int           @id @default(autoincrement())
+  projectId  Int
+  project    Project       @relation(fields: [projectId], references: [id])
+  amount     Int
+  status     BillingStatus @default(PENDING)
+  endsAt     DateTime
+  paidAt     DateTime?
+  paidBy     Int?
+  paidByUser User?         @relation(fields: [paidBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BillingStatus {
+  PENDING
+  PAID
 }
 
 enum Role {

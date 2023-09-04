@@ -6,9 +6,11 @@ import { DonationsService } from '../donations/donations.service';
 import { DonorsService } from '../donors/donors.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { FrequencyInterval } from '@prisma/client';
+import { BillingsService } from '../billings/billings.service';
 
-// const PLATFORM_FEE = 0.05;
-// const MAX_FEE = 100;
+const PLATFORM_FEE = 0.05;
+const MAX_FEE = 100;
+const MP_FEE = 0.0599;
 
 export enum MercadoPagoTopics {
   PAYMENT = 'payment',
@@ -31,13 +33,13 @@ export class WebhooksService {
     private donationsService: DonationsService,
     private donorsService: DonorsService,
     private subscriptionsService: SubscriptionsService,
+    private billingsService: BillingsService,
   ) {}
 
-  // private calculateFee(amount: number) {
-  //   const fee = amount * PLATFORM_FEE;
-  //   const finalAmount = amount - (fee > MAX_FEE ? MAX_FEE : fee);
-  //   // TODO: Add fee to platform account
-  // }
+  private calculateNetTransactionAmount(amount: number) {
+    const fee = Math.floor(amount * PLATFORM_FEE);
+    return { amount: amount - (fee > MAX_FEE ? MAX_FEE : fee), fee };
+  }
 
   async handlePayment(paymentId: number, projectSlug: string, action: MercadoPagoActions) {
     const project = await this.projectsService.findOneInternalBySlug(projectSlug);
@@ -90,8 +92,11 @@ export class WebhooksService {
   }
 
   private async createSubscription(body: any, project: any, preapprovalId: string) {
+    const netAmountPreviousPlatformFee = (body.auto_recurring.transaction_amount * 100) / (1 + MP_FEE);
+    const { amount, fee } = this.calculateNetTransactionAmount(netAmountPreviousPlatformFee);
+
     await this.subscriptionsService.create({
-      amount: body.auto_recurring.transaction_amount * 100,
+      amount,
       frequency: body.auto_recurring.frequency,
       frequencyInterval: FrequencyInterval.MONTHLY,
       payerEmail: body.payer_email,
@@ -99,6 +104,8 @@ export class WebhooksService {
       status: body.status,
       mpSubscriptionId: preapprovalId,
     });
+
+    await this.updateBilling(fee, project);
   }
 
   private async createPayment(body: any, project: any, paymentId: number) {
@@ -113,14 +120,28 @@ export class WebhooksService {
       paymentMethod: body.payment_method?.type || body.payment_type_id,
     });
 
+    const { amount, fee } = this.calculateNetTransactionAmount(body.transaction_details.net_received_amount * 100);
+
     await this.donationsService.create(
       {
-        amount: body.transaction_details.net_received_amount * 100,
+        amount,
         projectId: project.id,
         status: body.status,
         paymentId: `${paymentId}`,
       },
       donor.id,
     );
+
+    await this.updateBilling(fee, project);
+  }
+
+  private async updateBilling(fee: number, project: any) {
+    const billing = await this.billingsService.findOneUnpaidByProjectId(project.id as number);
+
+    if (!billing) return;
+
+    await this.billingsService.update(billing.id, {
+      amount: billing.amount + fee,
+    });
   }
 }

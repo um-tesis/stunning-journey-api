@@ -37,6 +37,28 @@ type BaseSubscription {
   updatedAt: DateTime!
 }
 
+type Billing {
+  amount: Int!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  endsAt: DateTime!
+  id: ID!
+  paidAt: DateTime
+  paidBy: Int
+  paidByUser: User
+  projectId: Int!
+  status: BillingStatus!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+enum BillingStatus {
+  PAID
+  PENDING
+}
+
 input ChangePasswordInput {
   newPassword: String!
   oldPassword: String!
@@ -238,6 +260,7 @@ type Mutation {
   emailVolunteers(emailVolunteersInput: EmailVolunteers!): Boolean!
   loadProjectHours(hours: Int!, projectId: Int!, userId: Int!): ProjectUser!
   login(data: LoginInput!): Auth!
+  payBilling(projectId: Int!): Billing!
   postContactForm(contactInput: ContactDto!): Boolean!
   refreshToken(token: JWT!): Token!
   removeDonor(id: Int!): Donor!
@@ -328,6 +351,7 @@ type Project {
   acceptsVolunteers: Boolean!
   activeSubscriptionsMoney: Int
   activeSubscriptionsNumber: Int
+  amountToPay: Int!
   coverPhoto: String
 
   """Identifies the date and time when the object was created."""
@@ -335,6 +359,7 @@ type Project {
   description: String!
   donatorsNumber: Int
   field: String!
+  fixedEarningsWithSubscriptions: Int
   hoursVolunteered: Int
   id: ID!
   location: String
@@ -379,6 +404,8 @@ type ProjectsPagination {
 
 type Query {
   adminsByOrganizationId(filter: String = "", itemsPerPage: Int, page: Int): OrgAdminPagination!
+  billing(id: Int!): Billing!
+  billingsByProjectId(projectId: Int!): [Billing!]!
   donation(id: Int!): Donation!
   donationsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): DonationPagination!
   donationsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): DonationPagination!
@@ -402,6 +429,7 @@ type Query {
   subscriptions: [SubscriptionEntity!]!
   subscriptionsByOrganization(filter: String = "", itemsPerPage: Int, organizationId: Int!, page: Int): SubscriptionPagination!
   subscriptionsByProject(filter: String = "", itemsPerPage: Int, page: Int, projectId: Int!): SubscriptionPagination!
+  unpaidBillingByProjectId(projectId: Int!): Billing!
   user(id: Int!): User!
   users: [User!]!
   usersByOrganizationId(organizationId: Int!): [User!]!

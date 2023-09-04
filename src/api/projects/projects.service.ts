@@ -79,37 +79,21 @@ export class ProjectsService {
     if (!user || user.role === Role.USER || project.organizationId !== user.organizationId) {
       delete project.mpAccessToken;
       delete project.mpInstantCheckout;
-      // delete project.moneyEarned;
       delete project.activeSubscriptionsMoney;
     }
-    // if (project.mpAccessToken) project.mpAccessToken = await decrypt(project.mpAccessToken);
 
     const donations = await this.donationsService.getDonationsAmountInThisMonth(project.id);
-    const subscriptions = await this.subscriptionsService.getActiveSubscriptionsInThisMonth(project.id);
+    const subscriptions = await this.subscriptionsService.getActiveSubscriptions(project.id);
     const projectVolunteers = await this.usersService.findAllByProjectId(project.id);
-
-    // moneyEarned this month: to be calculated, to calculate this we need to calculate the donations made this month and the subscriptions (active) made this month
-    const monthlyEarnedMoney = donations.amount + subscriptions.amount;
-
-    // activeSubscriptionsNumber
-    const activeSubscriptionsNumber = subscriptions.total;
-
-    // donatorsNumber
-    const donatorsNumber = donations.total;
-
-    // volunteersNumber
-    const volunteersNumber = projectVolunteers.total;
-
-    // hoursVolunteered
-    const hoursVolunteered = projectVolunteers.volunteers.reduce((acc, volunteer) => acc + volunteer.hours, 0);
 
     return {
       ...project,
-      monthlyEarnedMoney,
-      activeSubscriptionsNumber,
-      donatorsNumber,
-      volunteersNumber,
-      hoursVolunteered,
+      monthlyEarnedMoney: donations.amount,
+      activeSubscriptionsNumber: subscriptions.total,
+      fixedEarningsWithSubscriptions: subscriptions.amount,
+      donatorsNumber: donations.donorsTotal,
+      volunteersNumber: projectVolunteers.total,
+      hoursVolunteered: projectVolunteers.volunteers.reduce((acc, volunteer) => acc + volunteer.hours, 0),
     };
   }
 

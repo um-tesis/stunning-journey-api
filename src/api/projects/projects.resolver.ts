@@ -10,11 +10,12 @@ import { UserEntity } from '../common/decorators';
 import { User } from '../users/entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { OptionalAuthGuard } from '../common/guards/optionalAuth.guard';
+import { BillingsService } from '../billings/billings.service';
 
 @UseGuards(OptionalAuthGuard)
 @Resolver(() => Project)
 export class ProjectsResolver {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(private readonly projectsService: ProjectsService, private readonly billingsService: BillingsService) {}
 
   /****************************************************
    *** QUERIES
@@ -55,8 +56,16 @@ export class ProjectsResolver {
    ****************************************************/
 
   @Mutation(() => Project)
-  createProject(@Args('createProjectInput') createProjectInput: CreateProjectInput) {
-    return this.projectsService.create(createProjectInput);
+  async createProject(@Args('createProjectInput') createProjectInput: CreateProjectInput) {
+    const newProject = await this.projectsService.create(createProjectInput);
+
+    await this.billingsService.create({
+      projectId: newProject.id,
+      amount: 0,
+      endsAt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    });
+
+    return newProject;
   }
 
   @Mutation(() => Project)
@@ -93,5 +102,11 @@ export class ProjectsResolver {
   @ResolveField('organization', () => Organization)
   async organization(@Parent() project: Project) {
     return await this.projectsService.getOrganization(project.organizationId);
+  }
+
+  @ResolveField('amountToPay', () => Int)
+  async amountToPay(@Parent() project: Project) {
+    const billing = await this.billingsService.findOneUnpaidByProjectId(project.id);
+    return billing?.amount || 0;
   }
 }

@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { DonationsService } from '../donations/donations.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { PasswordService } from '../auth/password.service';
+import { BillingsService } from '../billings/billings.service';
 
 @Module({
   providers: [
@@ -17,6 +18,7 @@ import { PasswordService } from '../auth/password.service';
     DonationsService,
     SubscriptionsService,
     PasswordService,
+    BillingsService,
   ],
 })
 export class ProjectsModule {}
