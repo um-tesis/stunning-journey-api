@@ -5,9 +5,6 @@ import { BillingStatus } from '@prisma/client';
 @InputType()
 export class UpdateBillingInput extends PartialType(CreateBillingInput) {
   @Field(() => Int, { nullable: true })
-  id: number;
-
-  @Field(() => Int, { nullable: true })
   paidBy?: number;
 
   @Field(() => Int, { nullable: true })

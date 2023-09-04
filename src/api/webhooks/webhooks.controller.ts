@@ -28,4 +28,20 @@ export class WebhooksController {
     }
     /* eslint-enable */
   }
+
+  @Post('/mercadopago-admin')
+  createAdmin(@Body() webhookInfo: MercadoPagoInput) {
+    const { action, data } = webhookInfo;
+    if (!action) return null;
+
+    /* eslint-disable */
+    switch (action) {
+      case MercadoPagoActions.PAYMENT_CREATED:
+      case MercadoPagoActions.PAYMENT_UPDATED:
+        return this.webhooksService.handlePayment(parseInt(data.id), null, action as MercadoPagoActions);
+      default:
+        return null;
+    }
+    /* eslint-enable */
+  }
 }

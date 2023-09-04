@@ -3,6 +3,7 @@ import { CreateBillingInput } from './dto/create-billing.input';
 import { UpdateBillingInput } from './dto/update-billing.input';
 import { PrismaService } from 'nestjs-prisma';
 import { FindOneBillingInput } from './dto/find-one-billing.input';
+import { BillingStatus } from '@prisma/client';
 
 type BillingInput<T> = T & { endsAt: Date };
 
@@ -28,6 +29,13 @@ export class BillingsService {
 
     return this.prisma.projectBilling.findFirst({
       where: { projectId, endsAt: { gt: endsAt } },
+      orderBy: { endsAt: 'desc' },
+    });
+  }
+
+  findOneUnpaidByProjectId(projectId: number) {
+    return this.prisma.projectBilling.findFirst({
+      where: { projectId, status: BillingStatus.PENDING },
       orderBy: { endsAt: 'desc' },
     });
   }
