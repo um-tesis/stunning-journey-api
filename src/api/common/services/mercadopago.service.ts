@@ -28,7 +28,7 @@ export class MercadoPagoService {
         pending: `${getClientUrlOrNgrok(true)}/projects/${projectSlug}`,
       },
       auto_return: 'all',
-      notification_url: `${getSiteUrlOrNgrok(true)}/api/v1/webhooks/mercadopago?cliente=${projectSlug}`,
+      notification_url: `${getSiteUrlOrNgrok(true)}/webhooks/mercadopago?cliente=${projectSlug}`,
       external_reference: projectSlug,
     });
   }
