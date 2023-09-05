@@ -16,7 +16,7 @@ export class ContactService {
 
   async sendContactForm(contactDto: ContactDto) {
     const template = fs.readFileSync(
-      path.join(__dirname, '../../../../src/helpers/email-templates/contactEmailTemplate.ejs'),
+      path.join(__dirname, '../../../src/helpers/email-templates/contactEmailTemplate.ejs'),
       'utf-8',
     );
 
@@ -48,7 +48,7 @@ export class ContactService {
 
   async emailVolunteers(emailVolunteersInput: EmailVolunteers) {
     const template = fs.readFileSync(
-      path.join(__dirname, '../../../../src/helpers/email-templates/volunteerEmailTemplate.ejs'),
+      path.join(__dirname, '../../../src/helpers/email-templates/volunteerEmailTemplate.ejs'),
       'utf-8',
     );
 

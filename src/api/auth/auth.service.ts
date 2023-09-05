@@ -30,7 +30,7 @@ export class AuthService {
 
   async createUser(payload: CreateUserInput): Promise<User> {
     const template = fs.readFileSync(
-      path.join(__dirname, '../../../../src/helpers/email-templates/welcomeEmailTemplate.ejs'),
+      path.join(__dirname, '../../../src/helpers/email-templates/welcomeEmailTemplate.ejs'),
       'utf-8',
     );
 
