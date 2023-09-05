@@ -40,4 +40,4 @@ export const setMercadoPagoConfig = async (
   }
 };
 
-const validKey = (key: string) => key.startsWith(NODE_ENV === 'development' ? 'APP_USR-' : 'TEST-');
+const validKey = (key: string) => key.startsWith(NODE_ENV === 'production' ? 'APP_USR-' : 'TEST-');
