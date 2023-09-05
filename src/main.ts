@@ -22,7 +22,7 @@ async function bootstrap() {
   app.useGlobalFilters(new PrismaClientExceptionFilter());
 
   // Global Prefix
-  app.setGlobalPrefix('api/v1', {
+  app.setGlobalPrefix('webhooks/v1', {
     exclude: [{ path: 'graphql', method: RequestMethod.ALL }],
   });
 
