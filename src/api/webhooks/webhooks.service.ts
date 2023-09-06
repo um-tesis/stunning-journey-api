@@ -55,7 +55,9 @@ export class WebhooksService {
           break;
         }
         case MercadoPagoActions.PAYMENT_UPDATED: {
-          await this.donationsService.updateByPaymentId({ status: body.status }, `${paymentId}`);
+          const { net_received_amount, total_paid_amount } = body.transaction_details;
+          const amount = (net_received_amount || total_paid_amount * (1 - MP_FEE)) * 100;
+          await this.donationsService.updateByPaymentId({ status: body.status, amount }, `${paymentId}`);
           break;
         }
       }
@@ -95,7 +97,7 @@ export class WebhooksService {
   }
 
   private async createSubscription(body: any, project: any, preapprovalId: string) {
-    const netAmountPreviousPlatformFee = (body.auto_recurring.transaction_amount * 100) / (1 + MP_FEE);
+    const netAmountPreviousPlatformFee = body.auto_recurring.transaction_amount * 100 * (1 - MP_FEE);
     const { amount, fee } = this.calculateNetTransactionAmount(netAmountPreviousPlatformFee);
 
     await this.subscriptionsService.create({
@@ -122,9 +124,11 @@ export class WebhooksService {
       cardStart: body.card?.first_six_digits,
       paymentMethod: body.payment_method?.type || body.payment_type_id,
     });
-    console.log('Donor created', donor.id);
 
-    const { amount, fee } = this.calculateNetTransactionAmount(body.transaction_details.net_received_amount * 100);
+    const { net_received_amount, total_paid_amount } = body.transaction_details;
+    const { amount, fee } = this.calculateNetTransactionAmount(
+      (net_received_amount || total_paid_amount * (1 - MP_FEE)) * 100,
+    );
 
     await this.donationsService.create(
       {

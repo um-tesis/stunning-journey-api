@@ -111,7 +111,7 @@ export class DonationsService {
 
     await this.prisma.project.update({
       where: { id: createDonationInput.projectId },
-      data: { moneyEarned: result._sum.amount },
+      data: { moneyEarned: result._sum.amount || 0 },
     });
 
     return donation;
@@ -127,7 +127,7 @@ export class DonationsService {
   updateByPaymentId(updateDonationInput: UpdateDonationInput, paymentId: string) {
     return this.prisma.donation.update({
       where: { paymentId: `${paymentId}` },
-      data: { status: updateDonationInput.status },
+      data: { status: updateDonationInput.status, amount: updateDonationInput.amount },
     });
   }
 
