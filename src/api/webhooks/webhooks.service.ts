@@ -62,6 +62,7 @@ export class WebhooksService {
 
       return body;
     } catch (error) {
+      console.log(error);
       return error;
     }
   }
@@ -87,6 +88,7 @@ export class WebhooksService {
 
       return body;
     } catch (error) {
+      console.log(error);
       return error;
     }
   }
@@ -119,6 +121,7 @@ export class WebhooksService {
       cardStart: body.card?.first_six_digits,
       paymentMethod: body.payment_method?.type || body.payment_type_id,
     });
+    console.log('Donor created', donor.id);
 
     const { amount, fee } = this.calculateNetTransactionAmount(body.transaction_details.net_received_amount * 100);
 
@@ -132,7 +135,11 @@ export class WebhooksService {
       donor.id,
     );
 
+    console.log('Donation created', paymentId);
+
     await this.updateBilling(fee, project);
+
+    console.log('Billing updated');
   }
 
   private async updateBilling(fee: number, project: any) {

@@ -16,6 +16,9 @@ export class WebhooksController {
       fullAction = `${type}.${action}`;
     }
 
+    console.log('fullAction', fullAction);
+    console.log(webhookInfo);
+
     /* eslint-disable */
     switch (fullAction) {
       case MercadoPagoActions.PAYMENT_CREATED:
