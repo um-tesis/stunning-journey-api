@@ -102,6 +102,7 @@ export class SubscriptionsResolver {
         initPoint: body.init_point,
       };
     } catch (e: any) {
+      console.log(e);
       throw new GenericError(e?.message as string);
     }
   }
