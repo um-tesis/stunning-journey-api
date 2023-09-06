@@ -5,7 +5,7 @@ const { NODEMAILER_PASSWORD, LIBERA_EMAIL_ACCOUNT } = config;
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
-  port: 465,
+  port: 25,
   host: 'smtp.gmail.com',
   auth: {
     user: LIBERA_EMAIL_ACCOUNT,
