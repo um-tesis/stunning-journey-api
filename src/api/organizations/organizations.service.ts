@@ -137,11 +137,7 @@ export class OrganizationsService {
     }, 0);
 
     const totalVolunteers = organizations.reduce((acc, organization) => {
-      return (
-        acc +
-        organization.users.filter((user) => user.role === 'USER').length +
-        organization.users.filter((user) => user.role === 'ORGADMIN').length
-      );
+      return acc + organization.users.filter((user) => user.role === 'USER').length;
     }, 0);
 
     const totalEarnings = organizations.reduce((acc, organization) => {
