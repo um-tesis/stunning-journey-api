@@ -46,6 +46,7 @@ export class WebhooksService {
 
     try {
       const { body } = await this.mpService.getPaymentInfo(paymentId, project.mpAccessToken);
+      console.log('body', body);
 
       /* eslint-disable */
       switch (action) {
