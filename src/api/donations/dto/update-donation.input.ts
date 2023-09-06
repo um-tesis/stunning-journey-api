@@ -7,4 +7,7 @@ export class UpdateDonationInput {
 
   @Field(() => String)
   status: string;
+
+  @Field(() => Int, { nullable: true })
+  amount?: number;
 }
