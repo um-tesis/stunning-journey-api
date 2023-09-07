@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Bienvenido Voluntario</title>
+    <title>Volunteer Appreciation</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -22,22 +22,31 @@
       p {
         color: #777777;
       }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #55a5ff;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>¡Bienvenido, Voluntario!</h1>
-      <p>Estimado <%= name %>,</p>
+      <h1>¡Gracias, Voluntario!</h1>
+      <p>Estimado <%= volunteerName %>,</p>
+      <p><%= body %></p>
       <p>
-        Estamos emocionados de tenerle como parte de la organización <%= organizationName %>. Valoramos su voluntad de
-        hacer una diferencia y estamos seguros de que será una experiencia gratificante para todos.
+        Gracias por formar parte del proyecto <%= projectName %>. Su dedicación y trabajo duro son apreciados por todos
+        los miembros y partipantes Libera!
       </p>
       <p>
         Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Valoramos su
-        participación y estamos entusiasmados por lo que lograremos juntos.
+        contribución y esperamos alcanzar juntos el mayor de los éxitos.
       </p>
       <p>Saludos cordiales,</p>
-      <p>El Equipo de <%= organizationName %> y Libera.</p>
+      <p>El Equipo de <%= projectName %> y Libera.</p>
       <p>
         <a class="button" href="https://donar-libera.com">Visite el sitio web de Libera</a>
       </p>

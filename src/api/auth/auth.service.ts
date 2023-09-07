@@ -29,13 +29,28 @@ export class AuthService {
   ) {}
 
   async createUser(payload: CreateUserInput): Promise<User> {
-    const template = fs.readFileSync(
-      path.join(__dirname, '../../../src/helpers/email-templates/welcomeEmailTemplate.ejs'),
-      'utf-8',
-    );
+    let template;
+
+    if (payload.role === 'USER') {
+      template = fs.readFileSync(
+        path.join(__dirname, '../../../src/helpers/email-templates/volunteerEmailTemplate.ejs'),
+        'utf-8',
+      );
+    } else {
+      template = fs.readFileSync(
+        path.join(__dirname, '../../../src/helpers/email-templates/welcomeEmailTemplate.ejs'),
+        'utf-8',
+      );
+    }
+    const organization = await this.prisma.organization.findUnique({
+      where: {
+        id: payload.organizationId,
+      },
+    });
 
     const renderedTemplate = ejs.render(template, {
       name: payload.name,
+      organizationName: organization.name,
     });
 
     const message = {
@@ -68,7 +83,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<Token> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
+    if (!user || user.role === 'USER') {
       throw new NotFoundException(`No user found for email: ${email}`);
     }
 
