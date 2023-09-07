@@ -79,6 +79,9 @@ export class UsersService {
       where: {
         organizationId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -95,6 +98,9 @@ export class UsersService {
           contains: args.filter,
           mode: 'insensitive',
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
