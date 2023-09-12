@@ -8,6 +8,12 @@ export class Donor extends BaseEntity {
   email?: string;
 
   @Field(() => String, { nullable: true })
+  firstName?: string;
+
+  @Field(() => String, { nullable: true })
+  lastName?: string;
+
+  @Field(() => String, { nullable: true })
   identification?: string;
 
   @Field(() => String, { nullable: true })
