@@ -198,9 +198,11 @@ type Donor {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String
+  firstName: String
   id: ID!
   identification: String
   identificationType: String
+  lastName: String
   paymentMethod: String
 
   """Identifies the date and time when the object was last updated."""
